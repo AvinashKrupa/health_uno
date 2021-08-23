@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import SidebarNav from "../sidebar";
 import MessagePane from "./MessagePane";
 import ConversationList from "./ConversationList";
+import {fetchApi} from "../../../_utils/http-utils";
 
 class Chat extends Component {
     constructor(props) {
@@ -18,8 +19,9 @@ class Chat extends Component {
         });
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         document.body.classList.add('chat-page');
+
         let conversations = [
             {
                 name: "Yatish",
@@ -29,6 +31,13 @@ class Chat extends Component {
                 room_id: ""
             }
         ]
+
+        // let conversations = await fetchApi({
+        //     url: "v1/chat/getConversations", method: "POST", body: {
+        //         user_id: "612363d240eef4f51b11e4de"
+        //     }
+        // })
+
         this.setState({conversations: conversations})
     }
 
@@ -55,7 +64,7 @@ class Chat extends Component {
 
                                         <ConversationList conversations={this.state.conversations}/>
                                     </div>
-                                    <MessagePane receiver_id={"60fe5e254000bf472c927fd4"}
+                                    <MessagePane receiver_id={"61028daf17f197002082d079"}
                                                  openModal={(id) => this.openModal(id)}/>
                                 </div>
                             </div>
