@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import Logo from '../../assets/images/logo-white.png';
+import Logo from '../../assets/images/logo.png';
 
 class ForgotPassword extends Component{
     render(){

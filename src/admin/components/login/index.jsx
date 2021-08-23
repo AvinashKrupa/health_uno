@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import Logo from '../../assets/images/logo-white.png';
+import Logo from '../../assets/images/logo.png';
 
 class Login extends Component{
     render(){
@@ -24,7 +24,7 @@ class Login extends Component{
 										<input className="form-control" type="text" placeholder="Email" />
 									</div>
 									<div className="form-group">
-										<input className="form-control" type="text" placeholder="Password" />
+										<input className="form-control" type="password" placeholder="Password" />
 									</div>
 									<div className="form-group">
 										<button className="btn btn-primary btn-block" type="submit">Login</button>

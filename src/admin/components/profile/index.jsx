@@ -65,8 +65,8 @@ class Profile extends Component{
 										</Link>
 									</div>
 									<div className="col ml-md-n2 profile-user-info">
-										<h4 className="user-name mb-0">Ryan Taylor</h4>
-										<h6 className="text-muted">ryantaylor@admin.com</h6>
+										<h4 className="user-name mb-0">Paramveer Singh</h4>
+										<h6 className="text-muted">psingh@admin.com</h6>
 										<div className="user-Location"><i className="fa fa-map-marker" aria-hidden="true"></i> Florida, United States</div>
 										<div className="about-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
 									</div>

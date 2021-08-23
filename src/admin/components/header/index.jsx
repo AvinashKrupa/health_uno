@@ -182,7 +182,7 @@ class Header extends Component {
                         className="rounded-circle"
                         src={avatar}
                         width="31"
-                        alt="Ryan Taylor"
+                        alt="Paramveer Singh"
                     />
                   </span>
                             </Dropdown.Toggle>
@@ -198,7 +198,7 @@ class Header extends Component {
                                             />
                                         </div>
                                         <div className="user-text">
-                                            <h6>Ryan Taylor</h6>
+                                            <h6>Paramveer Singh</h6>
                                             <p className="text-muted mb-0">Administrator</p>
                                         </div>
                                     </div>

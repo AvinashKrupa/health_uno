@@ -45,7 +45,7 @@ class SidebarNav extends Component {
                             <li className={pathname.includes('patient-list') ? "active" : ""}>
                                 <Link to="/patient-list"><i className="fe fe-user"/> <span>Patients</span></Link>
                             </li>
-                            <li className={pathname.includes('patient-list') ? "active" : ""}>
+                            <li className={pathname.includes('chat') ? "active" : ""}>
                                 <Link to="/chat"><i className="fe fe-messanger"/> <span>Chat</span></Link>
                             </li>
                             {/*<li className={pathname.includes('reviews') ?"active" :""}> */}

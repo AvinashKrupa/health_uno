@@ -117,7 +117,7 @@ performance: {
       new HtmlWebpackPlugin({
         template: "./public/index.html",
         filename: "./index.html",
-        favicon: './public/favicon.png'
+        favicon: './public/logo-small.png'
       }),
         new MiniCssExtractPlugin({ // plugin for controlling how compiled css will be outputted and named
             filename: "css/[name].css",
