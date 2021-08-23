@@ -22,23 +22,23 @@ class Chat extends Component {
     async componentDidMount() {
         document.body.classList.add('chat-page');
 
-        let conversations = [
-            {
-                name: "Yatish",
-                avatar: "",
-                last_message: "Hiii",
-                last_message_at: "5 min",
-                room_id: ""
-            }
-        ]
-
-        // let conversations = await fetchApi({
-        //     url: "v1/chat/getConversations", method: "POST", body: {
-        //         user_id: "612363d240eef4f51b11e4de"
+        // let conversations = [
+        //     {
+        //         name: "Yatish",
+        //         avatar: "",
+        //         last_message: "Hiii",
+        //         last_message_at: "5 min",
+        //         room_id: ""
         //     }
-        // })
+        // ]
 
-        this.setState({conversations: conversations})
+        let result = await fetchApi({
+            url: "v1/chat/getConversations", method: "POST", body: {
+                user_id: "612363d240eef4f51b11e4de"
+            }
+        })
+
+        this.setState({conversations: result.data})
     }
 
     componentWillUnmount() {
