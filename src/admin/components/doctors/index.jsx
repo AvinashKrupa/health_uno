@@ -98,6 +98,15 @@ class Doctors extends Component {
                 render: (text) => renderText(text),
                 sorter: (a, b) => sorterText(a.status, b.status)
             },
+            {
+                title: 'Actions',
+                render: (text, record) => (
+                    <div className="actions">
+                        <a href="#0" className="btn btn-sm bg-success-light" onClick={()=>console.log("clicked action")}><i className="fe fe-pencil"></i>Change Status</a>
+                    </div>
+                ),
+
+            }
         ];
 
         return (

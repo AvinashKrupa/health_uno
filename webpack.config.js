@@ -27,7 +27,7 @@ module.exports = {
   //  publicPath: '/', //relative path to output path where  devserver will look for compiled files
    host: 'localhost',
     compress: true,
-    port: 3008, // port number
+    port: 3000, // port number
     historyApiFallback: true,
     quiet: true
  },
