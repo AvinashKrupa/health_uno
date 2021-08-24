@@ -20,39 +20,35 @@ class MessagePane extends Component {
     async componentDidMount() {
         console.log("componentDidMount>>>")
         document.body.classList.add('chat-page');
-        this.initializeChatWithUser(this.state.selectedConv)
-        await this.loadMessagesForUser()
+        await this.initializeChatWithUser(this.state.selectedConv)
 
     }
 
     async componentWillReceiveProps(nextProps) {
-        if(nextProps.selectedConv!==this.state.selectedConv){
+        if (nextProps.selectedConv !== this.state.selectedConv) {
             console.log("componentWillReceiveProps>>>")
             this.terminateConnection()
-            this.setState({
-                selectedConv: nextProps.selectedConv,
-            });
-            this.initializeChatWithUser(this.state.selectedConv)
-            await this.loadMessagesForUser()
+            await this.initializeChatWithUser(nextProps.selectedConv)
         }
 
     }
 
-    async loadMessagesForUser() {
+    async loadMessagesForUser(conv) {
         try {
             let result = await fetchApi({
                 url: "v1/chat/getMessages", method: "POST", body: {
-                    room_id: this.state.selectedConv.room_id
+                    room_id: conv.room_id
                 }
             })
-            let messages=result.data.docs.reverse()
+            let messages = result.data.docs.reverse()
             this.setState({messages: messages})
+            return Promise.resolve()
         } catch (e) {
             console.log("Error>>>", e)
         }
     }
 
-    initializeChatWithUser(conv) {
+    async initializeChatWithUser(conv) {
         let socketObj = getNewSocket()
 
         socketObj.auth = {
@@ -89,7 +85,8 @@ class MessagePane extends Component {
             console.log("disconnected>>>>")
         });
 
-        this.setState({socketObj: socketObj})
+        this.setState({socketObj: socketObj, selectedConv: conv})
+        await this.loadMessagesForUser(conv)
     }
 
     sendMessage() {
@@ -129,6 +126,7 @@ class MessagePane extends Component {
             socketObj.off("disconnect")
             socketObj.disconnect()
         }
+        this.setState({selectedConv: null})
     }
 
     render() {
