@@ -49,7 +49,7 @@ class ConversationList extends Component {
                                     </div>
                                     <div>
                                         <div
-                                            className="last-chat-time block">{getFormattedDate(conversation.last_message.created_at)}</div>
+                                            className="last-chat-time block">{conversation.last_message ? getFormattedDate(conversation.last_message.created_at):""}</div>
                                         {conversation.unread &&
                                         <div className="badge badge-success badge-pill">{conversation.unread}</div>}
                                     </div>

@@ -33,9 +33,6 @@ class MessageList extends Component {
                         {this.state.messages.map(message => {
                             return (
                                 <li className={this.state.user_id === message.sender._id ? "media sent" : "media received"}>
-                                    {message.sender.avatar && message.sender.avatar !== "" && <div className="avatar">
-                                        <img src={message.sender.avatar} alt="User" className="avatar-img rounded-circle"/>
-                                    </div>}
                                     <div className="media-body">
                                         <div className="msg-box">
                                             <div>
