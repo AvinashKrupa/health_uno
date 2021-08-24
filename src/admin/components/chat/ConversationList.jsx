@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {IMG01} from "./img";
-import {getFormattedDate, getFullName} from "../../../_utils/common-utils";
+import {getFormattedDateTime, getFullName} from "../../../_utils/common-utils";
 
 class ConversationList extends Component {
     constructor(props) {
@@ -49,7 +49,7 @@ class ConversationList extends Component {
                                     </div>
                                     <div>
                                         <div
-                                            className="last-chat-time block">{conversation.last_message ? getFormattedDate(conversation.last_message.created_at):""}</div>
+                                            className="last-chat-time block">{conversation.last_message ? getFormattedDateTime(conversation.last_message.created_at):""}</div>
                                         {conversation.unread &&
                                         <div className="badge badge-success badge-pill">{conversation.unread}</div>}
                                     </div>

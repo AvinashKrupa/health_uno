@@ -1,20 +1,24 @@
 import React, {Component} from 'react';
-import {getFormattedDate} from "../../../_utils/common-utils";
+import {getFormattedDate, getFormattedDateTime} from "../../../_utils/common-utils";
 
 class MessageList extends Component {
     constructor(props) {
         super(props);
         this.state = {
             messages: props.messages || [],
-            user_id:props.user_id
+            user_id: props.user_id
         }
     }
 
     componentDidMount() {
         document.body.classList.add('chat-page');
+        this.scrollToBottom()
 
     }
+    componentDidUpdate() {
+        this.scrollToBottom()
 
+    }
     componentWillReceiveProps(nextProps) {
         this.setState({
             messages: nextProps.messages,
@@ -25,11 +29,16 @@ class MessageList extends Component {
         document.body.classList.remove('chat-page');
     }
 
+    scrollToBottom = () => {
+        const {messageList} = this.refs;
+        messageList.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+    }
+
     render() {
         return (
             <div className="chat-body">
                 <div className="chat-scroll">
-                    <ul className="list-unstyled">
+                    <ul className="list-unstyled" ref={"messageList"}>
                         {this.state.messages.map(message => {
                             return (
                                 <li className={this.state.user_id === message.sender._id ? "media sent" : "media received"}>
@@ -40,7 +49,7 @@ class MessageList extends Component {
                                                 <ul className="chat-msg-info">
                                                     <li>
                                                         <div className="chat-time">
-                                                            <span>{getFormattedDate(message.created_at)}</span>
+                                                            <span>{getFormattedDateTime(message.created_at)}</span>
                                                         </div>
                                                     </li>
                                                 </ul>

@@ -14,6 +14,10 @@ export const getFullName = (user) => {
 export const getFormattedDate = (date) => {
     return moment(date).format("DD/MM/YYYY")
 }
+
+export const getFormattedDateTime = (date) => {
+    return moment(date).format("DD/MM/YYYY hh:mm a")
+}
 export const getNextSlot = (slot) => {
     return moment(slot,"HH:mm").add(10,"minutes").format("HH:mm")
 }
