@@ -9,7 +9,9 @@ class Chat extends Component {
         super(props);
         this.state = {
             activeModal: null,
-            conversations: []
+            selectedConv: null,
+            conversations: [],
+            user_id: "612363d240eef4f51b11e4de"
         }
     }
 
@@ -18,29 +20,29 @@ class Chat extends Component {
 
         });
     }
+    onSelectConv = (conv) => {
+        this.setState({selectedConv: conv})
+    }
 
     async componentDidMount() {
-        console.log("componentDidMount>>>>")
         document.body.classList.add('chat-page');
-
-        // let conversations = [
-        //     {
-        //         name: "Yatish",
-        //         avatar: "",
-        //         last_message: "Hiii",
-        //         last_message_at: "5 min",
-        //         room_id: ""
-        //     }
-        // ]
         try {
             let result = await fetchApi({
                 url: "v1/chat/getConversations", method: "POST", body: {
-                    user_id: "612363d240eef4f51b11e4de"
+                    user_id: this.state.user_id
                 }
             })
-            this.setState({conversations: result.data})
+            let conversations = result.data.map(conv => {
+                return {
+                    ...conv,
+                    recipient: conv.participants.find(obj => {
+                        return obj._id !== this.state.user_id
+                    })
+                }
+            })
+            this.setState({conversations: conversations})
         } catch (e) {
-            console.log("Error>>>",e)
+            console.log("Error>>>", e)
         }
 
 
@@ -67,10 +69,12 @@ class Chat extends Component {
                                             </a>
                                         </div>
 
-                                        <ConversationList conversations={this.state.conversations}/>
+                                        <ConversationList conversations={this.state.conversations}
+                                                          onSelectConv={(conv) => this.onSelectConv(conv)}/>
                                     </div>
-                                    <MessagePane receiver_id={"61028daf17f197002082d079"}
-                                                 openModal={(id) => this.openModal(id)}/>
+                                    {this.state.selectedConv &&
+                                    <MessagePane selectedConv={this.state.selectedConv}
+                                                 openModal={(id) => this.openModal(id)}/>}
                                 </div>
                             </div>
                         </div>

@@ -1,35 +1,46 @@
 import React, {Component} from 'react';
-import {IMG01} from './img';
 import {ChatType, getNewSocket} from "../../../socketIO/SocketManager";
 import MessageList from "./MessageList";
+import {getFullName} from "../../../_utils/common-utils";
+import {fetchApi} from "../../../_utils/http-utils";
 
 class MessagePane extends Component {
     constructor(props) {
         super(props);
         this.state = {
             room_id: null,
-            receiver_id: props.receiver_id,
+            selectedConv: props.selectedConv,
             user_id: "612363d240eef4f51b11e4de",
             text: "",
             messages: [],
-            socketObj: null
+            socketObj: null,
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         document.body.classList.add('chat-page');
-        this.initializeChatWithUser(this.state.receiver_id)
+        this.initializeChatWithUser(this.state.selectedConv)
+        try {
+            let result = await fetchApi({
+                url: "v1/chat/getMessages", method: "POST", body: {
+                    room_id: this.state.selectedConv.room_id
+                }
+            })
+            this.setState({messages: result.data.docs})
+        } catch (e) {
+            console.log("Error>>>", e)
+        }
 
     }
 
-    initializeChatWithUser(receiver_id) {
+    initializeChatWithUser(conv) {
         let socketObj = getNewSocket()
 
         socketObj.auth = {
             user_id: this.state.user_id,
             chat_type: ChatType.CHAT_TYPE_DOC_TO_PATIENT,
-            receiver_id: receiver_id,
-            conversation_id: localStorage.getItem("conversation_id")
+            receiver_id: conv.recipient._id,
+            conversation_id: conv._id
         };
         socketObj.connect();
 
@@ -46,10 +57,9 @@ class MessagePane extends Component {
         });
 
         socketObj.on('onNewMessage', data => {
-            let fromSelf = this.state.user_id === data.sender._id
             console.log('onNewMessage>>>>', data);
             let messages = this.state.messages
-            messages.push({...data, fromSelf})
+            messages.push(data)
             this.setState({
                 messages: messages
             })
@@ -73,7 +83,6 @@ class MessagePane extends Component {
             let finalMessage = {
                 message: this.state.text,
                 sender: {_id: this.state.user_id, name: this.state.user_id, avatar: ""},
-                fromSelf: true,
                 created_at: new Date().toDateString()
             }
             let messages = this.state.messages
@@ -109,11 +118,12 @@ class MessagePane extends Component {
                     <div className="media">
                         <div className="media-img-wrap">
                             <div className="avatar avatar-online">
-                                <img src={IMG01} alt="User" className="avatar-img rounded-circle"/>
+                                <img src={this.state.selectedConv.recipient.dp} alt="User"
+                                     className="avatar-img rounded-circle"/>
                             </div>
                         </div>
                         <div className="media-body">
-                            <div className="user-name">{this.state.receiver_id}</div>
+                            <div className="user-name">{getFullName(this.state.selectedConv.recipient)}</div>
                             {/*<div className="user-status">online</div>*/}
                         </div>
                     </div>
@@ -131,7 +141,7 @@ class MessagePane extends Component {
                     {/*    </a>*/}
                     {/*</div>*/}
                 </div>
-                <MessageList messages={this.state.messages}/>
+                <MessageList messages={this.state.messages} user_id={this.state.user_id}/>
                 <div className="chat-footer">
                     <div className="input-group">
                         <div className="input-group-prepend">

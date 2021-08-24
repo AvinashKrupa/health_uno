@@ -1,6 +1,6 @@
 import React from "react";
 import moment from "moment";
-import {changeCaseFirstLetter, getFormattedDate, getFullName} from "./common-utils";
+import {changeCaseFirstLetter, getFormattedDate, getFullName, getNextSlot} from "./common-utils";
 import {Link} from "react-router-dom";
 
 export const sorterDate = (a, b) => {
@@ -48,4 +48,10 @@ export const renderText = (text) => {
     return <div className="sorting_1">
         {changeCaseFirstLetter(text)}
     </div>
+}
+export const renderAppointment = (date,text) => {
+    return  <>
+        <span>{getFormattedDate(date)}</span>
+        <span className="text-primary d-block">{`${text} - ${getNextSlot(text)}`}</span>
+    </>
 }

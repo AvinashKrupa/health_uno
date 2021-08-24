@@ -14,6 +14,9 @@ export const getFullName = (user) => {
 export const getFormattedDate = (date) => {
     return moment(date).format("DD/MM/YYYY")
 }
+export const getNextSlot = (slot) => {
+    return moment(slot,"HH:mm").add(10,"minutes").format("HH:mm")
+}
 export const changeCaseFirstLetter = (params) => {
     if (!params)
         return ""

@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
+import {getFormattedDate} from "../../../_utils/common-utils";
 
 class MessageList extends Component {
     constructor(props) {
         super(props);
         this.state = {
             messages: props.messages || [],
+            user_id:props.user_id
         }
     }
 
@@ -30,7 +32,7 @@ class MessageList extends Component {
                     <ul className="list-unstyled">
                         {this.state.messages.map(message => {
                             return (
-                                <li className={message.fromSelf ? "media sent" : "media received"}>
+                                <li className={this.state.user_id === message.sender._id ? "media sent" : "media received"}>
                                     {message.sender.avatar && message.sender.avatar !== "" && <div className="avatar">
                                         <img src={message.sender.avatar} alt="User" className="avatar-img rounded-circle"/>
                                     </div>}
@@ -41,7 +43,7 @@ class MessageList extends Component {
                                                 <ul className="chat-msg-info">
                                                     <li>
                                                         <div className="chat-time">
-                                                            <span>{message.created_at}</span>
+                                                            <span>{getFormattedDate(message.created_at)}</span>
                                                         </div>
                                                     </li>
                                                 </ul>

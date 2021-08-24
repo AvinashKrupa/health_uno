@@ -27,7 +27,7 @@ export const fetchApi = async (params) => {
             case 401:
                 //move to login page here and log user out
                 localStorage.clear()
-                window.location = "/auth/login"
+                window.location = "/login"
                 return
             case 200:
                 return Promise.resolve(response.json())

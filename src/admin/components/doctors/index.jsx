@@ -102,7 +102,7 @@ class Doctors extends Component {
                 title: 'Actions',
                 render: (text, record) => (
                     <div className="actions">
-                        <a href="#0" className="btn btn-sm bg-success-light" onClick={()=>console.log("clicked action")}><i className="fe fe-pencil"></i>Change Status</a>
+                        <a href="#0" className="btn btn-sm bg-success-light" onClick={()=>console.log("clicked action")}>Change Status</a>
                     </div>
                 ),
 

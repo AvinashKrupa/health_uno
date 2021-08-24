@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 import {IMG01} from "./img";
+import {getFormattedDate, getFullName} from "../../../_utils/common-utils";
 
 class ConversationList extends Component {
     constructor(props) {
         super(props);
         this.state = {
             activeModal: null,
-            conversations: props.conversations || []
+            conversations: props.conversations || [],
+            onSelectConv: props.onSelectConv
         }
     }
 
@@ -31,22 +33,23 @@ class ConversationList extends Component {
 
                     {this.state.conversations.map(conversation => {
                         return (
-                            <a href="#0" className="media">
+                            <a href="#0" className="media"
+                               onClick={() => this.state.onSelectConv(conversation)}>
                                 <div className="media-img-wrap">
                                     <div className="avatar avatar-online">
-                                        <img src={conversation.avatar ? conversation.avatar : IMG01} alt="User"
+                                        <img src={conversation.recipient ? conversation.recipient.dp : IMG01} alt="User"
                                              className="avatar-img rounded-circle"/>
                                     </div>
                                 </div>
                                 <div className="media-body">
                                     <div>
-                                        <div className="user-name">{conversation.name ? conversation.name : ""}</div>
+                                        <div className="user-name">{getFullName(conversation.recipient)}</div>
                                         <div
-                                            className="user-last-chat">{conversation.last_message ? conversation.last_message : ""}</div>
+                                            className="user-last-chat">{conversation.last_message ? conversation.last_message.message : ""}</div>
                                     </div>
                                     <div>
                                         <div
-                                            className="last-chat-time block">{conversation.last_message_at ? conversation.last_message_at : ""}</div>
+                                            className="last-chat-time block">{getFormattedDate(conversation.last_message.created_at)}</div>
                                         {conversation.unread &&
                                         <div className="badge badge-success badge-pill">{conversation.unread}</div>}
                                     </div>

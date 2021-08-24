@@ -74,6 +74,15 @@ class Patients extends Component {
                 render: (text) => renderText(text),
                 sorter: (a, b) => sorterText(a.status, b.status)
             },
+            {
+                title: 'Actions',
+                render: (text, record) => (
+                    <div className="actions">
+                        <a href="#0" className="btn btn-sm bg-success-light" onClick={()=>console.log("clicked action")}>Change Status</a>
+                    </div>
+                ),
+
+            }
         ];
 
         return (

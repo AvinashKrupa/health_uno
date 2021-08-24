@@ -7,6 +7,7 @@ import {
 } from "../../components/paginationfunction";
 import {fetchApi} from "../../../_utils/http-utils";
 import {
+    renderAppointment,
     renderDate,
     renderName,
     renderText,
@@ -34,11 +35,7 @@ class Appointments extends Component {
         const columns = [
             {
                 title: "Appointment Time",
-                render: (text, record) => renderText(record.time.slot),
-            },
-            {
-                title: "Date",
-                render: (text, record) => renderDate(record.time.utc_time),
+                render: (text, record) => renderAppointment(record.time.utc_time,record.time.slot),
                 sorter: (a, b) => sorterDate(a.time.utc_time, b.time.utc_time),
             },
             {
@@ -97,6 +94,15 @@ class Appointments extends Component {
                 render: (text) => renderText(text),
                 sorter: (a, b) => sorterText(a.status, b.status)
             },
+            {
+                title: 'Actions',
+                render: (text, record) => (
+                    <div className="actions">
+                        <a href="#0" className="btn btn-sm bg-success-light" onClick={()=>console.log("clicked action")}>Change Status</a>
+                    </div>
+                ),
+
+            }
         ];
 
         return (
