@@ -20,6 +20,7 @@ class Chat extends Component {
     }
 
     async componentDidMount() {
+        console.log("componentDidMount>>>>")
         document.body.classList.add('chat-page');
 
         // let conversations = [
@@ -31,14 +32,18 @@ class Chat extends Component {
         //         room_id: ""
         //     }
         // ]
+        try {
+            let result = await fetchApi({
+                url: "v1/chat/getConversations", method: "POST", body: {
+                    user_id: "612363d240eef4f51b11e4de"
+                }
+            })
+            this.setState({conversations: result.data})
+        } catch (e) {
+            console.log("Error>>>",e)
+        }
 
-        let result = await fetchApi({
-            url: "v1/chat/getConversations", method: "POST", body: {
-                user_id: "612363d240eef4f51b11e4de"
-            }
-        })
 
-        this.setState({conversations: result.data})
     }
 
     componentWillUnmount() {

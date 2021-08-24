@@ -27,14 +27,15 @@ module.exports = {
   //  publicPath: '/', //relative path to output path where  devserver will look for compiled files
    host: 'localhost',
     compress: true,
-    port: 3001, // port number
+    port: 80, // port number
     historyApiFallback: true,
     quiet: true
  },
  externals: {
   // global app config object
   config: JSON.stringify({
-      apiUrl: 'http://localhost:3005/',
+      // apiUrl: 'http://localhost:3005/',
+      apiUrl: 'http://dev.healthuno.com:6002/',
       imageapiUrl: '',
       publicPath : '/'
   })
