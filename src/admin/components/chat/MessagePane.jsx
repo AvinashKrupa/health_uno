@@ -18,19 +18,38 @@ class MessagePane extends Component {
     }
 
     async componentDidMount() {
+        console.log("componentDidMount>>>")
         document.body.classList.add('chat-page');
         this.initializeChatWithUser(this.state.selectedConv)
+        await this.loadMessagesForUser()
+
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        if(nextProps.selectedConv!==this.state.selectedConv){
+            console.log("componentWillReceiveProps>>>")
+            this.terminateConnection()
+            this.setState({
+                selectedConv: nextProps.selectedConv,
+            });
+            this.initializeChatWithUser(this.state.selectedConv)
+            await this.loadMessagesForUser()
+        }
+
+    }
+
+    async loadMessagesForUser() {
         try {
             let result = await fetchApi({
                 url: "v1/chat/getMessages", method: "POST", body: {
                     room_id: this.state.selectedConv.room_id
                 }
             })
-            this.setState({messages: result.data.docs})
+            let messages=result.data.docs.reverse()
+            this.setState({messages: messages})
         } catch (e) {
             console.log("Error>>>", e)
         }
-
     }
 
     initializeChatWithUser(conv) {
@@ -97,6 +116,11 @@ class MessagePane extends Component {
     }
 
     componentWillUnmount() {
+        this.terminateConnection()
+        document.body.classList.remove('chat-page');
+    }
+
+    terminateConnection() {
         let socketObj = this.state.socketObj
         if (socketObj) {
             socketObj.off("onConversation")
@@ -105,7 +129,6 @@ class MessagePane extends Component {
             socketObj.off("disconnect")
             socketObj.disconnect()
         }
-        document.body.classList.remove('chat-page');
     }
 
     render() {
