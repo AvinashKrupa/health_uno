@@ -14,6 +14,7 @@ class MessagePane extends Component {
             text: "",
             messages: [],
             socketObj: null,
+            onClickBack: props.onClickBack
         }
     }
 
@@ -92,15 +93,12 @@ class MessagePane extends Component {
     sendMessage() {
         if (this.state.socketObj) {
             console.log("Sending Message>>>", this.state.text)
-            this.state.socketObj.emit("sendMessage", {
-                message: this.state.text,
-                sender: this.state.user_id,
-            });
             let finalMessage = {
                 message: this.state.text,
                 sender: {_id: this.state.user_id, name: this.state.user_id, avatar: ""},
                 created_at: new Date().toDateString()
             }
+            this.state.socketObj.emit("sendMessage", finalMessage);
             let messages = this.state.messages
             messages.push(finalMessage)
             this.setState({text: "", messages: messages})
@@ -133,7 +131,10 @@ class MessagePane extends Component {
         return (
             <div className="chat-cont-right">
                 <div className="chat-header">
-                    <a id="back_user_list" href="#0" className="back-user-list">
+                    <a id="back_user_list" onClick={() => {
+                        if (this.state.onClickBack)
+                            this.state.onClickBack()
+                    }} className="back-user-list">
                         <i className="material-icons">chevron_left</i>
                     </a>
                     <div className="media">

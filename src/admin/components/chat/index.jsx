@@ -73,7 +73,9 @@ class Chat extends Component {
                                                           onSelectConv={(conv) => this.onSelectConv(conv)}/>
                                     </div>
                                     {this.state.selectedConv &&
-                                    <MessagePane selectedConv={this.state.selectedConv}
+                                    <MessagePane selectedConv={this.state.selectedConv} onClickBack={() => {
+                                        this.setState({selectedConv: null})
+                                    }}
                                                  openModal={(id) => this.openModal(id)}/>}
                                 </div>
                             </div>
