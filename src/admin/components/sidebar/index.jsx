@@ -26,9 +26,6 @@ class SidebarNav extends Component {
                 <div className="sidebar-inner slimscroll">
                     <div id="sidebar-menu" className="sidebar-menu">
                         <ul>
-                            <li className="menu-title">
-                                <span>Main</span>
-                            </li>
                             <li className={pathname === '/admin' ? "active" : ""}>
                                 <Link to="/admin"><i className="fe fe-home"/> <span>Dashboard</span></Link>
                             </li>
@@ -102,9 +99,9 @@ class SidebarNav extends Component {
                             {/*<li className="menu-title"> */}
                             {/*  <span>UI Interface</span>*/}
                             {/*</li>*/}
-                            {/*<li>*/}
-                            {/*  <Link to="/components"><i className="fe fe-vector" /> <span>Components</span></Link>*/}
-                            {/*</li>*/}
+                            <li>
+                              <Link to="/components"><i className="fe fe-vector" /> <span>Components</span></Link>
+                            </li>
                             {/*<li className="submenu">*/}
                             {/*  <a href="#"><i className="fe fe-layout" /> <span> Forms </span> <span className="menu-arrow" /></a>*/}
                             {/*  <ul style={{display: 'none'}}>*/}

@@ -57,6 +57,7 @@
     "react-dom": "^16.13.1",
     "react-dropzone": "^11.1.0",
     "react-dropzone-uploader": "^2.11.0",
+    "react-hot-toast": "^2.1.1",
     "react-image-lightbox": "^5.1.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
