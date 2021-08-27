@@ -49,8 +49,27 @@ export const renderText = (text) => {
         {changeCaseFirstLetter(text)}
     </div>
 }
-export const renderAppointment = (date,text) => {
-    return  <>
+
+export const renderDropDown = (name, items, onItemClick, onButtonClick, showMenu) => {
+    return <div className="btn-group">
+        <button type="button" onClick={() => onButtonClick()} className="btn btn-primary dropdown-toggle"
+                data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">{name}</button>
+        <div className={showMenu ? "dropdown-menu show" : "dropdown-menu"}>
+            {
+                items.map((elem, index) => {
+                    return <a className="dropdown-item" onClick={() => {
+                        if (onItemClick)
+                            onItemClick(elem, index)
+                    }}>{changeCaseFirstLetter(elem)}</a>
+                })
+            }
+        </div>
+    </div>
+}
+
+export const renderAppointment = (date, text) => {
+    return <>
         <span>{getFormattedDate(date)}</span>
         <span className="text-primary d-block">{`${text} - ${getNextSlot(text)}`}</span>
     </>

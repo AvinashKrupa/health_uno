@@ -5,25 +5,59 @@ import SidebarNav from "../sidebar";
 import {itemRender, onShowSizeChange,} from "../../components/paginationfunction";
 import {fetchApi} from "../../../_utils/http-utils";
 import {
-    renderDate,
+    renderDate, renderDropDown,
     renderName,
     renderText,
     sorterDate,
     sorterNumber,
     sorterText
 } from "../../../_utils/data-table-utils";
+import toast from "react-hot-toast";
+
+const patientStatus = ['active', 'inactive', 'suspended', 'banned']
 
 class Patients extends Component {
     constructor(props) {
         super(props);
         this.state = {
             data: [],
+            showMenu: {}
         };
     }
 
     async componentDidMount() {
         let patients = await fetchApi({url: "v1/patients", method: "GET"})
         this.setState({data: patients.data});
+    }
+
+    async handleItemClick(record, dropdownItem) {
+        let index = this.state.data.indexOf(record)
+        let data = this.state.data
+        data[index].status = dropdownItem
+        this.setState({showMenu: {[record._id]: false}})
+        try {
+            let result = await fetchApi({
+                url: "v1/patient/changeStatus",
+                method: "POST",
+                body: {patient_id: record._id, status: dropdownItem}
+            })
+            if (result) {
+                toast(result.message)
+                this.setState({data: data})
+            }
+        } catch (e) {
+            console.log("error>>", e)
+
+        }
+    }
+
+    handleDropdownClick(record) {
+        let isShown = this.state.showMenu[record._id]
+        this.setState({showMenu: {[record._id]: !isShown}})
+    }
+
+    showDropDownMenu(record) {
+        return this.state.showMenu[record._id]
     }
 
     render() {
@@ -76,11 +110,10 @@ class Patients extends Component {
             },
             {
                 title: 'Actions',
-                render: (text, record) => (
-                    <div className="actions">
-                        <a href="#0" className="btn btn-sm bg-success-light" onClick={()=>console.log("clicked action")}>Change Status</a>
-                    </div>
-                ),
+                render: (text, record) => renderDropDown("Change Status", patientStatus.filter(item => item !== record.status),
+                    (elem, index) => this.handleItemClick(record, elem),
+                    () => this.handleDropdownClick(record),
+                    this.showDropDownMenu(record))
 
             }
         ];
@@ -118,7 +151,7 @@ class Patients extends Component {
                                                 columns={columns}
                                                 // bordered
                                                 dataSource={data}
-                                                rowKey={(record) => record.id}
+                                                rowKey={(record) => record._id}
                                                 showSizeChanger={true}
                                                 pagination={{
                                                     total: data.length,

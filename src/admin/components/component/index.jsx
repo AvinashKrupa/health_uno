@@ -623,7 +623,7 @@ class Components extends Component {
             <h4 className="card-title">Dropdowns within Buttons</h4>
             <div className="btn-group">
               <button type="button" className="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
-              <div className="dropdown-menu">
+              <div className="dropdown-menu show">
                 <a className="dropdown-item" href="#">Action</a>
                 <a className="dropdown-item" href="#">Another action</a>
                 <div className="dropdown-divider" />

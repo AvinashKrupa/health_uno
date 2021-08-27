@@ -30,7 +30,6 @@ class Login extends Component {
             toast(errorMessage)
             return
         }
-        console.log("handleSubmit>>", this.state)
         try {
             let result = await fetchApi({
                 url: "v1/auth/admin/login",
