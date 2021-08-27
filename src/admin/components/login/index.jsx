@@ -27,7 +27,7 @@ class Login extends Component {
             errorMessage += "The password field is required."
         }
         if (errorMessage != "") {
-            toast(errorMessage)
+            toast.error(errorMessage)
             return
         }
         try {
@@ -37,7 +37,7 @@ class Login extends Component {
                 body: {email: this.state.email, password: this.state.password}
             })
             if (result) {
-                toast(result.message)
+                toast.success(result.message)
                 await setJwtToken(result.data.session.access_token)
                 this.props.history.push("/dashboard")
             }

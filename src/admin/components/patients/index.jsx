@@ -42,7 +42,7 @@ class Patients extends Component {
                 body: {patient_id: record._id, status: dropdownItem}
             })
             if (result) {
-                toast(result.message)
+                toast.success(result.message)
                 this.setState({data: data})
             }
         } catch (e) {

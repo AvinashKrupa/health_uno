@@ -51,7 +51,7 @@ export const fetchApi = async (params) => {
         } else {
             errorMessage = e.error
         }
-        toast(errorMessage)
+        toast.error(errorMessage)
         return Promise.reject(e)
     });
 };
