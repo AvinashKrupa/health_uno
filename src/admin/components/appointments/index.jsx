@@ -8,19 +8,21 @@ import {
 import {fetchApi} from "../../../_utils/http-utils";
 import {
     renderAppointment,
-    renderDate,
+    renderDate, renderDropDown,
     renderName,
     renderText,
     sorterDate,
     sorterNumber,
     sorterText
 } from "../../../_utils/data-table-utils";
-
+import toast from "react-hot-toast";
+const statusArray = ['scheduled', 'cancelled', 'rejected', 'ongoing', 'completed']
 class Appointments extends Component {
     constructor(props) {
         super(props);
         this.state = {
             data: [],
+            showMenu: {}
         };
     }
 
@@ -28,7 +30,36 @@ class Appointments extends Component {
         let appointments = await fetchApi({url: "v1/appointments", method: "GET"})
         this.setState({data: appointments.data});
     }
+    async handleItemClick(record, dropdownItem) {
+        let index = this.state.data.indexOf(record)
+        let data = this.state.data
+        data[index].status = dropdownItem
+        this.setState({showMenu: {[record._id]: false}})
+        toast("Functionality in development")
+        // try {
+        //     let result = await fetchApi({
+        //         url: "v1/doctor/changeStatus",
+        //         method: "POST",
+        //         body: {doctor_id: record._id, status: dropdownItem}
+        //     })
+        //     if (result) {
+        //         toast.success(result.message)
+        //         this.setState({data: data})
+        //     }
+        // } catch (e) {
+        //     console.log("error>>", e)
+        //
+        // }
+    }
 
+    handleDropdownClick(record) {
+        let isShown = this.state.showMenu[record._id]
+        this.setState({showMenu: {[record._id]: !isShown}})
+    }
+
+    showDropDownMenu(record) {
+        return this.state.showMenu[record._id]
+    }
     render() {
         const {data} = this.state;
 
@@ -96,11 +127,10 @@ class Appointments extends Component {
             },
             {
                 title: 'Actions',
-                render: (text, record) => (
-                    <div className="actions">
-                        <a href="#0" className="btn btn-sm bg-success-light" onClick={()=>console.log("clicked action")}>Change Status</a>
-                    </div>
-                ),
+                render: (text, record) => renderDropDown("Change Status", statusArray.filter(item => item !== record.status),
+                    (elem, index) => this.handleItemClick(record, elem),
+                    () => this.handleDropdownClick(record),
+                    this.showDropDownMenu(record))
 
             }
         ];
@@ -136,7 +166,7 @@ class Appointments extends Component {
                                                 columns={columns}
                                                 // bordered
                                                 dataSource={data}
-                                                rowKey={(record) => record.id}
+                                                rowKey={(record) => record._id}
                                                 showSizeChanger={true}
                                                 pagination={{
                                                     total: data.length,

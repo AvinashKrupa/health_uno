@@ -13,6 +13,9 @@ export const sorterText = (a, b) => {
         b = ""
     return a.localeCompare(b);
 }
+export const sorterBoolean = (a, b) => {
+    return a === b;
+}
 export const sorterNumber = (a, b) => {
     if (!a)
         a = Number.MIN_SAFE_INTEGER
@@ -49,7 +52,19 @@ export const renderText = (text) => {
         {changeCaseFirstLetter(text)}
     </div>
 }
-
+export const renderBoolean = (value) => {
+    return <div className="sorting_1">
+        {value ? "Enabled" : "Disabled"}
+    </div>
+}
+export const renderTextWithImage = (text, url) => {
+    return <h2 className="table-avatar">
+        <a className="avatar avatar-sm mr-2"><img src={url}
+                                                  className="avatar-img"
+                                                  alt=""/></a>
+        <a>{text}</a>
+    </h2>
+}
 export const renderDropDown = (name, items, onItemClick, onButtonClick, showMenu) => {
     return <div className="btn-group">
         <button type="button" onClick={() => onButtonClick()} className="btn btn-primary dropdown-toggle"
@@ -67,7 +82,17 @@ export const renderDropDown = (name, items, onItemClick, onButtonClick, showMenu
         </div>
     </div>
 }
+export const renderEditDisableActions = (handleShow,record) => {
+    return <div className="actions">
+        <a href="#0" className="btn btn-sm bg-success-light" onClick={() => handleShow('edit')}>
+            <i className="fe fe-pencil"></i> Edit</a>
+        <a href="#0" className={`btn btn-sm ${record.enabled ? "bg-danger-light" : "bg-success-light"}`}
+           onClick={() => handleShow('disable')}>{record.enabled?" Disable":" Enable"}</a>
+        <a href="#0" className="btn btn-sm bg-danger-light" onClick={() => handleShow('delete')}>
+            <i className="fe fe-trash"></i></a>
+    </div>
 
+}
 export const renderAppointment = (date, text) => {
     return <>
         <span>{getFormattedDate(date)}</span>

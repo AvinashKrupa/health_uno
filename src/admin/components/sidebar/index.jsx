@@ -33,18 +33,30 @@ class SidebarNav extends Component {
                                 <Link to="/appointment-list"><i className="fe fe-layout"/>
                                     <span>Appointments</span></Link>
                             </li>
-                            {/*<li className={pathname.includes('specialities') ? "active" : ""}>*/}
-                            {/*    <Link to="/specialities"><i className="fe fe-users"/> <span>Specialities</span></Link>*/}
-                            {/*</li>*/}
-                            <li className={pathname.includes('doctor-list') ? "active" : ""}>
-                                <Link to="/doctor-list"><i className="fe fe-user-plus"/> <span>Doctors</span></Link>
-                            </li>
-                            <li className={pathname.includes('patient-list') ? "active" : ""}>
-                                <Link to="/patient-list"><i className="fe fe-user"/> <span>Patients</span></Link>
+                            <li className={pathname.includes('categories') ? "active" : ""}>
+                                <Link to="/categories"><i className="fe fe-globe"/> <span>Categories</span></Link>
                             </li>
                             <li className={pathname.includes('chat') ? "active" : ""}>
                                 <Link to="/chat"><i className="fe fe-messanger"/> <span>Chat</span></Link>
                             </li>
+                            <li className={pathname.includes('departments') ? "active" : ""}>
+                                <Link to="/departments"><i className="fe fe-rocket"/> <span>Departments</span></Link>
+                            </li>
+                            <li className={pathname.includes('doctor-list') ? "active" : ""}>
+                                <Link to="/doctor-list"><i className="fe fe-user-plus"/> <span>Doctors</span></Link>
+                            </li>
+                            <li className={pathname.includes('languages') ? "active" : ""}>
+                                <Link to="/languages"><i className="fe fe-globe"/> <span>Languages</span></Link>
+                            </li>
+
+                            <li className={pathname.includes('patient-list') ? "active" : ""}>
+                                <Link to="/patient-list"><i className="fe fe-users"/> <span>Patients</span></Link>
+                            </li>
+                            <li className={pathname.includes('specialities') ? "active" : ""}>
+                                <Link to="/specialities"><i className="fe fe-heart-o"/> <span>Specialities</span></Link>
+                            </li>
+
+
                             {/*<li className={pathname.includes('reviews') ?"active" :""}> */}
                             {/*  <Link to="/reviews"><i className="fe fe-star-o" /> <span>Reviews</span></Link>*/}
                             {/*</li>*/}
@@ -99,9 +111,9 @@ class SidebarNav extends Component {
                             {/*<li className="menu-title"> */}
                             {/*  <span>UI Interface</span>*/}
                             {/*</li>*/}
-                            <li>
-                              <Link to="/components"><i className="fe fe-vector" /> <span>Components</span></Link>
-                            </li>
+                            {/*<li>*/}
+                            {/*  <Link to="/components"><i className="fe fe-vector" /> <span>Components</span></Link>*/}
+                            {/*</li>*/}
                             {/*<li className="submenu">*/}
                             {/*  <a href="#"><i className="fe fe-layout" /> <span> Forms </span> <span className="menu-arrow" /></a>*/}
                             {/*  <ul style={{display: 'none'}}>*/}
