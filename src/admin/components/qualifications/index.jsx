@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {Table} from 'antd';
+import {Table} from 'antd/lib/index';
 import {Link} from 'react-router-dom';
 import SidebarNav from '../sidebar';
-import {Modal} from 'react-bootstrap';
+import {Modal} from 'react-bootstrap/esm/index';
 import {itemRender, onShowSizeChange} from "../../components/paginationfunction";
 import {fetchApi} from "../../../_utils/http-utils";
 import {
@@ -15,20 +15,26 @@ import {
 } from "../../../_utils/data-table-utils";
 
 import toast from "react-hot-toast";
+import {changeCaseFirstLetter} from "../../../_utils/common-utils";
 
-class Departments extends Component {
+class Qualifications extends Component {
     constructor(props) {
         super(props);
         this.state = {
             show: {id: null, record: null},
-            data: []
-
+            data: [],
+            categories: []
         }
     }
 
     async componentDidMount() {
-        let result = await fetchApi({url: "v1/departments", method: "GET"})
-        this.setState({data: result.data});
+        await this.reloadData()
+    }
+
+    async reloadData() {
+        let result = await fetchApi({url: "v1/qualifications", method: "GET"})
+        let categories = await fetchApi({url: "v1/categories", method: "GET"})
+        this.setState({data: result.data, categories: categories.data});
     }
 
     handleClose = () => {
@@ -38,27 +44,35 @@ class Departments extends Component {
     }
 
     handleShow = (id, record) => {
+        let showRecord = {...record}
+        showRecord["selectedCategory"] = record&&record.category?record.category._id:this.state.categories[0]._id
         this.setState({
-            show: {id: id, record: {...record}}
+            show: {id: id, record: showRecord}
         });
     }
     handleTitleChange = (e) => {
         let show = this.state.show
-        show.record["title"] = e.target.value
+        show.record["name"] = e.target.value
         this.setState({
             show: show
         });
     }
-
+    handleTypeChange = (e) => {
+        let show = this.state.show
+        show.record["selectedCategory"] = e.target.value
+        this.setState({
+            show: show
+        });
+    }
     handleRecordUpdate = async (record) => {
         let result
         if (record && record._id) {
-            let body = {_id: record._id,title:this.state.show.record.title}
-            result = await fetchApi({url: "v1/department/update", method: "POST", body: body})
+            let body = {_id: record._id, name: record.name, category: record.selectedCategory}
+            result = await fetchApi({url: "v1/qualification/update", method: "POST", body: body})
 
         } else {
-            let body = {title:this.state.show.record.title}
-            result = await fetchApi({url: "v1/department/addNew", method: "POST",  body: body})
+            let body = {name: record.name, category: record.selectedCategory}
+            result = await fetchApi({url: "v1/qualification/addNew", method: "POST", body: body})
         }
         if (result) {
             toast.success(result.message)
@@ -70,7 +84,7 @@ class Departments extends Component {
         let body = {_id: record._id, enabled: !record.enabled}
         try {
             let result = await fetchApi({
-                url: "v1/department/changeStatus",
+                url: "v1/qualification/changeStatus",
                 method: "POST",
                 body: body
             })
@@ -89,7 +103,7 @@ class Departments extends Component {
         let body = {_id: record._id}
         try {
             let result = await fetchApi({
-                url: "v1/department/deleteRecord",
+                url: "v1/qualification/deleteRecord",
                 method: "POST",
                 body: body
             })
@@ -112,9 +126,15 @@ class Departments extends Component {
 
             {
                 title: 'Title',
-                dataIndex: 'title',
-                render: (text, record) => renderText(record.title),
-                sorter: (a, b) => sorterText(a.title, b.title),
+                dataIndex: 'name',
+                render: (text, record) => renderText(record.name),
+                sorter: (a, b) => sorterText(a.name, b.name),
+            },
+            {
+                title: 'Category',
+                dataIndex: 'name',
+                render: (text, record) => renderText(record.category.title),
+                sorter: (a, b) => sorterText(a.category.title, b.category.title),
             },
             {
                 title: "Created At",
@@ -147,10 +167,10 @@ class Departments extends Component {
                         <div className="page-header">
                             <div className="row">
                                 <div className="col-sm-7 col-auto">
-                                    <h3 className="page-title">Departments</h3>
+                                    <h3 className="page-title">Qualifications</h3>
                                     <ul className="breadcrumb">
                                         <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
-                                        <li className="breadcrumb-item active">Departments</li>
+                                        <li className="breadcrumb-item active">Qualifications</li>
                                     </ul>
                                 </div>
                                 <div className="col-sm-5 col">
@@ -197,20 +217,37 @@ class Departments extends Component {
                     {this.state.show.id &&
                     <Modal show={this.state.show.id === 'edit'} onHide={this.handleClose} centered>
                         <Modal.Header closeButton>
-                            <Modal.Title><h5 className="modal-title">{this.state.show.record._id ? "Edit Department" : "Add New Department"}</h5></Modal.Title>
+                            <Modal.Title><h5
+                                className="modal-title">{this.state.show.record._id ? "Edit Qualification" : "Add New Qualification"}</h5>
+                            </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             <form>
                                 <div className="row form-row">
-                                    <div className="col-12 col-sm-12">
+                                    <div className="col-12 col-sm-6">
                                         <div className="form-group">
                                             <label>Title</label>
-                                            <input value={this.state.show.record ? this.state.show.record.title : ""}
+                                            <input value={this.state.show.record ? this.state.show.record.name : ""}
                                                    type="text"
                                                    onChange={(e) => {
                                                        this.handleTitleChange(e)
                                                    }}
                                                    className="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>Category</label>
+
+                                            <select value={this.state.show.record.selectedCategory}
+                                                    onChange={(e) => this.handleTypeChange(e)}
+                                                    className="form-control">
+                                                {this.state.categories?.map(category => {
+                                                    return <option
+                                                        value={category._id}>{changeCaseFirstLetter(category.title)}</option>
+                                                })}
+                                            </select>
+
                                         </div>
                                     </div>
 
@@ -229,7 +266,7 @@ class Departments extends Component {
                         <Modal.Body className="text-center">
                             <div className="form-content p-2">
                                 <h4 className="modal-title">{this.state.show.record.enabled ? "Disable" : "Enable"}</h4>
-                                <p className="mb-4">{`Are you sure want to ${this.state.show.record.enabled ? "disable" : "enable"} "${this.state.show.record.title}" ?`}</p>
+                                <p className="mb-4">{`Are you sure want to ${this.state.show.record.enabled ? "disable" : "enable"} "${this.state.show.record.name}" ?`}</p>
                                 <button type="button" className="btn btn-primary"
                                         onClick={() => this.changeStatus(this.state.show.record)}>Save
                                 </button>
@@ -245,7 +282,7 @@ class Departments extends Component {
                         {this.state.show.record && <Modal.Body className="text-center">
                             <div className="form-content p-2">
                                 <h4 className="modal-title">Delete</h4>
-                                <p className="mb-4">{`Are you sure want to delete "${this.state.show.record.title}"?`}</p>
+                                <p className="mb-4">{`Are you sure want to delete "${this.state.show.record.name}"?`}</p>
                                 <button type="button" className="btn btn-primary"
                                         onClick={() => this.deleteRecord(this.state.show.record)}>Save
                                 </button>
@@ -263,4 +300,4 @@ class Departments extends Component {
     }
 }
 
-export default Departments;
+export default Qualifications;

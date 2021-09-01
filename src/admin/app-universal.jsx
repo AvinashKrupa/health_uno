@@ -6,9 +6,11 @@ import Header from './components/header/index';
 import Dashboard from './components/dashboard';
 import Appointments from './components/appointments';
 import Specialities from './components/specialities';
+import Sliders from './components/sliders';
 import Categories from './components/categories';
 import Languages from './components/languages';
 import Departments from './components/departments';
+import Qualifications from './components/qualifications';
 import Doctors from './components/doctors';
 import Patients from './components/patients';
 import Chat from './components/chat';
@@ -52,9 +54,11 @@ const AppUniversal = function (props) {
                     <Route path="/admin" exact component={Dashboard}/>
                     <Route path="/appointment-list" exact component={Appointments}/>
                     <Route path="/specialities" exact component={Specialities}/>
+                    <Route path="/sliders" exact component={Sliders}/>
                     <Route path="/categories" exact component={Categories}/>
                     <Route path="/languages" exact component={Languages}/>
                     <Route path="/departments" exact component={Departments}/>
+                    <Route path="/qualifications" exact component={Qualifications}/>
                     <Route path="/doctor-list" exact component={Doctors}/>
                     <Route path="/patient-list" exact component={Patients}/>
                     <Route path="/chat" exact component={Chat}/>

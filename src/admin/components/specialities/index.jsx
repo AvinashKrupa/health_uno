@@ -10,7 +10,6 @@ import {
     renderDate,
     renderEditDisableActions,
     renderTextWithImage,
-    sorterBoolean,
     sorterDate,
     sorterText
 } from "../../../_utils/data-table-utils";
@@ -68,7 +67,6 @@ class Specialities extends Component {
 
         } else {
             let data = new FormData()
-            console.log("show>>>", this.state.show)
             if (!this.state.show.record.file) {
                 toast.error("Please select valid file")
                 return
@@ -214,7 +212,9 @@ class Specialities extends Component {
                     {this.state.show.id &&
                     <Modal show={this.state.show.id === 'edit'} onHide={this.handleClose} centered>
                         <Modal.Header closeButton>
-                            <Modal.Title><h5 className="modal-title">Edit Specialities</h5></Modal.Title>
+                            <Modal.Title><h5
+                                className="modal-title">{this.state.show.record._id ? "Edit Speciality" : "Add New Speciality"}</h5>
+                            </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             <form>
