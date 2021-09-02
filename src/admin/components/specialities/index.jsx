@@ -9,7 +9,7 @@ import {
     renderBoolean,
     renderDate,
     renderEditDisableActions,
-    renderTextWithImage,
+    renderTextWithImage, sorterBoolean,
     sorterDate,
     sorterText
 } from "../../../_utils/data-table-utils";
@@ -26,10 +26,12 @@ class Specialities extends Component {
     }
 
     async componentDidMount() {
-        let result = await fetchApi({url: "v1/specialities", method: "GET"})
+        await this.reloadData()
+    }
+    async reloadData() {
+        let result = await fetchApi({url: "v1/specialities?showAll=true", method: "GET"})
         this.setState({data: result.data});
     }
-
     handleClose = () => {
         this.setState({
             show: {id: null, record: null}
@@ -79,6 +81,7 @@ class Specialities extends Component {
             toast.success(result.message)
         }
         this.handleClose()
+        await this.reloadData()
     }
     changeStatus = async (record) => {
 
@@ -97,7 +100,7 @@ class Specialities extends Component {
 
         }
         this.handleClose()
-
+        await this.reloadData()
     }
     deleteRecord = async (record) => {
 
@@ -116,7 +119,7 @@ class Specialities extends Component {
 
         }
         this.handleClose()
-
+        await this.reloadData()
     }
 
     render() {
@@ -147,6 +150,7 @@ class Specialities extends Component {
                 title: "Status",
                 dataIndex: "enabled",
                 render: (text) => renderBoolean(text),
+                sorter:(a,b)=>sorterBoolean(a.enabled,b.enabled)
             },
             {
                 title: 'Actions',

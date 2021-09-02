@@ -14,7 +14,11 @@ export const sorterText = (a, b) => {
     return a.localeCompare(b);
 }
 export const sorterBoolean = (a, b) => {
-    return a === b;
+    if (a&&!b)
+        return 1
+    else if (b&&!a)
+        return -1
+    else return 0
 }
 export const sorterNumber = (a, b) => {
     if (!a)
@@ -82,12 +86,12 @@ export const renderDropDown = (name, items, onItemClick, onButtonClick, showMenu
         </div>
     </div>
 }
-export const renderEditDisableActions = (handleShow,record) => {
+export const renderEditDisableActions = (handleShow, record) => {
     return <div className="actions">
         <a href="#0" className="btn btn-sm bg-success-light" onClick={() => handleShow('edit')}>
             <i className="fe fe-pencil"></i> Edit</a>
         <a href="#0" className={`btn btn-sm ${record.enabled ? "bg-danger-light" : "bg-success-light"}`}
-           onClick={() => handleShow('disable')}>{record.enabled?" Disable":" Enable"}</a>
+           onClick={() => handleShow('disable')}>{record.enabled ? " Disable" : " Enable"}</a>
         <a href="#0" className="btn btn-sm bg-danger-light" onClick={() => handleShow('delete')}>
             <i className="fe fe-trash"></i></a>
     </div>
@@ -99,3 +103,68 @@ export const renderAppointment = (date, text) => {
         <span className="text-primary d-block">{`${text} - ${getNextSlot(text)}`}</span>
     </>
 }
+
+// export const getColumnSearchProps = dataIndex => ({
+//     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+//         <div style={{ padding: 8 }}>
+//             <Input
+//                 ref={node => {
+//                     this.searchInput = node;
+//                 }}
+//                 placeholder={`Search ${dataIndex}`}
+//                 value={selectedKeys[0]}
+//                 onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+//                 onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+//                 style={{ marginBottom: 8, display: 'block' }}
+//             />
+//             <Space>
+//                 <Button
+//                     type="primary"
+//                     onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+//                     icon={<SearchOutlined />}
+//                     size="small"
+//                     style={{ width: 90 }}
+//                 >
+//                     Search
+//                 </Button>
+//                 <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+//                     Reset
+//                 </Button>
+//                 <Button
+//                     type="link"
+//                     size="small"
+//                     onClick={() => {
+//                         confirm({ closeDropdown: false });
+//                         this.setState({
+//                             searchText: selectedKeys[0],
+//                             searchedColumn: dataIndex,
+//                         });
+//                     }}
+//                 >
+//                     Filter
+//                 </Button>
+//             </Space>
+//         </div>
+//     ),
+//     filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+//     onFilter: (value, record) =>
+//         record[dataIndex]
+//             ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+//             : '',
+//     onFilterDropdownVisibleChange: visible => {
+//         if (visible) {
+//             setTimeout(() => this.searchInput.select(), 100);
+//         }
+//     },
+//     render: text =>
+//         this.state.searchedColumn === dataIndex ? (
+//             <Highlighter
+//                 highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+//                 searchWords={[this.state.searchText]}
+//                 autoEscape
+//                 textToHighlight={text ? text.toString() : ''}
+//             />
+//         ) : (
+//             text
+//         ),
+// });

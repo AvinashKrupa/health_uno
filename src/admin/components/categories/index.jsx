@@ -9,7 +9,7 @@ import {
     renderBoolean,
     renderDate,
     renderEditDisableActions, renderText,
-    renderTextWithImage,
+    renderTextWithImage, sorterBoolean,
     sorterDate,
     sorterText
 } from "../../../_utils/data-table-utils";
@@ -26,7 +26,11 @@ class Categories extends Component {
     }
 
     async componentDidMount() {
-        let result = await fetchApi({url: "v1/categories", method: "GET"})
+        await this.reloadData()
+    }
+
+    async reloadData() {
+        let result = await fetchApi({url: "v1/categories?showAll=true", method: "GET"})
         this.setState({data: result.data});
     }
 
@@ -52,17 +56,18 @@ class Categories extends Component {
     handleRecordUpdate = async (record) => {
         let result
         if (record && record._id) {
-            let body = {_id: record._id,title:this.state.show.record.title}
+            let body = {_id: record._id, title: this.state.show.record.title}
             result = await fetchApi({url: "v1/category/update", method: "POST", body: body})
 
         } else {
-            let body = {title:this.state.show.record.title}
-            result = await fetchApi({url: "v1/category/addNew", method: "POST",  body: body})
+            let body = {title: this.state.show.record.title}
+            result = await fetchApi({url: "v1/category/addNew", method: "POST", body: body})
         }
         if (result) {
             toast.success(result.message)
         }
         this.handleClose()
+        await this.reloadData()
     }
     changeStatus = async (record) => {
 
@@ -81,6 +86,7 @@ class Categories extends Component {
 
         }
         this.handleClose()
+        await this.reloadData()
 
     }
     deleteRecord = async (record) => {
@@ -100,7 +106,7 @@ class Categories extends Component {
 
         }
         this.handleClose()
-
+        await this.reloadData()
     }
 
     render() {
@@ -131,6 +137,7 @@ class Categories extends Component {
                 title: "Status",
                 dataIndex: "enabled",
                 render: (text) => renderBoolean(text),
+                sorter:(a,b)=>sorterBoolean(a.enabled,b.enabled)
             },
             {
                 title: 'Actions',
@@ -196,7 +203,9 @@ class Categories extends Component {
                     {this.state.show.id &&
                     <Modal show={this.state.show.id === 'edit'} onHide={this.handleClose} centered>
                         <Modal.Header closeButton>
-                            <Modal.Title><h5 className="modal-title">{this.state.show.record._id ? "Edit Category" : "Add New Category"}</h5></Modal.Title>
+                            <Modal.Title><h5
+                                className="modal-title">{this.state.show.record._id ? "Edit Category" : "Add New Category"}</h5>
+                            </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             <form>

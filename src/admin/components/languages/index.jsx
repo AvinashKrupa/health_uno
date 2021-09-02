@@ -9,7 +9,7 @@ import {
     renderBoolean,
     renderDate,
     renderEditDisableActions, renderText,
-    renderTextWithImage,
+    renderTextWithImage, sorterBoolean,
     sorterDate,
     sorterText
 } from "../../../_utils/data-table-utils";
@@ -26,10 +26,12 @@ class Languages extends Component {
     }
 
     async componentDidMount() {
-        let result = await fetchApi({url: "v1/languages", method: "GET"})
+        await this.reloadData()
+    }
+    async reloadData() {
+        let result = await fetchApi({url: "v1/languages?showAll=true", method: "GET"})
         this.setState({data: result.data});
     }
-
     handleClose = () => {
         this.setState({
             show: {id: null, record: null}
@@ -63,6 +65,7 @@ class Languages extends Component {
             toast.success(result.message)
         }
         this.handleClose()
+        await this.reloadData()
     }
     changeStatus = async (record) => {
 
@@ -81,6 +84,7 @@ class Languages extends Component {
 
         }
         this.handleClose()
+        await this.reloadData()
 
     }
     deleteRecord = async (record) => {
@@ -100,7 +104,7 @@ class Languages extends Component {
 
         }
         this.handleClose()
-
+        await this.reloadData()
     }
 
     render() {
@@ -131,6 +135,7 @@ class Languages extends Component {
                 title: "Status",
                 dataIndex: "enabled",
                 render: (text) => renderBoolean(text),
+                sorter:(a,b)=>sorterBoolean(a.enabled,b.enabled)
             },
             {
                 title: 'Actions',

@@ -10,7 +10,7 @@ import {
     renderDate,
     renderEditDisableActions,
     renderText,
-    renderTextWithImage,
+    renderTextWithImage, sorterBoolean,
     sorterDate,
     sorterText
 } from "../../../_utils/data-table-utils";
@@ -38,7 +38,7 @@ class Sliders extends Component {
     }
 
     async reloadData() {
-        let result = await fetchApi({url: "v1/sliders", method: "GET"})
+        let result = await fetchApi({url: "v1/sliders?showAll=true", method: "GET"})
         this.setState({data: result.data});
     }
 
@@ -121,7 +121,7 @@ class Sliders extends Component {
 
         }
         this.handleClose()
-
+        await this.reloadData()
     }
     deleteRecord = async (record) => {
 
@@ -140,7 +140,7 @@ class Sliders extends Component {
 
         }
         this.handleClose()
-
+        await this.reloadData()
     }
 
     render() {
@@ -152,6 +152,7 @@ class Sliders extends Component {
             {
                 title: 'Title',
                 dataIndex: 'title',
+                ellipsis:true,
                 render: (text, record) => renderTextWithImage(record.title, record.image),
                 sorter: (a, b) => sorterText(a.title, b.title),
             },
@@ -168,6 +169,7 @@ class Sliders extends Component {
             {
                 title: 'Description',
                 dataIndex: 'title',
+                ellipsis:true,
                 render: (text, record) => renderText(record.desc),
             },
             {
@@ -186,6 +188,7 @@ class Sliders extends Component {
                 title: "Status",
                 dataIndex: "enabled",
                 render: (text) => renderBoolean(text),
+                sorter:(a,b)=>sorterBoolean(a.enabled,b.enabled)
             },
             {
                 title: 'Actions',

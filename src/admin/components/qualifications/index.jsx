@@ -9,7 +9,7 @@ import {
     renderBoolean,
     renderDate,
     renderEditDisableActions,
-    renderText,
+    renderText, sorterBoolean,
     sorterDate,
     sorterText
 } from "../../../_utils/data-table-utils";
@@ -28,13 +28,15 @@ class Qualifications extends Component {
     }
 
     async componentDidMount() {
+        let categories = await fetchApi({url: "v1/categories", method: "GET"})
         await this.reloadData()
+        this.setState({categories: categories.data});
+
     }
 
     async reloadData() {
-        let result = await fetchApi({url: "v1/qualifications", method: "GET"})
-        let categories = await fetchApi({url: "v1/categories", method: "GET"})
-        this.setState({data: result.data, categories: categories.data});
+        let result = await fetchApi({url: "v1/qualifications?showAll=true", method: "GET"})
+        this.setState({data: result.data});
     }
 
     handleClose = () => {
@@ -78,6 +80,7 @@ class Qualifications extends Component {
             toast.success(result.message)
         }
         this.handleClose()
+        await this.reloadData()
     }
     changeStatus = async (record) => {
 
@@ -96,6 +99,7 @@ class Qualifications extends Component {
 
         }
         this.handleClose()
+        await this.reloadData()
 
     }
     deleteRecord = async (record) => {
@@ -115,6 +119,7 @@ class Qualifications extends Component {
 
         }
         this.handleClose()
+        await this.reloadData()
 
     }
 
@@ -152,6 +157,7 @@ class Qualifications extends Component {
                 title: "Status",
                 dataIndex: "enabled",
                 render: (text) => renderBoolean(text),
+                sorter:(a,b)=>sorterBoolean(a.enabled,b.enabled)
             },
             {
                 title: 'Actions',

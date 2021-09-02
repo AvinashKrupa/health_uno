@@ -172,7 +172,10 @@ class MessagePane extends Component {
                                placeholder="Type something"
                                onChange={(e) => this.handleTextChange(e)}/>
                         <div className="input-group-append">
-                            <button type="button" className="btn msg-send-btn" onClick={() => this.sendMessage()}>
+                            <button type="button" className="btn msg-send-btn" onClick={(e) => {
+                                e.preventDefault()
+                                this.sendMessage()
+                            }}>
                                 <i className="fab fa-telegram-plane"></i>
                             </button>
                         </div>
