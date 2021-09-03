@@ -117,9 +117,9 @@ class SidebarNav extends Component {
                             {/*<li className="menu-title"> */}
                             {/*  <span>UI Interface</span>*/}
                             {/*</li>*/}
-                            <li>
-                              <Link to="/components"><i className="fe fe-vector" /> <span>Components</span></Link>
-                            </li>
+                            {/*<li>*/}
+                            {/*  <Link to="/components"><i className="fe fe-vector" /> <span>Components</span></Link>*/}
+                            {/*</li>*/}
                             {/*<li className="submenu">*/}
                             {/*  <a href="#"><i className="fe fe-layout" /> <span> Forms </span> <span className="menu-arrow" /></a>*/}
                             {/*  <ul style={{display: 'none'}}>*/}
