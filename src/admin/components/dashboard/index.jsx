@@ -7,6 +7,8 @@ import TablePatientsList from './tablePatientList';
 import TableAppointmentList from './appointment';
 
 class Dashboard extends Component{
+
+
     render(){
         return(
             <>

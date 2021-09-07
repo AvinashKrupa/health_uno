@@ -38,25 +38,25 @@ class Appointments extends Component {
     }
 
     async handleItemClick(record, dropdownItem) {
-        // let index = this.state.data.indexOf(record)
-        // let data = this.state.data
-        // data[index].status = dropdownItem
+        let index = this.state.data.indexOf(record)
+        let data = this.state.data
+        data[index].status = dropdownItem
         this.setState({showMenu: {[record._id]: false}})
-        toast("Functionality in development")
-        // try {
-        //     let result = await fetchApi({
-        //         url: "v1/doctor/changeStatus",
-        //         method: "POST",
-        //         body: {doctor_id: record._id, status: dropdownItem}
-        //     })
-        //     if (result) {
-        //         toast.success(result.message)
-        //         this.setState({data: data})
-        //     }
-        // } catch (e) {
-        //     console.log("error>>", e)
-        //
-        // }
+        // toast("Functionality in development")
+        try {
+            let result = await fetchApi({
+                url: "v1/appointment/changeStatus",
+                method: "POST",
+                body: {appointment_id: record._id, status: dropdownItem}
+            })
+            if (result) {
+                toast.success(result.message)
+                this.setState({data: data})
+            }
+        } catch (e) {
+            console.log("error>>", e)
+
+        }
     }
 
     handleDropdownClick(record) {

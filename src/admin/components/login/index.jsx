@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import Logo from '../../assets/images/logo.png';
 import {fetchApi} from "../../../_utils/http-utils";
 import toast from 'react-hot-toast';
-import {setJwtToken} from "../../../_utils/localStorage/SessionManager";
+import {setJwtToken, setProfileData} from "../../../_utils/localStorage/SessionManager";
 
 class Login extends Component {
     constructor(props) {
@@ -39,6 +39,8 @@ class Login extends Component {
             if (result) {
                 toast.success(result.message)
                 await setJwtToken(result.data.session.access_token)
+                console.log("login>>>",result.data)
+                await setProfileData(result.data.user._id)
                 this.props.history.push("/dashboard")
             }
         } catch (e) {

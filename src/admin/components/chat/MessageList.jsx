@@ -6,7 +6,8 @@ class MessageList extends Component {
         super(props);
         this.state = {
             messages: props.messages || [],
-            user_id: props.user_id
+            user_id: props.user_id,
+            scrollPosition: 'bottom'
         }
     }
 
@@ -33,12 +34,26 @@ class MessageList extends Component {
         const {messageList} = this.refs;
         messageList.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
     }
-
+    handleScrollTop = (e) => {
+        if (e.target.scrollTop < 5 && this.props.shouldScrollMore && !this.props.loadingChatIndicator) {
+            e.target.scrollTop += 10;
+            this.setState({
+                scrollPosition: 'top'
+            })
+            this.props.loadMessagesForUser(this.props.pageId)
+        }
+        const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+        if (bottom) {
+            this.setState({
+                scrollPosition: 'bottom'
+            })
+        }
+    }
     render() {
         return (
             <div className="chat-body">
                 <div className="chat-scroll">
-                    <ul className="list-unstyled" ref={"messageList"}>
+                    <ul className="list-unstyled" ref={"messageList"} onScroll={this.handleScrollTop}>
                         {this.state.messages.map(message => {
                             return (
                                 <li className={this.state.user_id === message.sender._id ? "media sent" : "media received"}>

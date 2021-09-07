@@ -3,6 +3,7 @@ import SidebarNav from "../sidebar";
 import MessagePane from "./MessagePane";
 import ConversationList from "./ConversationList";
 import {fetchApi} from "../../../_utils/http-utils";
+import {getProfileData} from "../../../_utils/localStorage/SessionManager";
 
 class Chat extends Component {
     constructor(props) {
@@ -11,7 +12,7 @@ class Chat extends Component {
             activeModal: null,
             selectedConv: null,
             conversations: [],
-            user_id: "612363d240eef4f51b11e4de"
+            user_id: null
         }
     }
 
@@ -25,22 +26,23 @@ class Chat extends Component {
     }
 
     async componentDidMount() {
+        let user_id = await getProfileData()
         document.body.classList.add('chat-page');
         try {
             let result = await fetchApi({
                 url: "v1/chat/getConversations", method: "POST", body: {
-                    user_id: this.state.user_id
+                    user_id: user_id
                 }
             })
             let conversations = result.data.map(conv => {
                 return {
                     ...conv,
                     recipient: conv.participants.find(obj => {
-                        return obj._id !== this.state.user_id
+                        return obj._id !== user_id
                     })
                 }
             })
-            this.setState({conversations: conversations})
+            this.setState({conversations: conversations, user_id: user_id})
         } catch (e) {
             console.log("Error>>>", e)
         }
@@ -73,9 +75,10 @@ class Chat extends Component {
                                                           onSelectConv={(conv) => this.onSelectConv(conv)}/>
                                     </div>
                                     {this.state.selectedConv &&
-                                    <MessagePane selectedConv={this.state.selectedConv} onClickBack={() => {
-                                        this.setState({selectedConv: null})
-                                    }}
+                                    <MessagePane selectedConv={this.state.selectedConv} user_id={this.state.user_id}
+                                                 onClickBack={() => {
+                                                     this.setState({selectedConv: null})
+                                                 }}
                                                  openModal={(id) => this.openModal(id)}/>}
                                 </div>
                             </div>
