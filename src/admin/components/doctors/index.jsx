@@ -5,19 +5,28 @@ import SidebarNav from "../sidebar";
 import {itemRender, onShowSizeChange,} from "../../components/paginationfunction";
 import {fetchApi} from "../../../_utils/http-utils";
 import {
+    getColumnFilterProps,
+    getColumnSearchProps,
     renderChips,
-    renderDate,
+    renderDate, renderDropDown,
     renderName,
     renderText,
     sorterDate, sorterNumber,
     sorterText
 } from "../../../_utils/data-table-utils";
+import toast from "react-hot-toast";
+import {setJwtToken} from "../../../_utils/localStorage/SessionManager";
+
+const doctorStatus = ['pending', 'active', 'inactive']
 
 class Doctors extends Component {
     constructor(props) {
         super(props);
         this.state = {
             data: [],
+            showMenu: {},
+            searchText: '',
+            searchedColumn: '',
         };
     }
 
@@ -26,14 +35,57 @@ class Doctors extends Component {
         this.setState({data: doctors.data});
     }
 
+    async handleItemClick(record, dropdownItem) {
+        let index = this.state.data.indexOf(record)
+        let data = this.state.data
+        data[index].status = dropdownItem
+        this.setState({showMenu: {[record._id]: false}})
+        try {
+            let result = await fetchApi({
+                url: "v1/doctor/changeStatus",
+                method: "POST",
+                body: {doctor_id: record._id, status: dropdownItem}
+            })
+            if (result) {
+                toast.success(result.message)
+                this.setState({data: data})
+            }
+        } catch (e) {
+            console.log("error>>", e)
+
+        }
+    }
+    handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        this.setState({
+            searchText: selectedKeys[0],
+            searchedColumn: dataIndex,
+        });
+    };
+
+    handleReset = clearFilters => {
+        clearFilters();
+        this.setState({searchText: ''});
+    };
+    handleDropdownClick(record) {
+        let isShown = this.state.showMenu[record._id]
+        this.setState({showMenu: {[record._id]: !isShown}})
+    }
+
+    showDropDownMenu(record) {
+        return this.state.showMenu[record._id]
+    }
+
     render() {
         const {data} = this.state;
 
         const columns = [
             {
                 title: "Doctor Name",
-                render: (text, record) => renderName(record, "Dr","",true),
-                sorter: (a, b) => sorterText(a.first_name, b.first_name)
+                render: (text, record) => renderName(record, "Dr", "", true),
+                sorter: (a, b) => sorterText(a.first_name, b.first_name),
+                ...getColumnSearchProps(this,"Doctor", this.handleSearch, this.handleReset,
+                    "first_name"),
             },
             {
                 title: "Med Reg No.",
@@ -96,15 +148,15 @@ class Doctors extends Component {
                 dataIndex: "status",
                 key: "status",
                 render: (text) => renderText(text),
-                sorter: (a, b) => sorterText(a.status, b.status)
+                sorter: (a, b) => sorterText(a.status, b.status),
+                ...getColumnFilterProps(doctorStatus, "status"),
             },
             {
                 title: 'Actions',
-                render: (text, record) => (
-                    <div className="actions">
-                        <a href="#0" className="btn btn-sm bg-success-light" onClick={()=>console.log("clicked action")}>Change Status</a>
-                    </div>
-                ),
+                render: (text, record) => renderDropDown("Change Status", doctorStatus.filter(item => item !== record.status),
+                    (elem, index) => this.handleItemClick(record, elem),
+                    () => this.handleDropdownClick(record),
+                    this.showDropDownMenu(record))
 
             }
         ];
@@ -152,7 +204,7 @@ class Doctors extends Component {
                                                     showSizeChanger: true,
                                                     onShowSizeChange: onShowSizeChange,
                                                     itemRender: itemRender,
-                                                 position: ["topRight", "bottomRight"]
+                                                    position: ["topRight", "bottomRight"]
                                                 }}
                                             />
                                         </div>

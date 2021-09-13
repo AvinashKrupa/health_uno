@@ -3,6 +3,8 @@ import {ChatType, getNewSocket} from "../../../socketIO/SocketManager";
 import MessageList from "./MessageList";
 import {getFullName} from "../../../_utils/common-utils";
 import {fetchApi} from "../../../_utils/http-utils";
+import moment from "moment-timezone";
+import _ from "lodash";
 
 class MessagePane extends Component {
     constructor(props) {
@@ -10,11 +12,15 @@ class MessagePane extends Component {
         this.state = {
             room_id: null,
             selectedConv: props.selectedConv,
-            user_id: "612363d240eef4f51b11e4de",
+            user_id: props.user_id,
             text: "",
             messages: [],
             socketObj: null,
-            onClickBack: props.onClickBack
+            onClickBack: props.onClickBack,
+            pageId: 1,
+            totalMessages: null,
+            shouldScrollMore: true,
+            loading: false,
         }
     }
 
@@ -34,17 +40,39 @@ class MessagePane extends Component {
 
     }
 
-    async loadMessagesForUser(conv) {
+    async loadMessagesForUser(conv, pageId = 1) {
         try {
+            this.setState({
+                loading:true,
+            })
             let result = await fetchApi({
                 url: "v1/chat/getMessages", method: "POST", body: {
-                    room_id: conv.room_id
+                    room_id: conv.room_id,
+                    limit: 20,
+                    page: pageId,
                 }
             })
             let messages = result.data.docs.reverse()
-            this.setState({messages: messages})
+            let total = result.data.total
+            if (this.state.messages.length === 0)
+                this.setState({
+                    messages: messages, pageId: pageId + 1, totalMessages: total,
+                    shouldScrollMore: this.state.messages.length < total,
+                    loading: false,
+                })
+            else {
+                messages = _.concat(messages, this.state.messages)
+                this.setState({
+                    messages: messages, pageId: pageId + 1, totalMessages: total,
+                    shouldScrollMore: this.state.messages.length < total,
+                    loading: false,
+                })
+            }
             return Promise.resolve()
         } catch (e) {
+            this.setState({
+                loading:false,
+            })
             console.log("Error>>>", e)
         }
     }
@@ -92,11 +120,10 @@ class MessagePane extends Component {
 
     sendMessage() {
         if (this.state.socketObj) {
-            console.log("Sending Message>>>", this.state.text)
             let finalMessage = {
                 message: this.state.text,
                 sender: {_id: this.state.user_id, name: this.state.user_id, avatar: ""},
-                created_at: new Date().toDateString()
+                created_at: moment().utc().toDate()
             }
             this.state.socketObj.emit("sendMessage", finalMessage);
             let messages = this.state.messages
@@ -163,7 +190,7 @@ class MessagePane extends Component {
                     {/*    </a>*/}
                     {/*</div>*/}
                 </div>
-                <MessageList messages={this.state.messages} user_id={this.state.user_id}/>
+                <MessageList messages={this.state.messages} user_id={this.state.user_id} loadMessagesForUser={this.loadMessagesForUser} pageId={this.state.pageId} shouldScrollMore={this.state.shouldScrollMore} loadingChatIndicator={this.state.loading}/>
                 <div className="chat-footer">
                     <div className="input-group">
                         <div className="input-group-prepend">
@@ -172,7 +199,10 @@ class MessagePane extends Component {
                                placeholder="Type something"
                                onChange={(e) => this.handleTextChange(e)}/>
                         <div className="input-group-append">
-                            <button type="button" className="btn msg-send-btn" onClick={() => this.sendMessage()}>
+                            <button type="button" className="btn msg-send-btn" onClick={(e) => {
+                                e.preventDefault()
+                                this.sendMessage()
+                            }}>
                                 <i className="fab fa-telegram-plane"></i>
                             </button>
                         </div>

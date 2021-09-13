@@ -9,14 +9,22 @@ import {
     renderBoolean,
     renderDate,
     renderEditDisableActions,
+    renderText,
     renderTextWithImage, sorterBoolean,
     sorterDate,
     sorterText
 } from "../../../_utils/data-table-utils";
 
 import toast from "react-hot-toast";
+import {changeCaseFirstLetter} from "../../../_utils/common-utils";
 
-class Specialities extends Component {
+const sliderTypes = ["promo"]
+const userTypes = {
+    "1": "Patient",
+    "2": "Doctor"
+}
+
+class Sliders extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -28,10 +36,12 @@ class Specialities extends Component {
     async componentDidMount() {
         await this.reloadData()
     }
+
     async reloadData() {
-        let result = await fetchApi({url: "v1/specialities?showAll=true", method: "GET"})
+        let result = await fetchApi({url: "v1/sliders?showAll=true", method: "GET"})
         this.setState({data: result.data});
     }
+
     handleClose = () => {
         this.setState({
             show: {id: null, record: null}
@@ -39,17 +49,22 @@ class Specialities extends Component {
     }
 
     handleShow = (id, record) => {
+        let showRecord = {...record}
+        showRecord["selectedUserType"] = showRecord.user_type || "1"
+        showRecord["selectedType"] = showRecord.type || sliderTypes[0]
         this.setState({
-            show: {id: id, record: {...record}}
+            show: {id: id, record: showRecord}
         });
     }
-    handleTitleChange = (e) => {
+    handleChange = (e) => {
+        const name = e.target.name
         let show = this.state.show
-        show.record["title"] = e.target.value
+        show.record[name] = e.target.value
         this.setState({
             show: show
         });
     }
+
     handleFileSelection = (e) => {
         let show = this.state.show
         show.record["file"] = e.target.files[0]
@@ -61,21 +76,27 @@ class Specialities extends Component {
         let result
         if (record && record._id) {
             let data = new FormData()
-            if (this.state.show.record.file)
-                data.append('file', this.state.show.record.file)
-            data.append('title', this.state.show.record.title)
+            if (record.file)
+                data.append('file', record.file)
+            data.append('title', record.title)
+            data.append('desc', record.desc)
+            data.append('type', record.selectedType)
+            data.append('user_type', record.selectedUserType)
             data.append('_id', record._id)
-            result = await fetchApiWithFileUpload({url: "v1/speciality/update", method: "POST", formData: data})
+            result = await fetchApiWithFileUpload({url: "v1/slider/update", method: "POST", formData: data})
 
         } else {
             let data = new FormData()
-            if (!this.state.show.record.file) {
+            if (!record.file) {
                 toast.error("Please select valid file")
                 return
             }
-            data.append('file', this.state.show.record.file)
-            data.append('title', this.state.show.record.title)
-            result = await fetchApiWithFileUpload({url: "v1/speciality/addNew", method: "POST", formData: data})
+            data.append('file', record.file)
+            data.append('title', record.title)
+            data.append('desc', record.desc)
+            data.append('type', record.selectedType)
+            data.append('user_type', record.selectedUserType)
+            result = await fetchApiWithFileUpload({url: "v1/slider/addNew", method: "POST", formData: data})
         }
         if (result) {
             toast.success(result.message)
@@ -88,7 +109,7 @@ class Specialities extends Component {
         let body = {_id: record._id, enabled: !record.enabled}
         try {
             let result = await fetchApi({
-                url: "v1/speciality/changeStatus",
+                url: "v1/slider/changeStatus",
                 method: "POST",
                 body: body
             })
@@ -107,7 +128,7 @@ class Specialities extends Component {
         let body = {_id: record._id}
         try {
             let result = await fetchApi({
-                url: "v1/speciality/deleteRecord",
+                url: "v1/slider/deleteRecord",
                 method: "POST",
                 body: body
             })
@@ -131,8 +152,25 @@ class Specialities extends Component {
             {
                 title: 'Title',
                 dataIndex: 'title',
+                ellipsis:true,
                 render: (text, record) => renderTextWithImage(record.title, record.image),
                 sorter: (a, b) => sorterText(a.title, b.title),
+            },
+            {
+                title: 'Type',
+                dataIndex: 'type',
+                render: (text, record) => renderText(record.type),
+            },
+            {
+                title: 'User Type',
+                dataIndex: 'user_type',
+                render: (text, record) => renderText(userTypes[record.user_type]),
+            },
+            {
+                title: 'Description',
+                dataIndex: 'title',
+                ellipsis:true,
+                render: (text, record) => renderText(record.desc),
             },
             {
                 title: "Created At",
@@ -166,10 +204,10 @@ class Specialities extends Component {
                         <div className="page-header">
                             <div className="row">
                                 <div className="col-sm-7 col-auto">
-                                    <h3 className="page-title">Specialities</h3>
+                                    <h3 className="page-title">Sliders</h3>
                                     <ul className="breadcrumb">
                                         <li className="breadcrumb-item"><Link to="/admin">Dashboard</Link></li>
-                                        <li className="breadcrumb-item active">Specialities</li>
+                                        <li className="breadcrumb-item active">Sliders</li>
                                     </ul>
                                 </div>
                                 <div className="col-sm-5 col">
@@ -217,7 +255,7 @@ class Specialities extends Component {
                     <Modal show={this.state.show.id === 'edit'} onHide={this.handleClose} centered>
                         <Modal.Header closeButton>
                             <Modal.Title><h5
-                                className="modal-title">{this.state.show.record._id ? "Edit Speciality" : "Add New Speciality"}</h5>
+                                className="modal-title">{this.state.show.record._id ? "Edit Slider" : "Add New Slider"}</h5>
                             </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
@@ -225,11 +263,12 @@ class Specialities extends Component {
                                 <div className="row form-row">
                                     <div className="col-12 col-sm-6">
                                         <div className="form-group">
-                                            <label>Specialities</label>
+                                            <label>Title</label>
                                             <input value={this.state.show.record ? this.state.show.record.title : ""}
                                                    type="text"
+                                                   name="title"
                                                    onChange={(e) => {
-                                                       this.handleTitleChange(e)
+                                                       this.handleChange(e)
                                                    }}
                                                    className="form-control"/>
                                         </div>
@@ -239,6 +278,51 @@ class Specialities extends Component {
                                             <label>Image</label>
                                             <input type="file" className="form-control"
                                                    onChange={(e) => this.handleFileSelection(e)}/>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div className="row form-row">
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>Type</label>
+                                            <select value={this.state.show.record.selectedType}
+                                                    name="selectedType"
+                                                    onChange={(e) => this.handleChange(e)}
+                                                    className="form-control">
+                                                {sliderTypes?.map(type => {
+                                                    return <option
+                                                        value={type}>{changeCaseFirstLetter(type)}</option>
+                                                })}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>User Type</label>
+                                            <select value={this.state.show.record.selectedUserType}
+                                                    name="selectedUserType"
+                                                    onChange={(e) => this.handleChange(e)}
+                                                    className="form-control">
+                                                {Object.keys(userTypes)?.map(key => {
+                                                    return <option
+                                                        value={key}>{changeCaseFirstLetter(userTypes[key])}</option>
+                                                })}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div className="row form-row">
+                                    <div className="col-12 col-sm-12">
+                                        <div className="form-group">
+                                            <label>Description</label>
+                                            <textarea value={this.state.show.record ? this.state.show.record.desc : ""}
+                                                      name="desc"
+                                                      onChange={(e) => {
+                                                          this.handleChange(e)
+                                                      }}
+                                                      className="form-control"/>
                                         </div>
                                     </div>
 
@@ -283,7 +367,7 @@ class Specialities extends Component {
                             </div>
 
                         </Modal.Body>}
-                    </Modal>}
+                    </Modal>
                     {/* Delete Modal */}
                 </div>
             </>
@@ -291,4 +375,4 @@ class Specialities extends Component {
     }
 }
 
-export default Specialities;
+export default Sliders;

@@ -5,25 +5,76 @@ import SidebarNav from "../sidebar";
 import {itemRender, onShowSizeChange,} from "../../components/paginationfunction";
 import {fetchApi} from "../../../_utils/http-utils";
 import {
-    renderDate,
+    getColumnFilterProps,
+    getColumnSearchProps,
+    renderDate, renderDropDown,
     renderName,
     renderText,
     sorterDate,
     sorterNumber,
     sorterText
 } from "../../../_utils/data-table-utils";
+import toast from "react-hot-toast";
+
+const patientStatus = ['active', 'inactive', 'suspended', 'banned']
 
 class Patients extends Component {
     constructor(props) {
         super(props);
         this.state = {
             data: [],
+            showMenu: {},
+            searchText: '',
+            searchedColumn: '',
         };
     }
 
     async componentDidMount() {
         let patients = await fetchApi({url: "v1/patients", method: "GET"})
         this.setState({data: patients.data});
+    }
+
+    handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        this.setState({
+            searchText: selectedKeys[0],
+            searchedColumn: dataIndex,
+        });
+    };
+
+    handleReset = clearFilters => {
+        clearFilters();
+        this.setState({searchText: ''});
+    };
+
+    async handleItemClick(record, dropdownItem) {
+        let index = this.state.data.indexOf(record)
+        let data = this.state.data
+        data[index].status = dropdownItem
+        this.setState({showMenu: {[record._id]: false}})
+        try {
+            let result = await fetchApi({
+                url: "v1/patient/changeStatus",
+                method: "POST",
+                body: {patient_id: record._id, status: dropdownItem}
+            })
+            if (result) {
+                toast.success(result.message)
+                this.setState({data: data})
+            }
+        } catch (e) {
+            console.log("error>>", e)
+
+        }
+    }
+
+    handleDropdownClick(record) {
+        let isShown = this.state.showMenu[record._id]
+        this.setState({showMenu: {[record._id]: !isShown}})
+    }
+
+    showDropDownMenu(record) {
+        return this.state.showMenu[record._id]
     }
 
     render() {
@@ -33,7 +84,9 @@ class Patients extends Component {
             {
                 title: "Patient Name",
                 render: (text, record) => renderName(record, "", "", true),
-                // sorter: (a, b) => sorterText(a.user.first_name, b.user.first_name)
+                sorter: (a, b) => sorterText(a.user_id.first_name, b.user_id.first_name),
+                ...getColumnSearchProps(this, "Patient", this.handleSearch, this.handleReset,
+                    "user_id.first_name"),
             },
             {
                 title: "Height (Feet)",
@@ -72,15 +125,15 @@ class Patients extends Component {
                 dataIndex: "status",
                 key: "status",
                 render: (text) => renderText(text),
-                sorter: (a, b) => sorterText(a.status, b.status)
+                sorter: (a, b) => sorterText(a.status, b.status),
+                ...getColumnFilterProps(patientStatus, "status"),
             },
             {
                 title: 'Actions',
-                render: (text, record) => (
-                    <div className="actions">
-                        <a href="#0" className="btn btn-sm bg-success-light" onClick={()=>console.log("clicked action")}>Change Status</a>
-                    </div>
-                ),
+                render: (text, record) => renderDropDown("Change Status", patientStatus.filter(item => item !== record.status),
+                    (elem, index) => this.handleItemClick(record, elem),
+                    () => this.handleDropdownClick(record),
+                    this.showDropDownMenu(record))
 
             }
         ];
@@ -118,7 +171,7 @@ class Patients extends Component {
                                                 columns={columns}
                                                 // bordered
                                                 dataSource={data}
-                                                rowKey={(record) => record.id}
+                                                rowKey={(record) => record._id}
                                                 showSizeChanger={true}
                                                 pagination={{
                                                     total: data.length,
