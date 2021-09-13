@@ -1,6 +1,12 @@
 import moment from "moment-timezone";
-import {useState} from "react";
+import React from "react";
 
+export const constants = {
+    USER_TYPE_PATIENT: "1",
+    USER_TYPE_DOCTOR: "2",
+    PATIENT_STATUSES : ['active', 'inactive', 'suspended', 'banned'],
+    DOCTOR_STATUSES: ['pending', 'active', 'inactive']
+}
 export const getFullName = (user) => {
     if (!user)
         return ""
@@ -9,6 +15,15 @@ export const getFullName = (user) => {
     }
 
     return `${changeCaseFirstLetter(user.first_name)} ${changeCaseFirstLetter(user.last_name)}`
+}
+export const getAddress = (address) => {
+    if (!address)
+        return ""
+    return <a>
+        {address.line1 + ", " + address.line2}<br/>
+        {address.city + ", " + address.state}<br/>
+        {address.country}
+    </a>
 }
 
 export const getFormattedDate = (date) => {
@@ -19,7 +34,7 @@ export const getFormattedDateTime = (date) => {
     return moment(date).format("DD/MM/YYYY hh:mm a")
 }
 export const getNextSlot = (slot) => {
-    return moment(slot,"HH:mm").add(10,"minutes").format("HH:mm")
+    return moment(slot, "HH:mm").add(10, "minutes").format("HH:mm")
 }
 export const changeCaseFirstLetter = (params) => {
     if (!params)
@@ -36,21 +51,7 @@ export const getNameFromEmail = (email) => {
     return email.slice(0, email.indexOf("@"))
 }
 
-export const useInput = initialValue => {
-    const [value, setValue] = useState(initialValue);
 
-    return {
-        value,
-        setValue,
-        reset: () => setValue(""),
-        bind: {
-            value,
-            onChange: event => {
-                setValue(event.target.value);
-            }
-        }
-    };
-};
 export const getTimezone = () => {
     return moment.tz.guess();
 }

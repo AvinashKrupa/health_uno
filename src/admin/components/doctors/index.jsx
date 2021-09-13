@@ -5,6 +5,8 @@ import SidebarNav from "../sidebar";
 import {itemRender, onShowSizeChange,} from "../../components/paginationfunction";
 import {fetchApi} from "../../../_utils/http-utils";
 import {
+    getColumnFilterProps,
+    getColumnSearchProps,
     renderChips,
     renderDate, renderDropDown,
     renderName,
@@ -22,7 +24,9 @@ class Doctors extends Component {
         super(props);
         this.state = {
             data: [],
-            showMenu: {}
+            showMenu: {},
+            searchText: '',
+            searchedColumn: '',
         };
     }
 
@@ -51,7 +55,18 @@ class Doctors extends Component {
 
         }
     }
+    handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        this.setState({
+            searchText: selectedKeys[0],
+            searchedColumn: dataIndex,
+        });
+    };
 
+    handleReset = clearFilters => {
+        clearFilters();
+        this.setState({searchText: ''});
+    };
     handleDropdownClick(record) {
         let isShown = this.state.showMenu[record._id]
         this.setState({showMenu: {[record._id]: !isShown}})
@@ -68,7 +83,9 @@ class Doctors extends Component {
             {
                 title: "Doctor Name",
                 render: (text, record) => renderName(record, "Dr", "", true),
-                sorter: (a, b) => sorterText(a.first_name, b.first_name)
+                sorter: (a, b) => sorterText(a.first_name, b.first_name),
+                ...getColumnSearchProps(this,"Doctor", this.handleSearch, this.handleReset,
+                    "first_name"),
             },
             {
                 title: "Med Reg No.",
@@ -131,7 +148,8 @@ class Doctors extends Component {
                 dataIndex: "status",
                 key: "status",
                 render: (text) => renderText(text),
-                sorter: (a, b) => sorterText(a.status, b.status)
+                sorter: (a, b) => sorterText(a.status, b.status),
+                ...getColumnFilterProps(doctorStatus, "status"),
             },
             {
                 title: 'Actions',

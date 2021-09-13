@@ -1,347 +1,369 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import SidebarNav from '../sidebar';
-import IMG01 from '../../assets/images/avatar-01.jpg'
-import { Link } from 'react-router-dom';
-import { Tabs, Tab } from 'react-bootstrap';
-import { Modal } from 'react-bootstrap';
+import {Modal, Tab, Tabs} from 'react-bootstrap';
 import DatePicker from "react-datepicker";
-class Profile extends Component{
-    constructor(props){
+import {fetchApi} from "../../../_utils/http-utils";
+import {constants, getAddress, getFullName} from "../../../_utils/common-utils";
+import moment from "moment";
+import {renderDropDown, renderText} from "../../../_utils/data-table-utils";
+import toast from "react-hot-toast";
+
+
+class Profile extends Component {
+    constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             key: 1,
             show: false,
-            startDate: new Date()
+            data: null,
+            updatedModel: null,
+            user_id: props.match.params.user_id,
+            type: props.match.params.type
         }
-       
+
     }
 
-    handleSelect=(key)=> {
+    async componentDidMount() {
 
-		this.setState({ key })
+        let profile = await fetchApi({
+            url: "v1/user/getUserProfile",
+            method: "POST",
+            body: {user_id: this.state.user_id, type: this.state.type}
+        })
+        this.setState({data: profile.data});
     }
-    handleClose=()=>{
+
+    handleSelect = (key) => {
+
+        this.setState({key})
+    }
+    handleClose = () => {
         this.setState({
-            show:false
+            show: false,
+            updatedModel: null
         });
     }
 
-    handleShow=()=>{
+    handleShow = () => {
         this.setState({
-            show:true
+            show: true,
+            updatedModel: {user: {...this.state.data.user}, additional_info: {...this.state.data.additional_info}}
         });
     }
-    handleChange = date => {
+    handleDateChange = date => {
+        let data = this.state.updatedModel
+        data.user.dob = moment(date).format("YYYY-MM-DD")
         this.setState({
-          startDate: date
+            updatedModel: data
         });
-      };
-    render(){
-        return(
+    };
+    handleChange = e => {
+        let data = this.state.updatedModel
+        data.user[e.target.name] = e.target.value
+        this.setState({
+            updatedModel: data
+        });
+    };
+    updateProfile = async () => {
+        let data = this.state.updatedModel
+
+        try {
+            let result = await fetchApi({
+                url: "v1/user/updateProfile",
+                method: "POST",
+                body: {...data.user, user_id: data.user._id, type: this.state.type}
+            })
+
+            if (result) {
+                console.log("result>>>", result)
+                toast.success(result.message)
+                this.setState({data: data})
+            }
+        } catch (e) {
+            console.log("error>>", e)
+
+        }
+        this.setState({showMenu: false, show: false})
+    };
+
+    async handleItemClick(dropdownItem) {
+        let data = this.state.data
+        this.setState({showMenu: false})
+        try {
+            let result
+            if (this.state.type === constants.USER_TYPE_PATIENT)
+                result = await fetchApi({
+                    url: "v1/patient/changeStatus",
+                    method: "POST",
+                    body: {patient_id: data.additional_info._id, status: dropdownItem}
+                })
+            else {
+                result = await fetchApi({
+                    url: "v1/doctor/changeStatus",
+                    method: "POST",
+                    body: {doctor_id: data.additional_info._id, status: dropdownItem}
+                })
+            }
+            if (result) {
+                toast.success(result.message)
+                this.setState({data: data})
+            }
+        } catch (e) {
+            console.log("error>>", e)
+
+        }
+    }
+    async getStateForCountry(dropdownItem) {
+        try {
+            let result = await fetchApi({
+                    url: "v1/state",
+                    method: "POST",
+                    body: {countryId: dropdownItem}
+                })
+
+            if (result) {
+                toast.success(result.message)
+                this.setState({states: data})
+            }
+        } catch (e) {
+            console.log("error>>", e)
+
+        }
+    }
+    async getCityForState(dropdownItem) {
+        let countryStateCity=this.state.countryStateCity
+        try {
+            let result = await fetchApi({
+                url: "v1/city",
+                method: "POST",
+                body: {countryId: countryStateCity.countryId,stateId:countryStateCity.stateId}
+            })
+
+            if (result) {
+                toast.success(result.message)
+                this.setState({states: data})
+            }
+        } catch (e) {
+            console.log("error>>", e)
+
+        }
+    }
+
+    handleDropdownClick() {
+        let isShown = this.state.showMenu
+        this.setState({showMenu: !isShown})
+    }
+
+    showDropDownMenu() {
+        return this.state.showMenu
+    }
+
+
+    render() {
+        return (
             <div>
-                    <SidebarNav />
-                    <div className="page-wrapper">
-                        <div className="content container-fluid">
-                      
-                            <div className="page-header">
-                                <div className="row">
-                                    <div className="col">
-                                        <h3 className="page-title">Profile</h3>
-                                        <ul className="breadcrumb">
-                                            <li className="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                                            <li className="breadcrumb-item active">Profile</li>
-                                        </ul>
+                <SidebarNav/>
+                <div className="page-wrapper">
+                    <div className="content container-fluid">
+
+                        <div className="page-header">
+                            <div className="row">
+                                <div className="col">
+                                    <h3 className="page-title">Profile</h3>
+                                    <ul className="breadcrumb">
+                                        <li className="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                                        <li className="breadcrumb-item active">Profile</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {/* page header */}
+                        {this.state.data && <div className="row">
+                            <div className="col-md-12">
+                                <div className="profile-header">
+                                    <div className="row align-items-center">
+                                        <div className="col-auto profile-image">
+                                            <img className="rounded-circle" alt="User"
+                                                 src={this.state.data.user.dp}/>
+                                        </div>
+                                        <div className="col ml-md-n2 profile-user-info">
+                                            <h4 className="user-name mb-0">{getFullName(this.state.data.user)}</h4>
+                                            <h6 className="text-muted">{this.state.data.user.email}</h6>
+                                            <div className="user-Location"><i className="fa fa-map-marker"
+                                                                              aria-hidden="true"></i> {getAddress(this.state.data.additional_info.address)}
+                                            </div>
+                                        </div>
+                                        <div className="col-auto profile-btn">
+                                            {renderText(this.state.data.additional_info.status)}
+                                            {renderDropDown("Change Status",
+                                                (this.state.type === constants.USER_TYPE_PATIENT ? constants.PATIENT_STATUSES : constants.DOCTOR_STATUSES)
+                                                    .filter(item => item !== this.state.data.additional_info.status)
+                                                ,
+                                                (elem, index) => this.handleItemClick(elem),
+                                                () => this.handleDropdownClick(),
+                                                this.showDropDownMenu())}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                           {/* page header */}
-                            <div className="row">
-						        <div className="col-md-12">
-                                    <div className="profile-header">
-                                <div className="row align-items-center">
-									<div className="col-auto profile-image">
-										<Link to="">
-											<img className="rounded-circle" alt="User" src={IMG01} />
-										</Link>
-									</div>
-									<div className="col ml-md-n2 profile-user-info">
-										<h4 className="user-name mb-0">Paramveer Singh</h4>
-										<h6 className="text-muted">psingh@admin.com</h6>
-										<div className="user-Location"><i className="fa fa-map-marker" aria-hidden="true"></i> Florida, United States</div>
-										<div className="about-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
-									</div>
-									<div className="col-auto profile-btn">
-										
-										<Link to="" className="btn btn-primary" >
-											Edit
-										</Link>
-									</div>
-								</div>
-                                </div>
-							 </div> 
-                          </div> {/* row */}
-                          
-                          <Tabs
-									className="profile tab-view"
-									activeKey={this.state.key}
-									onSelect={this.handleSelect}
-									id="controlled-tab-example"
-								>
-									
-								
-                                 <Tab className="nav-link" eventKey={1} title="About">
-                                 <div className="row">
-										<div className="col-lg-12">
-											<div className="card">
-												<div className="card-body">
-													<h5 className="card-title d-flex justify-content-between">
-														<span>Personal Details</span> 
-														<Link to="" className="edit-link" onClick={this.handleShow}>
-                                                            <i className="fa fa-edit mr-1"></i>Edit</Link>
-													</h5>
-													<div className="row">
-														<p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Name</p>
-														<p className="col-sm-10">John Doe</p>
-													</div>
-													<div className="row">
-														<p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Date of Birth</p>
-														<p className="col-sm-10">24 Jul 1983</p>
-													</div>
-													<div className="row">
-														<p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Email ID</p>
-														<p className="col-sm-10">johndoe@example.com</p>
-													</div>
-													<div className="row">
-														<p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Mobile</p>
-														<p className="col-sm-10">305-310-5857</p>
-													</div>
-													<div className="row">
-														<p className="col-sm-2 text-muted text-sm-right mb-0">Address</p>
-														<p className="col-sm-10 mb-0">4663  Agriculture Lane,<br />
-														Miami,<br />
-														Florida - 33165,<br />
-														United States.</p>
-													</div>
-												</div>
-											</div>
-											
-										
-											<div className="modal fade" id="edit_personal_details" aria-hidden="true" role="dialog">
-												<div className="modal-dialog modal-dialog-centered" role="document" >
-													<div className="modal-content">
-														<div className="modal-header">
-															<h5 className="modal-title">Personal Details</h5>
-															<button type="button" className="close" data-dismiss="modal" aria-label="Close">
-																<span aria-hidden="true">&times;</span>
-															</button>
-														</div>
-														<div className="modal-body">
-															<form>
-																<div className="row form-row">
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>First Name</label>
-																			<input type="text"readOnly={true} className="form-control"  /> 
-																		</div>
-																	</div>
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>Last Name</label>
-																			<input type="text"readOnly={true} className="form-control" />
-																		</div>
-																	</div>
-																	<div className="col-12">
-																		<div className="form-group">
-																			<label>Date of Birth</label>
-																			<div className="cal-icon">
-                                                                                <input type="text"readOnly={true} className="form-control" 
-                                                                                value="24-07-1983" />
-																			</div>
-																		</div>
-																	</div>
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>Email ID</label>
-                                                                            <input type="email"readOnly={true} className="form-control" 
-                                                                            value="johndoe@example.com" />
-																		</div>
-																	</div>
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>Mobile</label>
-																			<input type="text"readOnly={true} value="+1 202-555-0125" className="form-control" />
-																		</div>
-																	</div>
-																	<div className="col-12">
-																		<h5 className="form-title"><span>Address</span></h5>
-																	</div>
-																	<div className="col-12">
-																		<div className="form-group">
-																		<label>Address</label>
-                                                                            <input type="text"readOnly={true} className="form-control" 
-                                                                            value="4663 Agriculture Lane" />
-																		</div>
-																	</div>
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>City</label>
-																			<input type="text"readOnly={true} className="form-control"  />
-																		</div>
-																	</div>
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>State</label>
-																			<input type="text"readOnly={true} className="form-control"  />
-																		</div>
-																	</div>
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>Zip Code</label>
-																			<input type="text"readOnly={true} className="form-control"  />
-																		</div>
-																	</div>
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>Country</label>
-																			<input type="text"readOnly={true} className="form-control"  />
-																		</div>
-																	</div>
-																</div>
-																<button type="submit" className="btn btn-primary btn-block">Save Changes</button>
-															</form>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-											
-                              </Tab>
-                              
-                                <Tab className="nav-item" eventKey={2} title="Password">
-								<div className="row">
-										<div className="col-lg-12">
-                                           <div className="card">
-                                            <div className="card-body">
-                                                <h5 className="card-title">Change Password</h5>
+                        </div>}
+                        {/* row */}
+
+                        <Tabs
+                            className="profile tab-view"
+                            activeKey={this.state.key}
+                            onSelect={this.handleSelect}
+                            id="controlled-tab-example"
+                        >
+                            <Tab className="nav-link" eventKey={1} title="About">
+                                <div className="row">
+                                    <div className="col-lg-12">
+                                        <div className="card">
+                                            {this.state.data && <div className="card-body">
+                                                <h5 className="card-title d-flex justify-content-between">
+                                                    <span>Personal Details</span>
+                                                    <a className="edit-link" onClick={this.handleShow}>
+                                                        <i className="fa fa-edit mr-1"></i>Edit</a>
+                                                </h5>
                                                 <div className="row">
-                                                    <div className="col-md-10 col-lg-6">
-                                                        <form>
-                                                            <div className="form-group">
-                                                                <label>Old Password</label>
-                                                                <input type="password" onChange={(e)=>console.log()} className="form-control" />
-                                                            </div>
-                                                            <div className="form-group">
-                                                                <label>New Password</label>
-                                                                <input type="password" onChange={(e)=>console.log()} className="form-control" />
-                                                            </div>
-                                                            <div className="form-group">
-                                                                <label>Confirm Password</label>
-                                                                <input type="password" onChange={(e)=>console.log()} className="form-control" />
-                                                            </div>
-                                                            <button className="btn btn-primary" type="submit">Save Changes</button>
-                                                        </form>
-                                                    </div>
+                                                    <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Name</p>
+                                                    <p className="col-sm-10">{getFullName(this.state.data.user)}</p>
                                                 </div>
-                                            </div>
-                                        </div> 
-										</div>
-									</div>
-                                </Tab>
-                              
-                            </Tabs>
-                           
-                          </div>
-                     </div>
-                     {/* modal */}
-                            <Modal show={this.state.show} onHide={this.handleClose}>
-                                <Modal.Header closeButton>
-                                    <Modal.Title><h5 className="modal-title">Personal Details</h5></Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body>
-                                <div className="modal-body">
-															<form>
-																<div className="row form-row">
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>First Name</label>
-																			<input type="text" className="form-control" value="John" /> 
-																		</div>
-																	</div>
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>Last Name</label>
-																			<input type="text"  className="form-control" value="Doe" />
-																		</div>
-																	</div>
-																	<div className="col-12">
-																		<div className="form-group">
-																			<label>Date of Birth</label>
-																			<div className="cal-icon">
-                                                                            <DatePicker
-                                                                            className="form-control"
-                                                                                    selected={this.state.startDate}
-                                                                                    onChange={this.handleChange}
-                                                                                />
-																			</div>
-																		</div>
-																	</div>
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>Email ID</label>
-                                                                            <input type="email" className="form-control" 
-                                                                            value="johndoe@example.com" />
-																		</div>
-																	</div>
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>Mobile</label>
-																			<input type="text" value="+1 202-555-0125" className="form-control" />
-																		</div>
-																	</div>
-																	<div className="col-12">
-																		<h5 className="form-title"><span>Address</span></h5>
-																	</div>
-																	<div className="col-12">
-																		<div className="form-group">
-																		<label>Address</label>
-                                                                            <input type="text" className="form-control" 
-                                                                            value="4663 Agriculture Lane" />
-																		</div>
-																	</div>
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>City</label>
-																			<input type="text" className="form-control" value="Miami" />
-																		</div>
-																	</div>
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>State</label>
-																			<input type="text" className="form-control" value="Florida" />
-																		</div>
-																	</div>
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>Zip Code</label>
-																			<input type="text" className="form-control" value="22434" />
-																		</div>
-																	</div>
-																	<div className="col-12 col-sm-6">
-																		<div className="form-group">
-																			<label>Country</label>
-																			<input type="text" className="form-control" value="United States" />
-																		</div>
-																	</div>
-																</div>
-																<button type="submit" className="btn btn-primary btn-block">Save Changes</button>
-															</form>
-														</div>
-                        </Modal.Body>
-                    </Modal>
-                      {/* modal */}
+                                                <div className="row">
+                                                    <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Date
+                                                        of Birth</p>
+                                                    <p className="col-sm-10">{this.state.data.user.dob}</p>
+                                                </div>
+                                                <div className="row">
+                                                    <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Gender</p>
+                                                    <p className="col-sm-10">{this.state.data.user.gender}</p>
+                                                </div>
+                                                <div className="row">
+                                                    <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Email
+                                                        ID</p>
+                                                    <p className="col-sm-10">{this.state.data.user.email}</p>
+                                                </div>
+                                                <div className="row">
+                                                    <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Mobile</p>
+                                                    <p className="col-sm-10">{this.state.data.user.mobile_number}</p>
+                                                </div>
+                                                <div className="row">
+                                                    <p className="col-sm-2 text-muted text-sm-right mb-0">Address</p>
+                                                    <p className="col-sm-10 mb-0">{getAddress(this.state.data.additional_info.address)}</p>
+                                                </div>
+                                            </div>}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </Tab>
+
+                        </Tabs>
+
+                    </div>
                 </div>
-          
+                {/* modal */}
+                <Modal show={this.state.show} onHide={this.handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title><h5 className="modal-title">Personal Details</h5></Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {this.state.updatedModel && <div className="modal-body">
+                            <form onSubmit={this.updateProfile}>
+                                <div className="row form-row">
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>First Name</label>
+                                            <input type="text" className="form-control"
+                                                   name="first_name"
+                                                   onChange={this.handleChange}
+                                                   value={this.state.updatedModel.user.first_name}/>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>Last Name</label>
+                                            <input type="text" className="form-control"
+                                                   name="last_name"
+                                                   onChange={this.handleChange}
+                                                   value={this.state.updatedModel.user.last_name}/>
+                                        </div>
+                                    </div>
+                                    <div className="col-12">
+                                        <div className="form-group">
+                                            <label>Date of Birth</label>
+                                            <div className="cal-icon">
+                                                <DatePicker
+                                                    className="form-control"
+                                                    dateFormat={"yyyy-MM-dd"}
+                                                    selected={new Date(this.state.updatedModel.user.dob)}
+                                                    onChange={this.handleDateChange}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>Email ID</label>
+                                            <input type="email" className="form-control"
+                                                   name="email"
+                                                   onChange={this.handleChange}
+                                                   value={this.state.updatedModel.user.email}/>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>Mobile</label>
+                                            <input type="text" disabled={true} value={this.state.updatedModel.user.mobile_number}
+                                                   className="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>Address Line1</label>
+                                            <input type="text" className="form-control"
+                                                   value={this.state.updatedModel.additional_info.address.line1}/>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>Address Line2</label>
+                                            <input type="text" className="form-control"
+                                                   value={this.state.updatedModel.additional_info.address.line2}/>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>City</label>
+                                            <input type="text" className="form-control"
+                                                   value={this.state.updatedModel.additional_info.address.city}/>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>State</label>
+                                            <input type="text" className="form-control"
+                                                   value={this.state.updatedModel.additional_info.address.state}/>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>Country</label>
+                                            <input type="text" className="form-control"
+                                                   value={this.state.updatedModel.additional_info.address.country}/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" className="btn btn-primary btn-block">Save Changes
+                                </button>
+                            </form>
+                        </div>}
+                    </Modal.Body>
+                </Modal>
+                {/* modal */}
+            </div>
+
         );
     }
 }

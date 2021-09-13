@@ -5,6 +5,8 @@ import SidebarNav from "../sidebar";
 import {itemRender, onShowSizeChange,} from "../../components/paginationfunction";
 import {fetchApi} from "../../../_utils/http-utils";
 import {
+    getColumnFilterProps,
+    getColumnSearchProps,
     renderDate, renderDropDown,
     renderName,
     renderText,
@@ -21,7 +23,9 @@ class Patients extends Component {
         super(props);
         this.state = {
             data: [],
-            showMenu: {}
+            showMenu: {},
+            searchText: '',
+            searchedColumn: '',
         };
     }
 
@@ -29,6 +33,19 @@ class Patients extends Component {
         let patients = await fetchApi({url: "v1/patients", method: "GET"})
         this.setState({data: patients.data});
     }
+
+    handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        this.setState({
+            searchText: selectedKeys[0],
+            searchedColumn: dataIndex,
+        });
+    };
+
+    handleReset = clearFilters => {
+        clearFilters();
+        this.setState({searchText: ''});
+    };
 
     async handleItemClick(record, dropdownItem) {
         let index = this.state.data.indexOf(record)
@@ -67,7 +84,9 @@ class Patients extends Component {
             {
                 title: "Patient Name",
                 render: (text, record) => renderName(record, "", "", true),
-                // sorter: (a, b) => sorterText(a.user.first_name, b.user.first_name)
+                sorter: (a, b) => sorterText(a.user_id.first_name, b.user_id.first_name),
+                ...getColumnSearchProps(this, "Patient", this.handleSearch, this.handleReset,
+                    "user_id.first_name"),
             },
             {
                 title: "Height (Feet)",
@@ -106,7 +125,8 @@ class Patients extends Component {
                 dataIndex: "status",
                 key: "status",
                 render: (text) => renderText(text),
-                sorter: (a, b) => sorterText(a.status, b.status)
+                sorter: (a, b) => sorterText(a.status, b.status),
+                ...getColumnFilterProps(patientStatus, "status"),
             },
             {
                 title: 'Actions',

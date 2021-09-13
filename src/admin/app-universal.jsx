@@ -63,7 +63,7 @@ const AppUniversal = function (props) {
                     <Route path="/patient-list" exact component={Patients}/>
                     <Route path="/chat" exact component={Chat}/>
                     <Route path="/reviews" exact component={Reviews}/>
-                    <Route path="/profile" exact component={Profile}/>
+                    <Route path="/profile/:user_id/:type" exact component={Profile}/>
                     <Route path="/transactions-list" exact component={Transaction}/>
                     <Route path="/settings" exact component={Settings}/>
                     <Route path="/invoice-report" exact component={InvoiceReport}/>

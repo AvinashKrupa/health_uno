@@ -1,15 +1,14 @@
 import React, {Component} from "react";
-import {Table, Switch, Input, Space, Button} from "antd";
+import {Table} from "antd";
 import SidebarNav from "../sidebar";
-import {
-    itemRender,
-    onShowSizeChange,
-} from "../../components/paginationfunction";
+import {itemRender, onShowSizeChange,} from "../../components/paginationfunction";
 import {fetchApi} from "../../../_utils/http-utils";
 import {
+    getColumnFilterProps,
     getColumnSearchProps,
     renderAppointment,
-    renderDate, renderDropDown,
+    renderDate,
+    renderDropDown,
     renderName,
     renderText,
     sorterDate,
@@ -17,7 +16,6 @@ import {
     sorterText
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
-import {changeCaseFirstLetter} from "../../../_utils/common-utils";
 
 const statusArray = ['pending','scheduled', 'cancelled', 'rejected', 'ongoing', 'completed']
 
@@ -81,73 +79,6 @@ class Appointments extends Component {
         this.setState({searchText: ''});
     };
 
-    getColumnSearchProps = (dataIndex, handleSearch, handleReset, recordValueToCompare) => ({
-        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
-            <div style={{padding: 8}}>
-                <Input
-                    ref={node => {
-                        this.searchInput = node;
-                    }}
-                    placeholder={`Search ${dataIndex}`}
-                    value={selectedKeys[0]}
-                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                    style={{marginBottom: 8, display: 'block'}}
-                />
-                <Space>
-                    <Button
-                        type="primary"
-                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                        size="small"
-                        style={{width: 90}}
-                    >
-                        Search
-                    </Button>
-                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{width: 90}}>
-                        Reset
-                    </Button>
-
-                </Space>
-            </div>
-        ),
-        onFilter: (value, record) => {
-            let childern = recordValueToCompare.split(".")
-            let finalVal = record
-            childern.forEach(child => {
-                finalVal = finalVal[child]
-            })
-            return finalVal
-                ? finalVal.toString().toLowerCase().includes(value.toLowerCase())
-                : ''
-        },
-        onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-                setTimeout(() => this.searchInput.select(), 100);
-            }
-        },
-    });
-    getColumnFilterProps = (filterArray, recordValueToCompare) => {
-        filterArray = filterArray.map(filter => {
-            return {
-                text: changeCaseFirstLetter(filter),
-                value: filter
-            }
-        })
-        return ({
-            filters: filterArray,
-            onFilter: (value, record) => {
-                let childern = recordValueToCompare.split(".")
-                let finalVal = record
-                childern.forEach(child => {
-                    finalVal = finalVal[child]
-                })
-                return finalVal
-                    ? finalVal.toString().toLowerCase().includes(value.toLowerCase())
-                    : ''
-            },
-        });
-    }
-
     render() {
         const {data} = this.state;
 
@@ -161,7 +92,7 @@ class Appointments extends Component {
                 title: "Patient",
                 render: (text, record) => renderName(record.patient),
                 sorter: (a, b) => sorterText(a.patient.user_id.first_name, b.patient.user_id.first_name),
-                ...this.getColumnSearchProps("Patient", this.handleSearch, this.handleReset,
+                ...getColumnSearchProps(this,"Patient", this.handleSearch, this.handleReset,
                     "patient.user_id.first_name"),
 
             },
@@ -169,7 +100,7 @@ class Appointments extends Component {
                 title: "Doctor",
                 render: (text, record) => renderName(record.doctor, "Dr"),
                 sorter: (a, b) => sorterText(a.doctor.first_name, b.doctor.first_name),
-                ...this.getColumnSearchProps("Doctor", this.handleSearch, this.handleReset,
+                ...getColumnSearchProps(this,"Doctor", this.handleSearch, this.handleReset,
                     "doctor.first_name"),
 
             },
@@ -218,7 +149,7 @@ class Appointments extends Component {
                 key: "status",
                 render: (text) => renderText(text),
                 sorter: (a, b) => sorterText(a.status, b.status),
-                ...this.getColumnFilterProps(statusArray, "status"),
+                ...getColumnFilterProps(statusArray, "status"),
             },
             {
                 title: 'Actions',
