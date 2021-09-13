@@ -6,7 +6,6 @@ import {getJwtToken} from "./localStorage/SessionManager";
 
 export const fetchApi = async (params) => {
     const {url, method} = params;
-
     let headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",

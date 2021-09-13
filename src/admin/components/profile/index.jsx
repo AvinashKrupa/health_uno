@@ -3,7 +3,7 @@ import SidebarNav from '../sidebar';
 import {Modal, Tab, Tabs} from 'react-bootstrap';
 import DatePicker from "react-datepicker";
 import {fetchApi} from "../../../_utils/http-utils";
-import {constants, getAddress, getFullName} from "../../../_utils/common-utils";
+import {changeCaseFirstLetter, constants, getAddress, getFullName, assign} from "../../../_utils/common-utils";
 import moment from "moment";
 import {renderDropDown, renderText} from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
@@ -18,7 +18,11 @@ class Profile extends Component {
             data: null,
             updatedModel: null,
             user_id: props.match.params.user_id,
-            type: props.match.params.type
+            type: props.match.params.type,
+            countryStateCity: {country: {}, state: {}, city: {}},
+            countries: [],
+            states: [],
+            cities: []
         }
 
     }
@@ -30,7 +34,11 @@ class Profile extends Component {
             method: "POST",
             body: {user_id: this.state.user_id, type: this.state.type}
         })
-        this.setState({data: profile.data});
+        let countries = await fetchApi({
+            url: "v1/country",
+            method: "GET",
+        })
+        this.setState({data: profile.data, countries: countries.data});
     }
 
     handleSelect = (key) => {
@@ -59,19 +67,41 @@ class Profile extends Component {
     };
     handleChange = e => {
         let data = this.state.updatedModel
-        data.user[e.target.name] = e.target.value
+        let name = e.target.name
+        let value = e.target.value
+        if (data.user.hasOwnProperty(name))
+            data.user[name] = value
+        else if (data.additional_info.hasOwnProperty(name)) {
+            data.additional_info[name] = value
+        } else {
+            //Find where this key belongs to by checking it's actual path
+            let childern = name.split(".")
+            assign(data, childern, value);
+        }
         this.setState({
             updatedModel: data
         });
     };
     updateProfile = async () => {
         let data = this.state.updatedModel
-
+        let countryStateCity = this.state.countryStateCity
+        data.additional_info.address = {
+            ...data.additional_info.address,
+            city: countryStateCity.city.name,
+            state: countryStateCity.state.name,
+            country: countryStateCity.country.name
+        }
+        console.log("additional_info>>>", data.additional_info)
         try {
             let result = await fetchApi({
                 url: "v1/user/updateProfile",
                 method: "POST",
-                body: {...data.user, user_id: data.user._id, type: this.state.type}
+                body: {
+                    ...data.user,
+                    address: data.additional_info.address,
+                    user_id: data.user._id,
+                    type: this.state.type
+                }
             })
 
             if (result) {
@@ -113,40 +143,62 @@ class Profile extends Component {
 
         }
     }
+
     async getStateForCountry(dropdownItem) {
+        let countryId = dropdownItem.target.value
+        let name = this.state.countries[dropdownItem.target.selectedIndex].name
+
         try {
             let result = await fetchApi({
-                    url: "v1/state",
-                    method: "POST",
-                    body: {countryId: dropdownItem}
-                })
+                url: "v1/state",
+                method: "POST",
+                body: {countryId: countryId}
+            })
 
             if (result) {
-                toast.success(result.message)
-                this.setState({states: data})
+                this.setState({
+                    states: result.data,
+                    countryStateCity: {...this.state.countryStateCity, country: {id: countryId, name: name}}
+                })
             }
         } catch (e) {
             console.log("error>>", e)
 
         }
     }
+
     async getCityForState(dropdownItem) {
-        let countryStateCity=this.state.countryStateCity
+        let countryStateCity = this.state.countryStateCity
+        let stateId = dropdownItem.target.value
+        let name = this.state.states[dropdownItem.target.selectedIndex].name
         try {
             let result = await fetchApi({
                 url: "v1/city",
                 method: "POST",
-                body: {countryId: countryStateCity.countryId,stateId:countryStateCity.stateId}
+                body: {countryId: countryStateCity.country.id, stateId: stateId}
             })
 
             if (result) {
-                toast.success(result.message)
-                this.setState({states: data})
+
+                this.setState({
+                    cities: result.data,
+                    countryStateCity: {...countryStateCity, state: {id: stateId, name: name}}
+                })
             }
         } catch (e) {
             console.log("error>>", e)
 
         }
+    }
+
+    async selectCity(dropdownItem) {
+        let countryStateCity = this.state.countryStateCity
+        let city = dropdownItem.target.value
+        let name = this.state.cities[dropdownItem.target.selectedIndex].name
+        this.setState({
+            countryStateCity: {...countryStateCity, city: {id: city, name: name}}
+        })
+
     }
 
     handleDropdownClick() {
@@ -275,7 +327,7 @@ class Profile extends Component {
                                         <div className="form-group">
                                             <label>First Name</label>
                                             <input type="text" className="form-control"
-                                                   name="first_name"
+                                                   name="user.first_name"
                                                    onChange={this.handleChange}
                                                    value={this.state.updatedModel.user.first_name}/>
                                         </div>
@@ -284,7 +336,7 @@ class Profile extends Component {
                                         <div className="form-group">
                                             <label>Last Name</label>
                                             <input type="text" className="form-control"
-                                                   name="last_name"
+                                                   name="user.last_name"
                                                    onChange={this.handleChange}
                                                    value={this.state.updatedModel.user.last_name}/>
                                         </div>
@@ -306,7 +358,7 @@ class Profile extends Component {
                                         <div className="form-group">
                                             <label>Email ID</label>
                                             <input type="email" className="form-control"
-                                                   name="email"
+                                                   name="user.email"
                                                    onChange={this.handleChange}
                                                    value={this.state.updatedModel.user.email}/>
                                         </div>
@@ -314,7 +366,8 @@ class Profile extends Component {
                                     <div className="col-12 col-sm-6">
                                         <div className="form-group">
                                             <label>Mobile</label>
-                                            <input type="text" disabled={true} value={this.state.updatedModel.user.mobile_number}
+                                            <input type="text" disabled={true}
+                                                   value={this.state.updatedModel.user.mobile_number}
                                                    className="form-control"/>
                                         </div>
                                     </div>
@@ -322,6 +375,8 @@ class Profile extends Component {
                                         <div className="form-group">
                                             <label>Address Line1</label>
                                             <input type="text" className="form-control"
+                                                   name="additional_info.address.line1"
+                                                   onChange={this.handleChange}
                                                    value={this.state.updatedModel.additional_info.address.line1}/>
                                         </div>
                                     </div>
@@ -329,29 +384,54 @@ class Profile extends Component {
                                         <div className="form-group">
                                             <label>Address Line2</label>
                                             <input type="text" className="form-control"
+                                                   name="additional_info.address.line2"
+                                                   onChange={this.handleChange}
                                                    value={this.state.updatedModel.additional_info.address.line2}/>
                                         </div>
                                     </div>
-                                    <div className="col-12 col-sm-6">
+
+                                    <div className="col-12">
                                         <div className="form-group">
-                                            <label>City</label>
-                                            <input type="text" className="form-control"
-                                                   value={this.state.updatedModel.additional_info.address.city}/>
+                                            <label>Country</label>
+                                            <select value={this.state.countryStateCity.country.id}
+                                                    onChange={(e) => this.getStateForCountry(e)}
+                                                    className="form-control">
+                                                {this.state.countries?.map(country => {
+                                                    return <option
+                                                        value={country.id}>{changeCaseFirstLetter(country.name)}</option>
+                                                })}
+                                            </select>
+
                                         </div>
                                     </div>
                                     <div className="col-12 col-sm-6">
                                         <div className="form-group">
                                             <label>State</label>
-                                            <input type="text" className="form-control"
-                                                   value={this.state.updatedModel.additional_info.address.state}/>
+                                            <select value={this.state.countryStateCity.state.id}
+                                                    onChange={(e) => this.getCityForState(e)}
+                                                    disabled={this.state.states.length === 0}
+                                                    className="form-control">
+                                                {this.state.states?.map(state => {
+                                                    return <option
+                                                        value={state.id}>{changeCaseFirstLetter(state.name)}</option>
+                                                })}
+                                            </select>
+
                                         </div>
                                     </div>
-
                                     <div className="col-12 col-sm-6">
                                         <div className="form-group">
-                                            <label>Country</label>
-                                            <input type="text" className="form-control"
-                                                   value={this.state.updatedModel.additional_info.address.country}/>
+                                            <label>City</label>
+                                            <select value={this.state.countryStateCity.city.id}
+                                                    onChange={(e) => this.selectCity(e)}
+                                                    disabled={this.state.cities.length === 0}
+                                                    className="form-control">
+                                                {this.state.cities?.map(city => {
+                                                    return <option
+                                                        value={city.id}>{changeCaseFirstLetter(city.name)}</option>
+                                                })}
+                                            </select>
+
                                         </div>
                                     </div>
                                 </div>
