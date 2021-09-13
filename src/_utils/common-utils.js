@@ -4,8 +4,9 @@ import React from "react";
 export const constants = {
     USER_TYPE_PATIENT: "1",
     USER_TYPE_DOCTOR: "2",
-    PATIENT_STATUSES : ['active', 'inactive', 'suspended', 'banned'],
-    DOCTOR_STATUSES: ['pending', 'active', 'inactive']
+    PATIENT_STATUSES: ['active', 'inactive', 'suspended', 'banned'],
+    DOCTOR_STATUSES: ['pending', 'active', 'inactive'],
+    GENDER_DROPDOWN: ['Male', 'Female', 'Other'],
 }
 export const getFullName = (user) => {
     if (!user)
@@ -57,10 +58,10 @@ export const getTimezone = () => {
 }
 
 export function assign(obj, keyPath, value) {
-    let lastKeyIndex = keyPath.length-1;
-    for (let i = 0; i < lastKeyIndex; ++ i) {
-       let key = keyPath[i];
-        if (!(key in obj)){
+    let lastKeyIndex = keyPath.length - 1;
+    for (let i = 0; i < lastKeyIndex; ++i) {
+        let key = keyPath[i];
+        if (!(key in obj)) {
             obj[key] = {}
         }
         obj = obj[key];

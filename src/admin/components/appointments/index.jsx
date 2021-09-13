@@ -17,7 +17,7 @@ import {
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
 
-const statusArray = ['pending','scheduled', 'cancelled', 'rejected', 'ongoing', 'completed']
+const statusArray = ['pending', 'scheduled', 'cancelled', 'rejected', 'ongoing', 'completed']
 
 class Appointments extends Component {
     constructor(props) {
@@ -27,12 +27,33 @@ class Appointments extends Component {
             showMenu: {},
             searchText: '',
             searchedColumn: '',
+            appointmentStats: {
+                "pending": 0,
+                "completed": 0,
+                "scheduled": 0,
+                "ongoing": 0,
+                "cancelled": 0
+            }
         };
     }
 
     async componentDidMount() {
         let appointments = await fetchApi({url: "v1/appointments", method: "GET"})
-        this.setState({data: appointments.data});
+        let appointmentStats = {
+            "pending": 0,
+            "completed": 0,
+            "scheduled": 0,
+            "ongoing": 0,
+            "cancelled": 0
+        }
+        appointments.data.forEach(appointment => {
+            if (appointmentStats.hasOwnProperty(appointment.status))
+                appointmentStats[appointment.status] = appointmentStats[appointment.status] + 1
+            else {
+                appointmentStats[appointment.status] = 1
+            }
+        })
+        this.setState({data: appointments.data, appointmentStats: appointmentStats});
     }
 
     async handleItemClick(record, dropdownItem) {
@@ -40,7 +61,6 @@ class Appointments extends Component {
         let data = this.state.data
         data[index].status = dropdownItem
         this.setState({showMenu: {[record._id]: false}})
-        // toast("Functionality in development")
         try {
             let result = await fetchApi({
                 url: "v1/appointment/changeStatus",
@@ -79,6 +99,11 @@ class Appointments extends Component {
         this.setState({searchText: ''});
     };
 
+    getCompletionPercent(currentVal) {
+        let val=this.state.appointmentStats[currentVal]
+        return `${(val * 100) / this.state.data.length}%`
+    }
+
     render() {
         const {data} = this.state;
 
@@ -92,7 +117,7 @@ class Appointments extends Component {
                 title: "Patient",
                 render: (text, record) => renderName(record.patient),
                 sorter: (a, b) => sorterText(a.patient.user_id.first_name, b.patient.user_id.first_name),
-                ...getColumnSearchProps(this,"Patient", this.handleSearch, this.handleReset,
+                ...getColumnSearchProps(this, "Patient", this.handleSearch, this.handleReset,
                     "patient.user_id.first_name"),
 
             },
@@ -100,7 +125,7 @@ class Appointments extends Component {
                 title: "Doctor",
                 render: (text, record) => renderName(record.doctor, "Dr"),
                 sorter: (a, b) => sorterText(a.doctor.first_name, b.doctor.first_name),
-                ...getColumnSearchProps(this,"Doctor", this.handleSearch, this.handleReset,
+                ...getColumnSearchProps(this, "Doctor", this.handleSearch, this.handleReset,
                     "doctor.first_name"),
 
             },
@@ -179,7 +204,94 @@ class Appointments extends Component {
                                 </div>
                             </div>
                         </div>
+                        <div className="row">
+                            <div className="col-xl-3 col-sm-6 col-12">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <div className="dash-widget-header">
+										<span className="dash-widget-icon text-primary border-primary">
+											<i className="fe fe-users"></i>
+										</span>
+                                            <div className="dash-count">
+                                                <h3>{this.state.appointmentStats.scheduled}</h3>
+                                            </div>
+                                        </div>
+                                        <div className="dash-widget-info">
+                                            <h6 className="text-muted">Scheduled</h6>
+                                            <div className="progress progress-sm">
+                                                <div
+                                                    className="progress-bar bg-primary"
+                                                    style={{"width": this.getCompletionPercent("scheduled")}}></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-xl-3 col-sm-6 col-12">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <div className="dash-widget-header">
+										<span className="dash-widget-icon text-success">
+											<i className="fe fe-credit-card"></i>
+										</span>
+                                            <div className="dash-count">
+                                                <h3>{this.state.appointmentStats.ongoing}</h3>
+                                            </div>
+                                        </div>
+                                        <div className="dash-widget-info">
 
+                                            <h6 className="text-muted">In Progress</h6>
+                                            <div className="progress progress-sm">
+                                                <div className="progress-bar bg-success"
+                                                     style={{"width": this.getCompletionPercent("ongoing")}}></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-xl-3 col-sm-6 col-12">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <div className="dash-widget-header">
+										<span className="dash-widget-icon text-danger border-danger">
+											<i className="fe fe-money"></i>
+										</span>
+                                            <div className="dash-count">
+                                                <h3>{this.state.appointmentStats.cancelled}</h3>
+                                            </div>
+                                        </div>
+                                        <div className="dash-widget-info">
+                                            <h6 className="text-muted">Cancelled</h6>
+                                            <div className="progress progress-sm">
+                                                <div className="progress-bar bg-danger"
+                                                     style={{"width": this.getCompletionPercent("cancelled")}}></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-xl-3 col-sm-6 col-12">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <div className="dash-widget-header">
+										<span className="dash-widget-icon text-success">
+											<i className="fe fe-credit-card"></i>
+										</span>
+                                            <div className="dash-count">
+                                                <h3>{this.state.appointmentStats.completed}</h3>
+                                            </div>
+                                        </div>
+                                        <div className="dash-widget-info">
+                                            <h6 className="text-muted">Completed</h6>
+                                            <div className="progress progress-sm">
+                                                <div className="progress-bar bg-success"
+                                                     style={{"width": this.getCompletionPercent("completed")}}></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="card">

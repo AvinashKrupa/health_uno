@@ -22,7 +22,8 @@ class Profile extends Component {
             countryStateCity: {country: {}, state: {}, city: {}},
             countries: [],
             states: [],
-            cities: []
+            cities: [],
+            languages: []
         }
 
     }
@@ -38,7 +39,27 @@ class Profile extends Component {
             url: "v1/country",
             method: "GET",
         })
-        this.setState({data: profile.data, countries: countries.data});
+        let languages = await fetchApi({
+            url: "v1/languages",
+            method: "GET",
+        })
+        let selectedCountry = countries.data.find(country => profile.data.additional_info.address.country == country.name)
+        if(!selectedCountry)
+            selectedCountry=countries.data[0]
+        let selectedState = {id: profile.data.additional_info.address.state, name: profile.data.additional_info.address.state}
+        let selectedCity = {id: profile.data.additional_info.address.city, name: profile.data.additional_info.address.city}
+        this.setState({
+            data: profile.data,
+            countries: countries.data,
+            states: [selectedState],
+            cities: [selectedCity],
+            languages: languages.data,
+            countryStateCity: {
+                country: {id: selectedCountry.id, name: selectedCountry.name},
+                state: selectedState,
+                city: selectedCity
+            }
+        });
     }
 
     handleSelect = (key) => {
@@ -66,6 +87,7 @@ class Profile extends Component {
         });
     };
     handleChange = e => {
+        e.preventDefault()
         let data = this.state.updatedModel
         let name = e.target.name
         let value = e.target.value
@@ -91,7 +113,6 @@ class Profile extends Component {
             state: countryStateCity.state.name,
             country: countryStateCity.country.name
         }
-        console.log("additional_info>>>", data.additional_info)
         try {
             let result = await fetchApi({
                 url: "v1/user/updateProfile",
@@ -201,6 +222,7 @@ class Profile extends Component {
 
     }
 
+
     handleDropdownClick() {
         let isShown = this.state.showMenu
         this.setState({showMenu: !isShown})
@@ -287,6 +309,10 @@ class Profile extends Component {
                                                     <p className="col-sm-10">{this.state.data.user.dob}</p>
                                                 </div>
                                                 <div className="row">
+                                                    <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Language</p>
+                                                    <p className="col-sm-10">{changeCaseFirstLetter(this.state.data.user.language.name)}</p>
+                                                </div>
+                                                <div className="row">
                                                     <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Gender</p>
                                                     <p className="col-sm-10">{this.state.data.user.gender}</p>
                                                 </div>
@@ -321,13 +347,13 @@ class Profile extends Component {
                     </Modal.Header>
                     <Modal.Body>
                         {this.state.updatedModel && <div className="modal-body">
-                            <form onSubmit={this.updateProfile}>
+                            <form>
                                 <div className="row form-row">
                                     <div className="col-12 col-sm-6">
                                         <div className="form-group">
                                             <label>First Name</label>
                                             <input type="text" className="form-control"
-                                                   name="user.first_name"
+                                                   name="first_name"
                                                    onChange={this.handleChange}
                                                    value={this.state.updatedModel.user.first_name}/>
                                         </div>
@@ -336,7 +362,7 @@ class Profile extends Component {
                                         <div className="form-group">
                                             <label>Last Name</label>
                                             <input type="text" className="form-control"
-                                                   name="user.last_name"
+                                                   name="last_name"
                                                    onChange={this.handleChange}
                                                    value={this.state.updatedModel.user.last_name}/>
                                         </div>
@@ -358,7 +384,7 @@ class Profile extends Component {
                                         <div className="form-group">
                                             <label>Email ID</label>
                                             <input type="email" className="form-control"
-                                                   name="user.email"
+                                                   name="email"
                                                    onChange={this.handleChange}
                                                    value={this.state.updatedModel.user.email}/>
                                         </div>
@@ -369,6 +395,36 @@ class Profile extends Component {
                                             <input type="text" disabled={true}
                                                    value={this.state.updatedModel.user.mobile_number}
                                                    className="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>Gender</label>
+                                            <select value={this.state.updatedModel.user.gender}
+                                                    name="gender"
+                                                    onChange={(e) => this.handleChange(e)}
+                                                    className="form-control">
+                                                {constants.GENDER_DROPDOWN?.map(gender => {
+                                                    return <option
+                                                        value={gender}>{changeCaseFirstLetter(gender)}</option>
+                                                })}
+                                            </select>
+
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>Language</label>
+                                            <select value={this.state.updatedModel.user.language._id}
+                                                    name="language"
+                                                    onChange={(e) => this.handleChange(e)}
+                                                    className="form-control">
+                                                {this.state.languages?.map(lang => {
+                                                    return <option
+                                                        value={lang._id}>{changeCaseFirstLetter(lang.name)}</option>
+                                                })}
+                                            </select>
+
                                         </div>
                                     </div>
                                     <div className="col-12 col-sm-6">
@@ -435,7 +491,7 @@ class Profile extends Component {
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" className="btn btn-primary btn-block">Save Changes
+                                <button type="submit" onClick={this.updateProfile} className="btn btn-primary btn-block">Save Changes
                                 </button>
                             </form>
                         </div>}
