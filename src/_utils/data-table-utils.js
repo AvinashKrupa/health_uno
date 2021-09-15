@@ -110,6 +110,14 @@ export const renderAppointment = (date, text) => {
     </>
 }
 
+export const getTextClassForStatus = (status) => {
+    switch (status) {
+        case "active":
+            return "text-success"
+        default :
+            return "text-danger"
+    }
+}
 export const getColumnSearchProps = (context, dataIndex, handleSearch, handleReset, recordValueToCompare) => ({
     filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
         <div style={{padding: 8}}>
