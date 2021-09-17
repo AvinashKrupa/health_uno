@@ -39,6 +39,11 @@ class Appointments extends Component {
 
     async componentDidMount() {
         let appointments = await fetchApi({url: "v1/appointments", method: "GET"})
+        let appointmentStats = this.getStats(appointments.data)
+        this.setState({data: appointments.data, appointmentStats: appointmentStats});
+    }
+
+    getStats(appointments) {
         let appointmentStats = {
             "pending": 0,
             "completed": 0,
@@ -46,14 +51,14 @@ class Appointments extends Component {
             "ongoing": 0,
             "cancelled": 0
         }
-        appointments.data.forEach(appointment => {
+        appointments.forEach(appointment => {
             if (appointmentStats.hasOwnProperty(appointment.status))
                 appointmentStats[appointment.status] = appointmentStats[appointment.status] + 1
             else {
                 appointmentStats[appointment.status] = 1
             }
         })
-        this.setState({data: appointments.data, appointmentStats: appointmentStats});
+        return appointmentStats
     }
 
     async handleItemClick(record, dropdownItem) {
@@ -93,14 +98,18 @@ class Appointments extends Component {
             searchedColumn: dataIndex,
         });
     };
-
+    handleDataChange = (pagination, filters, sorter, extra) => {
+        console.log("currentDataSource>>>", extra.currentDataSource.length)
+        let appointmentStats = this.getStats(extra.currentDataSource)
+        this.setState({appointmentStats: appointmentStats});
+    }
     handleReset = clearFilters => {
         clearFilters();
         this.setState({searchText: ''});
     };
 
     getCompletionPercent(currentVal) {
-        let val=this.state.appointmentStats[currentVal]
+        let val = this.state.appointmentStats[currentVal]
         return `${(val * 100) / this.state.data.length}%`
     }
 
@@ -303,6 +312,7 @@ class Appointments extends Component {
                                                 style={{overflowX: "auto"}}
                                                 columns={columns}
                                                 // bordered
+                                                onChange={this.handleDataChange}
                                                 dataSource={data}
                                                 rowKey={(record) => record._id}
                                                 showSizeChanger={true}

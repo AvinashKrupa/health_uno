@@ -3,9 +3,9 @@ import SidebarNav from '../sidebar';
 import {Modal, Tab, Tabs} from 'react-bootstrap';
 import DatePicker from "react-datepicker";
 import {fetchApi} from "../../../_utils/http-utils";
-import {changeCaseFirstLetter, constants, getAddress, getFullName, assign} from "../../../_utils/common-utils";
+import {assign, changeCaseFirstLetter, constants, getAddress, getFullName} from "../../../_utils/common-utils";
 import moment from "moment";
-import {renderDropDown, renderText} from "../../../_utils/data-table-utils";
+import {getTextClassForStatus, renderDropDown} from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
 
 
@@ -18,7 +18,7 @@ class Profile extends Component {
             data: null,
             updatedModel: null,
             user_id: props.match.params.user_id,
-            type: props.match.params.type,
+            type: props.match.params.type || constants.USER_TYPE_PATIENT,
             countryStateCity: {country: {}, state: {}, city: {}},
             countries: [],
             states: [],
@@ -44,10 +44,16 @@ class Profile extends Component {
             method: "GET",
         })
         let selectedCountry = countries.data.find(country => profile.data.additional_info.address.country == country.name)
-        if(!selectedCountry)
-            selectedCountry=countries.data[0]
-        let selectedState = {id: profile.data.additional_info.address.state, name: profile.data.additional_info.address.state}
-        let selectedCity = {id: profile.data.additional_info.address.city, name: profile.data.additional_info.address.city}
+        if (!selectedCountry)
+            selectedCountry = countries.data[0]
+        let selectedState = {
+            id: profile.data.additional_info.address.state,
+            name: profile.data.additional_info.address.state
+        }
+        let selectedCity = {
+            id: profile.data.additional_info.address.city,
+            name: profile.data.additional_info.address.city
+        }
         this.setState({
             data: profile.data,
             countries: countries.data,
@@ -126,7 +132,6 @@ class Profile extends Component {
             })
 
             if (result) {
-                console.log("result>>>", result)
                 toast.success(result.message)
                 this.setState({data: data})
             }
@@ -157,7 +162,13 @@ class Profile extends Component {
             }
             if (result) {
                 toast.success(result.message)
-                this.setState({data: data})
+                let profile = await fetchApi({
+                    url: "v1/user/getUserProfile",
+                    method: "POST",
+                    body: {user_id: this.state.user_id, type: this.state.type}
+                })
+                this.setState({data: profile.data})
+
             }
         } catch (e) {
             console.log("error>>", e)
@@ -243,7 +254,7 @@ class Profile extends Component {
                         <div className="page-header">
                             <div className="row">
                                 <div className="col">
-                                    <h3 className="page-title">Profile</h3>
+                                    <h3 className="page-title">{`${this.state.type === constants.USER_TYPE_PATIENT ? "Patient " : " Doctor"} Profile`}</h3>
                                     <ul className="breadcrumb">
                                         <li className="breadcrumb-item"><a href="/admin">Dashboard</a></li>
                                         <li className="breadcrumb-item active">Profile</li>
@@ -263,12 +274,13 @@ class Profile extends Component {
                                         <div className="col ml-md-n2 profile-user-info">
                                             <h4 className="user-name mb-0">{getFullName(this.state.data.user)}</h4>
                                             <h6 className="text-muted">{this.state.data.user.email}</h6>
+                                            <h6 className={getTextClassForStatus(this.state.data.additional_info.status)}>
+                                                {changeCaseFirstLetter(this.state.data.additional_info.status)}</h6>
                                             <div className="user-Location"><i className="fa fa-map-marker"
-                                                                              aria-hidden="true"></i> {getAddress(this.state.data.additional_info.address)}
+                                                                              aria-hidden="true"/> {getAddress(this.state.data.additional_info.address)}
                                             </div>
                                         </div>
                                         <div className="col-auto profile-btn">
-                                            {renderText(this.state.data.additional_info.status)}
                                             {renderDropDown("Change Status",
                                                 (this.state.type === constants.USER_TYPE_PATIENT ? constants.PATIENT_STATUSES : constants.DOCTOR_STATUSES)
                                                     .filter(item => item !== this.state.data.additional_info.status)
@@ -335,7 +347,52 @@ class Profile extends Component {
                                 </div>
 
                             </Tab>
+                            {/*<Tab className="nav-link" eventKey={1} title="Additional Details">*/}
+                            {/*    <div className="row">*/}
+                            {/*        <div className="col-lg-12">*/}
+                            {/*            <div className="card">*/}
+                            {/*                {this.state.data && <div className="card-body">*/}
+                            {/*                    <h5 className="card-title d-flex justify-content-between">*/}
+                            {/*                        <span>Medical Details</span>*/}
+                            {/*                        <a className="edit-link" onClick={this.handleShow}>*/}
+                            {/*                            <i className="fa fa-edit mr-1"></i>Edit</a>*/}
+                            {/*                    </h5>*/}
+                            {/*                    <div className="row">*/}
+                            {/*                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Name</p>*/}
+                            {/*                        <p className="col-sm-10">{getFullName(this.state.data.user)}</p>*/}
+                            {/*                    </div>*/}
+                            {/*                    <div className="row">*/}
+                            {/*                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Date*/}
+                            {/*                            of Birth</p>*/}
+                            {/*                        <p className="col-sm-10">{this.state.data.user.dob}</p>*/}
+                            {/*                    </div>*/}
+                            {/*                    <div className="row">*/}
+                            {/*                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Language</p>*/}
+                            {/*                        <p className="col-sm-10">{changeCaseFirstLetter(this.state.data.user.language.name)}</p>*/}
+                            {/*                    </div>*/}
+                            {/*                    <div className="row">*/}
+                            {/*                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Gender</p>*/}
+                            {/*                        <p className="col-sm-10">{this.state.data.user.gender}</p>*/}
+                            {/*                    </div>*/}
+                            {/*                    <div className="row">*/}
+                            {/*                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Email*/}
+                            {/*                            ID</p>*/}
+                            {/*                        <p className="col-sm-10">{this.state.data.user.email}</p>*/}
+                            {/*                    </div>*/}
+                            {/*                    <div className="row">*/}
+                            {/*                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Mobile</p>*/}
+                            {/*                        <p className="col-sm-10">{this.state.data.user.mobile_number}</p>*/}
+                            {/*                    </div>*/}
+                            {/*                    <div className="row">*/}
+                            {/*                        <p className="col-sm-2 text-muted text-sm-right mb-0">Address</p>*/}
+                            {/*                        <p className="col-sm-10 mb-0">{getAddress(this.state.data.additional_info.address)}</p>*/}
+                            {/*                    </div>*/}
+                            {/*                </div>}*/}
+                            {/*            </div>*/}
+                            {/*        </div>*/}
+                            {/*    </div>*/}
 
+                            {/*</Tab>*/}
                         </Tabs>
 
                     </div>
@@ -491,7 +548,8 @@ class Profile extends Component {
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" onClick={this.updateProfile} className="btn btn-primary btn-block">Save Changes
+                                <button type="submit" onClick={this.updateProfile}
+                                        className="btn btn-primary btn-block">Save Changes
                                 </button>
                             </form>
                         </div>}
