@@ -43,7 +43,7 @@ class MessagePane extends Component {
     async loadMessagesForUser(conv, pageId = 1) {
         try {
             this.setState({
-                loading:true,
+                loading: true,
             })
             let result = await fetchApi({
                 url: "v1/chat/getMessages", method: "POST", body: {
@@ -61,7 +61,8 @@ class MessagePane extends Component {
                     loading: false,
                 })
             else {
-                messages = _.concat(messages, this.state.messages)
+                if (messages.length > 0)
+                    messages = _.concat(messages, this.state.messages)
                 this.setState({
                     messages: messages, pageId: pageId + 1, totalMessages: total,
                     shouldScrollMore: this.state.messages.length < total,
@@ -71,7 +72,7 @@ class MessagePane extends Component {
             return Promise.resolve()
         } catch (e) {
             this.setState({
-                loading:false,
+                loading: false,
             })
             console.log("Error>>>", e)
         }
@@ -190,7 +191,9 @@ class MessagePane extends Component {
                     {/*    </a>*/}
                     {/*</div>*/}
                 </div>
-                <MessageList messages={this.state.messages} user_id={this.state.user_id} loadMessagesForUser={this.loadMessagesForUser} pageId={this.state.pageId} shouldScrollMore={this.state.shouldScrollMore} loadingChatIndicator={this.state.loading}/>
+                <MessageList messages={this.state.messages} user_id={this.state.user_id}
+                             loadMessagesForUser={this.loadMessagesForUser} pageId={this.state.pageId}
+                             shouldScrollMore={this.state.shouldScrollMore} loadingChatIndicator={this.state.loading}/>
                 <div className="chat-footer">
                     <div className="input-group">
                         <div className="input-group-prepend">
