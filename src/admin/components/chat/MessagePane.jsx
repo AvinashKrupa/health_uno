@@ -118,7 +118,8 @@ class MessagePane extends Component {
         await this.loadMessagesForUser(conv)
     }
 
-    sendMessage() {
+    sendMessage = (e) => {
+        e.preventDefault();
         if (this.state.socketObj) {
             let finalMessage = {
                 message: this.state.text,
@@ -192,6 +193,7 @@ class MessagePane extends Component {
                 </div>
                 <MessageList messages={this.state.messages} user_id={this.state.user_id} loadMessagesForUser={this.loadMessagesForUser} pageId={this.state.pageId} shouldScrollMore={this.state.shouldScrollMore} loadingChatIndicator={this.state.loading}/>
                 <div className="chat-footer">
+                        <form onSubmit={this.sendMessage}>
                     <div className="input-group">
                         <div className="input-group-prepend">
                         </div>
@@ -199,14 +201,16 @@ class MessagePane extends Component {
                                placeholder="Type something"
                                onChange={(e) => this.handleTextChange(e)}/>
                         <div className="input-group-append">
-                            <button type="button" className="btn msg-send-btn" onClick={(e) => {
-                                e.preventDefault()
-                                this.sendMessage()
-                            }}>
+                            <button type="button" className="btn msg-send-btn"
+                             onClick={(e) => {
+                                this.sendMessage(e)
+                            }}
+                            >
                                 <i className="fab fa-telegram-plane"></i>
                             </button>
                         </div>
                     </div>
+                        </form>
                 </div>
             </div>
         );
