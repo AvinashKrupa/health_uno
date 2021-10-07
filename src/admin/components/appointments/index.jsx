@@ -60,6 +60,15 @@ class Appointments extends Component {
     });
   }
 
+  componentDidUpdate() {
+    $(".wrapper1").scroll(function () {
+      $(".table-responsive").scrollLeft($(".wrapper1").scrollLeft());
+    });
+    $(".table-responsive").scroll(function () {
+      $(".wrapper1").scrollLeft($(".table-responsive").scrollLeft());
+    });
+  }
+
   getStats(appointments) {
     let appointmentStats = {
       pending: 0,
@@ -98,9 +107,9 @@ class Appointments extends Component {
       } catch (e) {
         console.log("error>>", e);
       }
-    }else{
-        const { history } = this.props;
-        history.push(`/slotBooking/${record.doctor._id}/${record._id}`)
+    } else {
+      const { history } = this.props;
+      history.push(`/slotBooking/${record.doctor._id}/${record._id}`);
     }
   }
 
@@ -136,17 +145,16 @@ class Appointments extends Component {
 
   handleChangeOption = (status) => {
     const optionData = statusArray.filter((item) => item !== status);
-    if(status === 'scheduled'){
-      return optionData
-    }else{
-      const index = optionData.findIndex(option => option === 'reschedule')
+    if (status === "scheduled") {
+      return optionData;
+    } else {
+      const index = optionData.findIndex((option) => option === "reschedule");
       if (index > -1) {
         optionData.splice(index, 1);
-     }
-      return optionData
+      }
+      return optionData;
     }
-
-  }
+  };
 
   render() {
     const { data } = this.state;
@@ -369,26 +377,31 @@ class Appointments extends Component {
               <div className="col-md-12">
                 <div className="card">
                   <div className="card-body">
+                    <div className="wrapper1">
+                      <div className="div1"></div>
+                    </div>
                     <div className="table-responsive">
-                      <Table
-                        className="table-striped"
-                        style={{ overflowX: "auto" }}
-                        columns={columns}
-                        // bordered
-                        onChange={this.handleDataChange}
-                        dataSource={data}
-                        rowKey={(record) => record._id}
-                        showSizeChanger={true}
-                        pagination={{
-                          total: data.length,
-                          showTotal: (total, range) =>
-                            `Showing ${range[0]} to ${range[1]} of ${total} entries`,
-                          showSizeChanger: true,
-                          onShowSizeChange: onShowSizeChange,
-                          itemRender: itemRender,
-                          position: ["topRight", "bottomRight"],
-                        }}
-                      />
+                      <div className="div2">
+                        <Table
+                          className="table-striped"
+                          style={{ overflowX: "auto", overflow: "hidden" }}
+                          columns={columns}
+                          // bordered
+                          onChange={this.handleDataChange}
+                          dataSource={data}
+                          rowKey={(record) => record._id}
+                          showSizeChanger={true}
+                          pagination={{
+                            total: data.length,
+                            showTotal: (total, range) =>
+                              `Showing ${range[0]} to ${range[1]} of ${total} entries`,
+                            showSizeChanger: true,
+                            onShowSizeChange: onShowSizeChange,
+                            itemRender: itemRender,
+                            position: ["topRight", "bottomRight"],
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
