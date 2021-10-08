@@ -40,6 +40,7 @@ import FormMask from './components/formask';
 import FormValidation from './components/formvalidation';
 import BlankPage from './components/blankpage';
 import Components from './components/component';
+import SlotBooking from './components/SlotBooking';
 
 
 const AppUniversal = function (props) {
@@ -53,6 +54,7 @@ const AppUniversal = function (props) {
                     <Route path="/dashboard" exact component={Dashboard}/>
                     <Route path="/admin" exact component={Dashboard}/>
                     <Route path="/appointment-list" exact component={Appointments}/>
+                    <Route path="/slotBooking/:doctor_id/:appoinment_id" exact component={SlotBooking}/>
                     <Route path="/specialities" exact component={Specialities}/>
                     <Route path="/sliders" exact component={Sliders}/>
                     <Route path="/categories" exact component={Categories}/>

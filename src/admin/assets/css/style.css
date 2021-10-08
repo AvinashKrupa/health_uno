@@ -4983,3 +4983,207 @@ table.table-inbox tbody tr.checked {
 		display: none;
 	}
 }
+
+/*-----------------
+	29. Slot Booking
+-----------------------*/
+
+.patient-slot-booking {
+}
+
+.fa-chevron-left {
+  padding-right: 51px;
+  padding-top: 20px;
+}
+
+.fa-chevron-right {
+  padding-left: 45px;
+  padding-top: 20px;
+}
+
+.react-datepicker-wrapper {
+  padding-left: 80px !important;
+}
+
+.react-datepicker-wrapper input {
+    width: 100px;
+}
+
+.fa-calendar-alt-slot {
+  padding-left: 5px !important;
+  border-color: #28a3da;
+  color: #28a3da;
+  width: 35px;
+  height: 35px;
+}
+
+.patient-slot-booking-btn {
+  margin-top: 54px;
+  width: 335px;
+  height: 50px;
+  background: #28a3da;
+  border-radius: 8px;
+  margin-bottom: 61px;
+}
+
+.patient-order-booking-btn {
+  margin-top: 54px;
+  width: 335px;
+  height: 50px;
+  background: #28a3da;
+  border-radius: 8px;
+  margin-bottom: 61px;
+  margin-left: 20px;
+}
+
+.patient-booking-detail {
+}
+
+.form-group {}
+.form-group br {
+    display: none;
+  }
+
+
+.textarea-label,
+.form-label {
+  font-weight: 500;
+  font-size: 20px;
+}
+
+.slot-appointment-detail {
+  margin-top: 10px;
+  padding: 35px;
+  border: 2px solid rgba(27, 27, 27, 0.15);
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+
+.empty-text {
+  text-align: center;
+}
+
+.pl-50 {
+	padding-left: 50px;
+  }
+  .mb-50 {
+	margin-bottom: 50px;
+  }
+  .back-nav-container {
+	display: flex;
+	align-items: center;
+}
+.back-nav-container > img {
+	  height: 20px;
+	  width: 31px;
+	  cursor: pointer;
+	}
+	.back-nav-container > span {
+	  margin-left: 18px;
+	}
+  .back-navigation {
+	margin-top: 32px !important;
+	text-align: left !important;
+	background: white !important;
+	width: 100%;
+	padding-top: 10px;
+	left: 0px;
+	height: 50px;
+	z-index: 1;
+	display: inherit !important;
+  }
+  .slot-evening,
+  .slot-day {
+	margin-top: 20px;
+  }
+  .patient-slot-booking-btn {
+	margin-top: 54px;
+	width: 335px;
+	height: 50px;
+	background: #28a3da;
+	border-radius: 8px;
+	margin-bottom: 61px;
+  }
+  .empty-text {
+	text-align: center;
+  }
+.slot-booking-btn{
+	color: #000;
+}
+.slot-booking-btn:hover{
+	color: #000;
+}
+
+/* slot generator  */
+
+.slot-timings-title {
+	margin-right: 77px;
+	width: 80px;
+	font-weight: 500;
+	line-height: 20px;
+	letter-spacing: 0.3058592677116394px;
+	padding-top: 10px;
+  }
+  
+  .slot-timings-button {
+	height: 50px;
+	width: 160px;
+	margin: 6px 10px;
+	border-radius: 12px;
+	margin-right: 24px;
+	background: rgba(255, 255, 255, 1);
+	border: 2px solid rgba(27, 27, 27, 0.5);
+  }
+
+  .active-btn {
+    background: rgba(40, 163, 218, 1) !important;
+}
+
+  .slot-timings-button-text {
+	font-size: 18px;
+	font-weight: 500;
+	line-height: 22px;
+	letter-spacing: 0.3058592677116394px;
+	color: rgba(27, 27, 27, 0.5);
+  }
+  
+  .slot-timings-button:hover {
+	background: rgba(40, 163, 218, 1);
+  }
+  
+  .slot-timings-button:hover .slot-timings-button-text {
+	color: white;
+  }
+  
+  .time-select {
+	display: flex;
+	padding-right: 60px;
+  }
+  
+  .slot-evening {
+	margin-top: 54px;
+  }
+  .slot-details{
+	font-weight: 500;
+    font-size: 20px;
+  }
+  .slot-details-info{
+	font-size: 18px;
+    font-weight: 300;
+  }
+  .wrapper1, .table-responsive{
+	overflow-x: scroll; 
+	overflow-y:hidden;
+  }
+  .wrapper1{
+	 height: 20px; 
+   }
+   .table-responsive{
+	}
+   .div1 {
+	  width:2000px; height: 20px; 
+	}
+   .div2 {
+	  width:2000px; 
+	  overflow: auto;
+   }
