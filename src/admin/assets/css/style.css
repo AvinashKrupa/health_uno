@@ -5181,9 +5181,9 @@ table.table-inbox tbody tr.checked {
    .table-responsive{
 	}
    .div1 {
-	  width:1650px; height: 20px; 
+	  width:2000px; height: 20px; 
 	}
    .div2 {
-	  width:1650px; 
+	  width:2000px; 
 	  overflow: auto;
    }
