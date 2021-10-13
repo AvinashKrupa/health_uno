@@ -377,15 +377,11 @@ class Appointments extends Component {
               <div className="col-md-12">
                 <div className="card">
                   <div className="card-body">
-                    <div className="wrapper1">
-                      <div className="div1"></div>
-                    </div>
-                    <div className="table-responsive">
-                      <div className="div2">
+                    <div>
                         <Table
                           className="table-striped"
-                          style={{ overflowX: "auto", overflow: "hidden" }}
                           columns={columns}
+                          scroll={{ x: 1300 }}
                           // bordered
                           onChange={this.handleDataChange}
                           dataSource={data}
@@ -401,7 +397,6 @@ class Appointments extends Component {
                             position: ["topRight", "bottomRight"],
                           }}
                         />
-                      </div>
                     </div>
                   </div>
                 </div>
