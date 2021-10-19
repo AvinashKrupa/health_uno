@@ -71,6 +71,12 @@ class SidebarNav extends Component {
                             <li className={pathname.includes('specialities') ? "active" : ""}>
                                 <Link to="/specialities"><img src={SpecialitiesIcon} className="navigation_icon" alt="Specialities" /> <span>Specialities</span></Link>
                             </li>
+                            <li className={pathname.includes('revenue') ? "active" : ""}>
+                                <Link to="/revenue"><i className="fe fe-money"/> <span>Revenue</span></Link>
+                            </li>
+                            <li className={pathname.includes('about-us') ? "active" : ""}>
+                                <Link to="/about-us"><i className="fe fe-question"></i> <span>About Us</span></Link>
+                            </li>
 
 
                             {/*<li className={pathname.includes('reviews') ?"active" :""}> */}
