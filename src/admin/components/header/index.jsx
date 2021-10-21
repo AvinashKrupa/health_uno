@@ -3,6 +3,7 @@ import logo from "../../assets/images/logo.png";
 import logoicon from "../../assets/images/logo-small.png";
 import avatar from "../../assets/images/avatar-01.jpg";
 import Dropdown from "react-bootstrap/Dropdown";
+import toast from "react-hot-toast";
 import $ from "jquery";
 import { fetchApi } from "../../../_utils/http-utils";
 
@@ -54,9 +55,11 @@ class Header extends Component {
                 toast.success(result.message)
                 localStorage.clear();
                 this.props.history.push("/login")
+            }else{
+                toast.success(result.message)
             }
         } catch (e) {
-            console.log("error>>", e)
+            toast.error(e.response.message || 'Something went wrong')
         }
 
     }

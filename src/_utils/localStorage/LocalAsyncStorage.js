@@ -24,7 +24,7 @@ const getStorageData = (key) => {
         return value;
     } catch (e) {
         console.log('Error in retrieving value from asyncStorage', e.message);
-        return Promise.resolve(null)
+        return null
     }
 };
 
