@@ -5171,3 +5171,7 @@ table.table-inbox tbody tr.checked {
 	font-size: 18px;
     font-weight: 300;
   }
+  .navigation_icon{
+	height: 20px !important;
+	width: 24px !important;
+  }
