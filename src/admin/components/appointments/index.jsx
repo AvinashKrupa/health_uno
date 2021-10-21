@@ -34,6 +34,7 @@ class Appointments extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      total: null,
       data: [],
       showMenu: {},
       searchText: "",
@@ -131,7 +132,10 @@ class Appointments extends Component {
   };
   handleDataChange = (pagination, filters, sorter, extra) => {
     let appointmentStats = this.getStats(extra.currentDataSource);
-    this.setState({ appointmentStats: appointmentStats });
+    this.setState({
+      appointmentStats: appointmentStats,
+      total: extra.currentDataSource.length,
+    });
   };
   handleReset = (clearFilters) => {
     clearFilters();
@@ -174,6 +178,7 @@ class Appointments extends Component {
             a.patient.user_id.first_name,
             b.patient.user_id.first_name
           ),
+
         ...getColumnSearchProps(
           this,
           "Patient",
@@ -377,31 +382,29 @@ class Appointments extends Component {
               <div className="col-md-12">
                 <div className="card">
                   <div className="card-body">
-                    <div className="wrapper1">
-                      <div className="div1"></div>
-                    </div>
-                    <div className="table-responsive">
-                      <div className="div2">
-                        <Table
-                          className="table-striped"
-                          style={{ overflowX: "auto", overflow: "hidden" }}
-                          columns={columns}
-                          // bordered
-                          onChange={this.handleDataChange}
-                          dataSource={data}
-                          rowKey={(record) => record._id}
-                          showSizeChanger={true}
-                          pagination={{
-                            total: data.length,
-                            showTotal: (total, range) =>
-                              `Showing ${range[0]} to ${range[1]} of ${total} entries`,
-                            showSizeChanger: true,
-                            onShowSizeChange: onShowSizeChange,
-                            itemRender: itemRender,
-                            position: ["topRight", "bottomRight"],
-                          }}
-                        />
-                      </div>
+                    <div>
+                      <Table
+                        className="table-striped"
+                        columns={columns}
+                        scroll={{ x: 1300 }}
+                        // bordered
+                        onChange={this.handleDataChange}
+                        dataSource={data}
+                        rowKey={(record) => record._id}
+                        showSizeChanger={true}
+                        pagination={{
+                          position: ["topRight", "bottomRight"],
+                          total:
+                            this.state.total >= 0
+                              ? this.state.total
+                              : data.length,
+                          showTotal: (total, range) =>
+                            `Showing ${range[0]} to ${range[1]} of ${total} entries`,
+                          showSizeChanger: true,
+                          onShowSizeChange: onShowSizeChange,
+                          itemRender: itemRender,
+                        }}
+                      />
                     </div>
                   </div>
                 </div>

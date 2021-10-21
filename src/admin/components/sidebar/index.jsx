@@ -1,5 +1,15 @@
 import React, {Component} from "react";
 import {Link, withRouter} from "react-router-dom";
+import DashboardIcon from '../../assets/images/dashboard.svg'
+import AppointmentsIcon from '../../assets/images/appointment.svg'
+import CategoriesIcon from '../../assets/images/category.svg'
+import DepartmentsIcon from '../../assets/images/department.svg'
+import DoctorsIcon from '../../assets/images/doctor.svg'
+import LanguagesIcon from '../../assets/images/language.svg'
+import PatientsIcon from '../../assets/images/patient.svg'
+import QualificationsIcon from '../../assets/images/qualification.svg'
+import SlidersIcon from '../../assets/images/sliders.svg'
+import SpecialitiesIcon from '../../assets/images/specialist.svg'
 import {Scrollbars} from "react-custom-scrollbars";
 
 class SidebarNav extends Component {
@@ -27,39 +37,39 @@ class SidebarNav extends Component {
                     <div id="sidebar-menu" className="sidebar-menu">
                         <ul>
                             <li className={pathname === '/admin' ? "active" : ""}>
-                                <Link to="/admin"><i className="fe fe-home"/> <span>Dashboard</span></Link>
+                                <Link to="/admin"><img src={DashboardIcon} className="navigation_icon" alt="dashboard" /> <span>Dashboard</span></Link>
                             </li>
                             <li className={pathname.includes('appointment-list') ? "active" : ""}>
-                                <Link to="/appointment-list"><i className="fe fe-layout"/>
+                                <Link to="/appointment-list"><img src={AppointmentsIcon} className="navigation_icon" alt="appoinments" />
                                     <span>Appointments</span></Link>
                             </li>
                             <li className={pathname.includes('categories') ? "active" : ""}>
-                                <Link to="/categories"><i className="fe fe-globe"/> <span>Categories</span></Link>
+                                <Link to="/categories"><img src={CategoriesIcon} className="navigation_icon" alt="categories" /> <span>Categories</span></Link>
                             </li>
                             <li className={pathname.includes('chat') ? "active" : ""}>
-                                <Link to="/chat"><i className="fe fe-messanger"/> <span>Chat</span></Link>
+                                <Link to="/chat"><i className="fe fe-messanger navigation_icon"/> <span>Chat</span></Link>
                             </li>
                             <li className={pathname.includes('departments') ? "active" : ""}>
-                                <Link to="/departments"><i className="fe fe-rocket"/> <span>Departments</span></Link>
+                                <Link to="/departments"><img src={DepartmentsIcon} className="navigation_icon" alt="Departments" /> <span>Departments</span></Link>
                             </li>
                             <li className={pathname.includes('doctor-list') ? "active" : ""}>
-                                <Link to="/doctor-list"><i className="fe fe-user-plus"/> <span>Doctors</span></Link>
+                                <Link to="/doctor-list"><img src={DoctorsIcon} className="navigation_icon" alt="Doctors" /> <span>Doctors</span></Link>
                             </li>
                             <li className={pathname.includes('languages') ? "active" : ""}>
-                                <Link to="/languages"><i className="fe fe-globe"/> <span>Languages</span></Link>
+                                <Link to="/languages"><img src={LanguagesIcon} className="navigation_icon" alt="Languages" /> <span>Languages</span></Link>
                             </li>
 
                             <li className={pathname.includes('patient-list') ? "active" : ""}>
-                                <Link to="/patient-list"><i className="fe fe-users"/> <span>Patients</span></Link>
+                                <Link to="/patient-list"><img src={PatientsIcon} className="navigation_icon" alt="Patients" /> <span>Patients</span></Link>
                             </li>
                             <li className={pathname.includes('qualifications') ? "active" : ""}>
-                                <Link to="/qualifications"><i className="fe fe-book"/> <span>Qualifications</span></Link>
+                                <Link to="/qualifications"><img src={QualificationsIcon} className="navigation_icon" alt="Qualifications" /> <span>Qualifications</span></Link>
                             </li>
                             <li className={pathname.includes('sliders') ? "active" : ""}>
-                                <Link to="/sliders"><i className="fe fe-columns"/> <span>Sliders</span></Link>
+                                <Link to="/sliders"><img src={SlidersIcon} className="navigation_icon" alt="Sliders" /> <span>Sliders</span></Link>
                             </li>
                             <li className={pathname.includes('specialities') ? "active" : ""}>
-                                <Link to="/specialities"><i className="fe fe-heart-o"/> <span>Specialities</span></Link>
+                                <Link to="/specialities"><img src={SpecialitiesIcon} className="navigation_icon" alt="Specialities" /> <span>Specialities</span></Link>
                             </li>
 
 

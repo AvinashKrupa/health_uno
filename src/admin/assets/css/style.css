@@ -5171,19 +5171,7 @@ table.table-inbox tbody tr.checked {
 	font-size: 18px;
     font-weight: 300;
   }
-  .wrapper1, .table-responsive{
-	overflow-x: scroll; 
-	overflow-y:hidden;
+  .navigation_icon{
+	height: 20px !important;
+	width: 24px !important;
   }
-  .wrapper1{
-	 height: 20px; 
-   }
-   .table-responsive{
-	}
-   .div1 {
-	  width:2000px; height: 20px; 
-	}
-   .div2 {
-	  width:2000px; 
-	  overflow: auto;
-   }
