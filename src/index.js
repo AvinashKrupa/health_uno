@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 //fontawesome
 import '../node_modules/font-awesome/css/font-awesome.min.css';
 import 'react-image-lightbox/style.css';
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import "react-datepicker/dist/react-datepicker.css";
 //carousel
 import "slick-carousel/slick/slick.css";
