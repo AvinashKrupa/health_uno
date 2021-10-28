@@ -1,12 +1,17 @@
 import React from "react";
 import Loader from "react-loader-spinner";
-import './spinner.css'
 
 const Spinner = ({ showLoader, width, height }) => {
   const renderer = () => {
+    const style = {
+      position: "fixed",
+      top: "50%",
+      left: "60%",
+      transform: "translate(-50%, -50%)",
+    };
     if (showLoader) {
       return (
-        <div className="spinner">
+        <div style={style}>
           <Loader
             type="ThreeDots"
             color="#1b5a90"
