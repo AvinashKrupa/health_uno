@@ -3,7 +3,9 @@ import logo from "../../assets/images/logo.png";
 import logoicon from "../../assets/images/logo-small.png";
 import avatar from "../../assets/images/avatar-01.jpg";
 import Dropdown from "react-bootstrap/Dropdown";
+import toast from "react-hot-toast";
 import $ from "jquery";
+import { fetchApi } from "../../../_utils/http-utils";
 
 
 class Header extends Component {
@@ -40,6 +42,25 @@ class Header extends Component {
         require('../../assets/css/font-awesome.min.css')
         require('../../assets/css/style.css')
         // }
+
+    }
+
+    handleLogout = async() => {
+        try {
+            let result = await fetchApi({
+                url: "v1/auth/logout",
+                method: "POST",
+            })
+            if (result.status === 200) {
+                toast.success(result.message)
+                localStorage.clear();
+                this.props.history.push("/login")
+            }else{
+                toast.success(result.message)
+            }
+        } catch (e) {
+            toast.error(e.response.message || 'Something went wrong')
+        }
 
     }
 
@@ -200,9 +221,9 @@ class Header extends Component {
                                         </div>
                                     </div>
                                 </Dropdown.Item>
-                                <Dropdown.Item href="/profile"> My Profile</Dropdown.Item>
-                                <Dropdown.Item href="/settings">Settings</Dropdown.Item>
-                                <Dropdown.Item href="/login">Logout</Dropdown.Item>
+                                {/* <Dropdown.Item href="/profile"> My Profile</Dropdown.Item>
+                                <Dropdown.Item href="/settings">Settings</Dropdown.Item> */}
+                                <Dropdown.Item onClick={this.handleLogout}>Logout</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                     </li>

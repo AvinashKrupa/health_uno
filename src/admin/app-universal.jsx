@@ -41,6 +41,7 @@ import FormValidation from './components/formvalidation';
 import BlankPage from './components/blankpage';
 import Components from './components/component';
 import SlotBooking from './components/SlotBooking';
+import PrivateRoute from './HOC/privateRoute';
 
 
 const AppUniversal = function (props) {
@@ -51,24 +52,24 @@ const AppUniversal = function (props) {
                 <Route render={(props) => <Header {...props}/>}/>
                 <Switch>
                     <Route path="/" exact component={Login}/>
-                    <Route path="/dashboard" exact component={Dashboard}/>
-                    <Route path="/admin" exact component={Dashboard}/>
-                    <Route path="/appointment-list" exact component={Appointments}/>
-                    <Route path="/slotBooking/:doctor_id/:appoinment_id" exact component={SlotBooking}/>
-                    <Route path="/specialities" exact component={Specialities}/>
-                    <Route path="/sliders" exact component={Sliders}/>
-                    <Route path="/categories" exact component={Categories}/>
-                    <Route path="/languages" exact component={Languages}/>
-                    <Route path="/departments" exact component={Departments}/>
-                    <Route path="/qualifications" exact component={Qualifications}/>
-                    <Route path="/doctor-list" exact component={Doctors}/>
-                    <Route path="/patient-list" exact component={Patients}/>
-                    <Route path="/chat" exact component={Chat}/>
-                    <Route path="/reviews" exact component={Reviews}/>
-                    <Route path="/profile/:user_id/:type" exact component={Profile}/>
-                    <Route path="/transactions-list" exact component={Transaction}/>
-                    <Route path="/settings" exact component={Settings}/>
-                    <Route path="/invoice-report" exact component={InvoiceReport}/>
+                    <PrivateRoute path="/dashboard" exact component={Dashboard}/>
+                    <PrivateRoute path="/admin" exact component={Dashboard}/>
+                    <PrivateRoute path="/appointment-list" exact component={Appointments}/>
+                    <PrivateRoute path="/slotBooking/:doctor_id/:appoinment_id" exact component={SlotBooking}/>
+                    <PrivateRoute path="/specialities" exact component={Specialities}/>
+                    <PrivateRoute path="/sliders" exact component={Sliders}/>
+                    <PrivateRoute path="/categories" exact component={Categories}/>
+                    <PrivateRoute path="/languages" exact component={Languages}/>
+                    <PrivateRoute path="/departments" exact component={Departments}/>
+                    <PrivateRoute path="/qualifications" exact component={Qualifications}/>
+                    <PrivateRoute path="/doctor-list" exact component={Doctors}/>
+                    <PrivateRoute path="/patient-list" exact component={Patients}/>
+                    <PrivateRoute path="/chat" exact component={Chat}/>
+                    <PrivateRoute path="/reviews" exact component={Reviews}/>
+                    <PrivateRoute path="/profile/:user_id/:type" exact component={Profile}/>
+                    <PrivateRoute path="/transactions-list" exact component={Transaction}/>
+                    <PrivateRoute path="/settings" exact component={Settings}/>
+                    <PrivateRoute path="/invoice-report" exact component={InvoiceReport}/>
                     <Route path="/blog" exact component={Blog}/>
                     <Route path="/blog-details" exact component={BlogDetails}/>
                     <Route path="/add-blog" exact component={AddBlog}/>

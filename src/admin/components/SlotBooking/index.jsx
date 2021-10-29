@@ -60,12 +60,12 @@ const SlotBooking = (props) => {
           body: params,
         });
         if (result.status === 200) {
-          toast.success(response.data.message);
+          toast.success(result.message);
           setTimeout(() => {
             props.history.push('/appointment-list')
           }, 1000);
         } else {
-          toast.error(response.data.message);
+          toast.error(result.message);
         }
       } catch (e) {
         console.log('e.error :>> ', e.error);
