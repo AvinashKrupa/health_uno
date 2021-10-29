@@ -42,6 +42,8 @@ import BlankPage from './components/blankpage';
 import Components from './components/component';
 import SlotBooking from './components/SlotBooking';
 import PrivateRoute from './HOC/privateRoute';
+import CkEditor from './components/CkEditor';
+import RevenuePage from './components/Revenue';
 
 
 const AppUniversal = function (props) {
@@ -55,6 +57,7 @@ const AppUniversal = function (props) {
                     <PrivateRoute path="/dashboard" exact component={Dashboard}/>
                     <PrivateRoute path="/admin" exact component={Dashboard}/>
                     <PrivateRoute path="/appointment-list" exact component={Appointments}/>
+                    <PrivateRoute path="/revenue" exact component={RevenuePage}/>
                     <PrivateRoute path="/slotBooking/:doctor_id/:appoinment_id" exact component={SlotBooking}/>
                     <PrivateRoute path="/specialities" exact component={Specialities}/>
                     <PrivateRoute path="/sliders" exact component={Sliders}/>
@@ -91,6 +94,7 @@ const AppUniversal = function (props) {
                     <Route path="/form-horizontal" exact component={FormHorizontal}/>
                     <Route path="/form-mask" exact component={FormMask}/>
                     <Route path="/form-validation" exact component={FormValidation}/>
+                    <Route path="/about-us" exact component={CkEditor}/>
                 </Switch>
             </div>
 
