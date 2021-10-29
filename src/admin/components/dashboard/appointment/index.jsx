@@ -52,7 +52,7 @@ class TableAppointmentList extends Component {
           dataSource={this.props.appointments}
           rowKey={(record) => record.id}
           pagination={{
-            pageSize: 5,
+            pageSize: 10,
           }}
         />
       </div>

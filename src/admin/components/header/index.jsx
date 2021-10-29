@@ -221,8 +221,8 @@ class Header extends Component {
                                         </div>
                                     </div>
                                 </Dropdown.Item>
-                                <Dropdown.Item href="/profile"> My Profile</Dropdown.Item>
-                                <Dropdown.Item href="/settings">Settings</Dropdown.Item>
+                                {/* <Dropdown.Item href="/profile"> My Profile</Dropdown.Item>
+                                <Dropdown.Item href="/settings">Settings</Dropdown.Item> */}
                                 <Dropdown.Item onClick={this.handleLogout}>Logout</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
