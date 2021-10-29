@@ -27,17 +27,16 @@ class Dashboard extends Component {
       url: "v1/appointments",
       method: "GET",
     });
-    let patients = await fetchApi({ url: "v1/patients", method: "GET" });
+    // let patients = await fetchApi({ url: "v1/patients", method: "GET" });
     let headerData = await fetchApi({
       url: "v1/dashboard/headerData",
       method: "GET",
     });
-    let doctors = await fetchApi({ url: "v1/doctors", method: "GET" });
-    console.log("headerData :>> ", headerData);
+    // let doctors = await fetchApi({ url: "v1/doctors", method: "GET" });
     this.setState({
       appointments: appointments.data,
-      patients: patients.data,
-      doctors: doctors.data,
+      // patients: patients.data,
+      // doctors: doctors.data,
       headerData: headerData.data,
       loading: false,
     });
@@ -138,7 +137,7 @@ class Dashboard extends Component {
                             <i className="fe fe-folder"></i>
                           </span>
                           <div className="dash-count">
-                            <h3>${this.state.headerData.revenue}</h3>
+                            <h3>₹{this.state.headerData.revenue}</h3>
                           </div>
                         </div>
                         <div className="dash-widget-info">
@@ -178,7 +177,7 @@ class Dashboard extends Component {
               </div> */}
                 </div>
                 {/*  row */}
-                <div className="row">
+                {/* <div className="row">
                   <div className="col-md-6 col-lg-6">
                     <div className="card card-table flex-fill">
                       <div className="card-header">
@@ -199,7 +198,7 @@ class Dashboard extends Component {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
                 <div className="row">
                   <div className="col-md-12 col-lg-12">
                     <div className="card card-table flex-fill">
