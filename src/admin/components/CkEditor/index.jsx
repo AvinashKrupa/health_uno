@@ -1,15 +1,58 @@
-import React, { Component, useState } from "react";
-import { Row, Col } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
+import toast from "react-hot-toast";
 import DecoupledcEditor from "@ckeditor/ckeditor5-build-decoupled-document";
 import SidebarNav from "../sidebar";
 import CustomButton from "../CustomButton";
-
-
-
+import { fetchApi } from "../../../_utils/http-utils";
 
 const CkEditor = ({}) => {
   const [editorValue, setEditorValue] = useState("");
+
+  useEffect(() => {
+    async function fetchConfig() {
+      try {
+        let configDetails = await fetchApi({
+          url: "v1/configs",
+          method: "GET",
+        });
+        if (configDetails.status === 200) {
+          const editorVal = configDetails.data.find(
+            (data) => data.name === "about_us"
+          );
+          setEditorValue(editorVal.value);
+          toast.success(configDetails.message);
+        } else {
+          toast.error(configDetails.message);
+        }
+      } catch (error) {
+        toast.error(error.error);
+      }
+    }
+
+    fetchConfig();
+  }, []);
+
+  const handleUpdateValue = async () => {
+    let body = { name: "about_us", value: editorValue };
+    if (editorValue !== "") {
+      try {
+        const result = await fetchApi({
+          url: "v1/config/update",
+          method: "POST",
+          body: body,
+        });
+        if (result.status === 200) {
+          toast.success(result.message);
+        } else {
+          toast.error(result.message);
+        }
+      } catch (error) {
+        toast.error(error.error);
+      }
+    }
+  };
+
   console.log("editorValue :>> ", editorValue);
   return (
     <>
@@ -33,6 +76,7 @@ const CkEditor = ({}) => {
               }}
               onReady={(editor) => {
                 // You can store the "editor" and use when it is needed.
+                editor.editing.view.focus();
                 editor.editing.view.change((writer) => {
                   writer.setStyle(
                     "height",
@@ -40,10 +84,12 @@ const CkEditor = ({}) => {
                     editor.editing.view.document.getRoot()
                   );
                 });
-                const toolbarContainer = document.querySelector( '.document-editor__toolbar' );
+                const toolbarContainer = document.querySelector(
+                  ".document-editor__toolbar"
+                );
 
-                toolbarContainer.appendChild( editor.ui.view.toolbar.element );
-        
+                toolbarContainer.appendChild(editor.ui.view.toolbar.element);
+
                 window.editor = editor;
                 // editor.ui
                 //   .getEditableElement()
@@ -56,6 +102,7 @@ const CkEditor = ({}) => {
                 console.log({ event, editor, data });
               }}
               onBlur={(event, editor) => {
+                editor.editing.view.focus();
                 console.log("Blur.", editor);
               }}
               onFocus={(event, editor) => {
@@ -64,7 +111,7 @@ const CkEditor = ({}) => {
             />
             <CustomButton
               className={"patient-slot-booking-btn float-right"}
-              // onClick={handleNextClick}
+              onClick={() => handleUpdateValue()}
               text={"Update"}
             />
           </div>
