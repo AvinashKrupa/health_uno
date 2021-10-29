@@ -1,5 +1,5 @@
 # Stage 1
-FROM node:alpine as react-build
+FROM node:14.4-alpine3.11 as react-build
 WORKDIR /app
 COPY . ./
 RUN npm install
