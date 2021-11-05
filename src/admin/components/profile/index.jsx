@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import SidebarNav from "../sidebar";
-import {Modal, Tab, Tabs} from "react-bootstrap";
+import {Col, Form, Row, Modal, Tab, Tabs} from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import {fetchApi} from "../../../_utils/http-utils";
 import {
@@ -16,6 +16,7 @@ import {
     renderDropDown,
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
+import Radio from "../../commons/Radio";
 
 class Profile extends Component {
     constructor(props) {
@@ -34,6 +35,29 @@ class Profile extends Component {
             languages: [],
             height: '',
             weight: '',
+            dosages : ["First", "Second"],
+            vaccineNames : ["Covishield", "Covaxin", "Sputnik", "J&J", "Pfizer", "Others"],
+            isDiabetic:false,
+            diabetics: [{id: 'yes', value: 'Yes', checked: false}, {id: 'no', value: 'No', checked: false}],
+            diabeticValue:'',
+            hypertensiveValue:'',
+            hypertensives:[{id: 'yes', value: 'Yes', checked: false}, {id: 'no', value: 'No', checked: false}],
+            isHypertensive:false,
+            surgerys:[{id: 'yes', value: 'Yes', checked: false}, {id: 'no', value: 'No', checked: false}],
+            isSurgery:false,
+            surgeryValue:'',
+            allergieValue:'',
+            allergies:[{id: 'yes', value: 'Yes', checked: false}, {id: 'no', value: 'No', checked: false}],
+            isAllergie:false,
+            covids:[{id: 'yes', value: 'Yes', checked: false}, {id: 'no', value: 'No', checked: false}],
+            isCovid:false,
+            otherMedical:'',
+            vaccinated:[{id: 'yes', value: 'Yes', checked: false}, {id: 'no', value: 'No', checked: false}],
+            isVaccinated:false,
+            vaccineDate:'',
+            dose:'',
+            vaccineName:'',
+            covidDetails:'',
         };
     }
 
@@ -75,6 +99,85 @@ class Profile extends Component {
                 city: selectedCity,
             },
         });
+    }
+
+    handleDiabetic = (id) => {
+        this.setState({
+            isDiabetic: id === 'yes'
+        })
+       const newDiabetic = this.state.diabetics.map((item) => {
+            return Object.assign({}, item, {checked: item.id === id});
+        })
+        this.setState({
+            diabetics:newDiabetic
+        })
+    }
+
+    handleHypertensive = (id) => {
+        this.setState({
+            isHypertensive: id === 'yes'
+        })
+
+       const newHypertensives = this.state.hypertensives.map((item) => {
+            return Object.assign({}, item, {checked: item.id === id});
+        })
+        this.setState({
+            hypertensives:newHypertensives
+        })
+    }
+
+    handleSurgerys = (id) => {
+        this.setState({
+            isSurgery: id === 'yes'
+        })
+
+       const newSurgerys = this.state.hypertensives.map((item) => {
+            return Object.assign({}, item, {checked: item.id === id});
+        })
+        this.setState({
+            surgerys:newSurgerys
+        })
+    }
+
+    handleAllergies = (id) => {
+        this.setState({
+            isAllergie: id === 'yes'
+        })
+
+       const newAllergies = this.state.allergies.map((item) => {
+            return Object.assign({}, item, {checked: item.id === id});
+        })
+        this.setState({
+            allergies:newAllergies
+        })
+    }
+
+    handleCovids = (id) => {
+        this.setState({
+            isCovid: id === 'yes'
+        })
+
+       const newCovids = this.state.covids.map((item) => {
+            return Object.assign({}, item, {checked: item.id === id});
+        })
+
+        this.setState({
+            covids:newCovids
+        })
+    }
+
+    handleVaccinated = (id) => {
+        this.setState({
+            isVaccinated: id === 'yes'
+        })
+
+       const newVaccinatedList = this.state.vaccinated.map((item) => {
+            return Object.assign({}, item, {checked: item.id === id});
+        })
+
+        this.setState({
+            vaccinated:newVaccinatedList
+        })
     }
 
     handleSelect = (key) => {
@@ -288,6 +391,57 @@ class Profile extends Component {
                         />
                     </div>
                 </div>
+                {/*<Row className="g-2">*/}
+                {/*    <Col md>*/}
+                <div className="col-12 col-sm-6">
+                        <Row>
+                            <Radio
+                                label="Are you Diabetic?"
+                                id="radioDiabetes"
+                                options={this.state.diabetics}
+                                handleSelect={this.handleDiabetic}
+                            />
+                        </Row>
+                        <Row>
+                            {this.state.isDiabetic &&
+                            <Col>
+                                <br/>
+                                <br/> <Form.Control type="date"
+                                                    value={this.state.diabeticValue}
+                                                    max={moment(new Date()).format('YYYY-MM-DD')}
+                                                    onChange={(e) => this.setState({
+                                                        diabeticValue:e.target.value
+                                                    })}/>
+                            </Col>
+                            }
+
+                        </Row>
+                </div>
+                    {/*</Col>*/}
+                    {/*<Col md>*/}
+                    <div className="col-12 col-sm-6">
+                        <Row>
+                            <Radio
+                                label="Are you Hypertensive?"
+                                id="radioHypertensive"
+                                options={this.state.hypertensives}
+                                handleSelect={this.handleHypertensive}
+                            />
+                        </Row>
+                        <Row>
+                            {this.state.isHypertensive &&
+                            <Col>
+                                <br/>
+                                <br/> <Form.Control type="date"
+                                                    value={this.state.hypertensiveValue}
+                                                    max={moment(new Date()).format('YYYY-MM-DD')}
+                                                    onChange={(e) => this.setState({hypertensiveValue:e.target.value})}/>
+                            </Col>
+                            }
+                        </Row>
+                    {/*</Col>*/}
+                    </div>
+                {/*</Row>*/}
             </>
         )
 }

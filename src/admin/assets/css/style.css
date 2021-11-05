@@ -5499,3 +5499,7 @@ input#menu[type="checkbox"] {
   height: 20px !important;
   width: 24px !important;
 }
+
+.radio-gap {
+  max-width: 140px;
+}
