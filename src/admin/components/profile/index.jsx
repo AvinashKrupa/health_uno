@@ -32,6 +32,8 @@ class Profile extends Component {
             states: [],
             cities: [],
             languages: [],
+            height: '',
+            weight: '',
         };
     }
 
@@ -254,6 +256,41 @@ class Profile extends Component {
     showDropDownMenu() {
         return this.state.showMenu;
     }
+
+    renderPatientMoreFields = () => {
+        return(
+            <>
+                <div className="col-12 col-sm-6">
+                    <div className="form-group">
+                        <label>Height</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="additional_info.height"
+                            onChange={this.handleChange}
+                            value={
+                                this.state.updatedModel.additional_info.height
+                            }
+                        />
+                    </div>
+                </div>
+                <div className="col-12 col-sm-6">
+                    <div className="form-group">
+                        <label>Weight</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="additional_info.weight"
+                            onChange={this.handleChange}
+                            value={
+                                this.state.updatedModel.additional_info.weight
+                            }
+                        />
+                    </div>
+                </div>
+            </>
+        )
+}
 
     render() {
         return (
@@ -593,7 +630,7 @@ class Profile extends Component {
                                             </div>
                                             <div className="col-12 col-sm-6">
                                                 <div className="form-group">
-                                                    <label>Address Line1</label>
+                                                    <label>Address Line 1</label>
                                                     <input
                                                         type="text"
                                                         className="form-control"
@@ -608,7 +645,7 @@ class Profile extends Component {
                                             </div>
                                             <div className="col-12 col-sm-6">
                                                 <div className="form-group">
-                                                    <label>Address Line2</label>
+                                                    <label>Address Line 2</label>
                                                     <input
                                                         type="text"
                                                         className="form-control"
@@ -679,6 +716,9 @@ class Profile extends Component {
                                                 </div>
                                             </div>
                                         </div>
+                                            <div className="row form-row">
+                                                {this.state.type === constants.USER_TYPE_PATIENT && this.renderPatientMoreFields()}
+                                            </div>
                                         <button
                                             type="submit"
                                             onClick={this.updateProfile}
