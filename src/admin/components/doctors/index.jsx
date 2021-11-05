@@ -114,6 +114,13 @@ class Doctors extends Component {
         render: (text, record) => renderText(record.qualif.dept_id.title),
         sorter: (a, b) =>
           sorterText(a.qualif.dept_id.title, b.qualif.dept_id.title),
+        ...getColumnSearchProps(
+            this,
+            "Department",
+            this.handleSearch,
+            this.handleReset,
+            "qualif.dept_id.title"
+          ),    
       },
       {
         title: "Experience (Years)",
