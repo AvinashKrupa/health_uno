@@ -17,6 +17,9 @@ import {
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
 import Radio from "../../commons/Radio";
+import Selector from "../../commons/Select";
+import TextArea from "../../commons/TextArea";
+import Input from "../../commons/Input";
 
 class Profile extends Component {
     constructor(props) {
@@ -362,7 +365,7 @@ class Profile extends Component {
 
     renderPatientMoreFields = () => {
         return(
-            <>
+            <div className="patient-more-fields">
                 <div className="col-12 col-sm-6">
                     <div className="form-group">
                         <label>Height</label>
@@ -442,7 +445,163 @@ class Profile extends Component {
                     {/*</Col>*/}
                     </div>
                 {/*</Row>*/}
-            </>
+                <div className="col-12 col-sm-6">
+
+                    <Row className="g-2">
+                        <Col md>
+                            <Row>
+                                <Radio
+                                    label="Any past surgery?"
+                                    id="radioSurgery"
+                                    options={this.state.surgerys}
+                                    handleSelect={this.handleSurgerys}
+                                />
+                            </Row>
+                            {this.state.isSurgery &&
+                            <Row>
+                                <TextArea
+                                    id={'surgery'}
+                                    value={this.state.surgeryValue}
+                                    placeholder="Please mention in brief"
+                                    onChange={(e) => this.setState({
+                                        surgeryValue:e.target.value
+                                    })}
+                                    rows={4}
+                                    cols={35}
+                                ></TextArea>
+                            </Row>
+                            }
+                        </Col>
+                        <Col md>
+                            <Row>
+                                <Radio
+                                    label="Any allergies to medications?"
+                                    id="radioAllergies"
+                                    options={this.state.allergies}
+                                    handleSelect={this.handleAllergies}
+                                />
+                            </Row>
+                            <Row>
+                                {this.state.isAllergie &&
+                                <TextArea
+                                    id={'textareaSurgery'}
+                                    value={this.state.allergieValue}
+                                    placeholder="Please mention in brief"
+                                    onChange={(e) => this.setState({
+                                        allergieValue:e.target.value
+                                    })}
+                                    rows={4}
+                                    cols={35}
+                                ></TextArea>
+                                }
+                            </Row>
+                        </Col>
+                    </Row>
+                    <Row className="g-2">
+                        <Col md>
+                            <Row>
+                                <Radio
+                                    label="Have you been diagnosed with Covid?"
+                                    id="diagCovid"
+                                    options={this.state.covids}
+                                    handleSelect={this.handleCovids}
+                                />
+                            </Row>
+                            <Row>
+                                {this.state.isCovid &&
+                                <Col md>
+                                    <Input
+                                        type="text"
+                                        placeholder="Enter additional details"
+                                        label="Provide additional details of Covid illness"
+                                        value={this.state.covidDetails}
+                                        onChange={(e) => this.setState({
+                                            covidDetails:e.target.value
+                                        })}
+                                    />
+                                </Col>
+                                }
+                            </Row>
+                        </Col>
+                        <Col md>
+                            <Row>
+                                <Radio
+                                    label="Have you been vaccinated against Covid?"
+                                    id="vaccinated"
+                                    options={this.state.vaccinated}
+                                    handleSelect={this.handleVaccinated}
+                                />
+                            </Row>
+                            <Row>
+                                {this.state.isVaccinated &&
+                                <Col md style={{paddingTop: '32px'}}>
+                                    <br/> <Form.Control type="date"
+                                                        value={this.state.vaccineDate}
+                                                        onKeyDown={(e) => e.preventDefault()}
+                                                        max={moment(new Date()).format('YYYY-MM-DD')}
+                                                        onChange={(e) => this.setState({
+                                                            vaccineDate:e.target.value
+                                                        })}
+                                />
+                                    <Selector
+                                        defaultValue="Choose dose type"
+                                        id="dose"
+                                        options={this.state.dosages}
+                                        // handleSelect={this.setDose}
+                                        handleSelect={(e) => this.setState({
+                                            dose:e.target.value
+                                        })}
+                                        value={this.state.dose}
+                                    />
+                                    <Selector
+                                        defaultValue="Choose vaccine name"
+                                        id="v-name"
+                                        options={this.state.vaccineNames}
+                                        // handleSelect={setVaccineName}
+                                        handleSelect={(e) => {
+                                            debugger
+                                            this.setState({
+                                                vaccineName: e.target.value
+                                            })
+                                        }}
+                                        value={this.state.vaccineName}
+                                    />
+                                </Col>
+                                }
+                            </Row>
+                        </Col>
+                    </Row>
+                    <Row className="g-2">
+                        <Col md>
+                            <TextArea
+                                label="Other medical conditions"
+                                id={'other-condition'}
+                                value={this.state.otherMedical}
+                                placeholder="Add conditions"
+                                onChange={(e) => this.setState({
+                                    otherMedical:e.target.value
+                                })}
+                                // onChange={setOtherMedical}
+                                rows={1}
+                                cols={20}
+                            ></TextArea>
+                        </Col>
+                        <Col md></Col>
+                    </Row>
+
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+            </div>
         )
 }
 
