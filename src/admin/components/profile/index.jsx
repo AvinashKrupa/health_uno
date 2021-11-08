@@ -322,6 +322,23 @@ class Profile extends Component {
         });
     };
     updateProfile = async (e) => {
+        const {
+            isDiabetic,
+            diabeticValue,
+            hypertensiveValue,
+            isHypertensive,
+            isSurgery,
+            surgeryValue,
+            allergieValue,
+            isAllergie,
+            isCovid,
+            otherMedical,
+            isVaccinated,
+            vaccineDate,
+            dose,
+            vaccineName,
+            covidDetails,
+        } = this.state;
         e.preventDefault()
         let data = this.state.updatedModel;
         let countryStateCity = this.state.countryStateCity;
@@ -331,6 +348,59 @@ class Profile extends Component {
             state: countryStateCity.state.name,
             country: countryStateCity.country.name,
         };
+        data.additional_info.med_cond = [
+            {
+                name: 'diabetic',
+                selected: isDiabetic,
+                diag_at: isDiabetic ? diabeticValue : '',
+                desc: '',
+            },
+            {
+                name: 'hypertensive',
+                selected: isHypertensive,
+                diag_at: isHypertensive ? hypertensiveValue : '',
+                desc: '',
+            },
+            {
+                name: 'diagnosed_with_covid',
+                selected: isCovid,
+                diag_at: '',
+                desc: isCovid ? covidDetails : '',
+            },
+            {
+                name: 'past_surgeries',
+                selected: isSurgery,
+                diag_at: '',
+                desc: isSurgery ? surgeryValue : '',
+            },
+            {
+                name: 'allergy_to_meds?',
+                selected: isAllergie,
+                diag_at: '',
+                desc: isAllergie ? allergieValue : '',
+            },
+            {
+                name: 'covid_vaccinated',
+                selected: isVaccinated,
+                diag_at: isVaccinated ? vaccineDate : '',
+                desc: '',
+                meta: isVaccinated ? [
+                    {
+                        name: 'dose_type',
+                        selected: true,
+                        diag_at: '',
+                        desc: dose,
+                    },
+                    {
+                        name: 'vaccine_name',
+                        selected: true,
+                        diag_at: '',
+                        desc: vaccineName,
+                    }
+                ] : []
+            },
+        ],
+        data.additional_info.other_med_cond = otherMedical
         try {
             let result = await fetchApi({
                 url: "v1/user/updateProfile",
