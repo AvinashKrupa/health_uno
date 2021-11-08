@@ -1,20 +1,11 @@
 import React, {Component} from "react";
 import SidebarNav from "../sidebar";
-import {Col, Form, Row, Modal, Tab, Tabs} from "react-bootstrap";
+import {Col, Form, Modal, Tab, Tabs} from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import {fetchApi} from "../../../_utils/http-utils";
-import {
-    assign,
-    changeCaseFirstLetter,
-    constants,
-    getAddress,
-    getFullName,
-} from "../../../_utils/common-utils";
+import {assign, changeCaseFirstLetter, constants, getAddress, getFullName,} from "../../../_utils/common-utils";
 import moment from "moment";
-import {
-    getTextClassForStatus,
-    renderDropDown,
-} from "../../../_utils/data-table-utils";
+import {getTextClassForStatus, renderDropDown,} from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
 import Radio from "../../commons/Radio";
 import Selector from "../../commons/Select";
@@ -557,10 +548,10 @@ class Profile extends Component {
                         />
                     </div>
                 </div>
-                {/*<Row className="g-2">*/}
-                {/*    <Col md>*/}
                 <div className="col-12 col-sm-6">
                     <div className="form-group">
+                        <Col md>
+                            <div className="form-group">
                             <Radio
                                 label="Are you Diabetic?"
                                 id="radioDiabetes"
@@ -568,8 +559,8 @@ class Profile extends Component {
                                 handleSelect={this.handleDiabetic}
                             />
                         </div>
-                    <div className="form-group">
-                            {this.state.isDiabetic &&
+                        {this.state.isDiabetic &&
+                            <div className="form-group">
                             <Col>
                                 <br/>
                                 <br/> <Form.Control type="date"
@@ -579,12 +570,11 @@ class Profile extends Component {
                                                         diabeticValue:e.target.value
                                                     })}/>
                             </Col>
-                            }
-
                         </div>
+                        }
+                        </Col>
+                    </div>
                 </div>
-                    {/*</Col>*/}
-                    {/*<Col md>*/}
                     <div className="col-12 col-sm-6">
                         <div className="form-group">
                             <Radio
@@ -605,9 +595,7 @@ class Profile extends Component {
                             </Col>
                             }
                         </div>
-                    {/*</Col>*/}
                     </div>
-                {/*</Row>*/}
                 <div className="col-12 col-sm-6">
 
                     <div className="form-group">
@@ -750,18 +738,6 @@ class Profile extends Component {
                         </Col>
                         <Col md></Col>
                     </div>
-
-
-
-
-
-
-
-
-
-
-
-
                 </div>
             </div>
         )
