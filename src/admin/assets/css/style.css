@@ -5371,8 +5371,8 @@ input#menu[type="checkbox"] {
 
 .textarea-label,
 .form-label {
-  font-weight: 500;
-  font-size: 20px;
+  font-weight: 400;
+  font-size: 16px;
 }
 
 .slot-appointment-detail {
@@ -5504,6 +5504,7 @@ input#menu[type="checkbox"] {
   max-width: 140px;
 }
 
-.patient-more-fields{
-
+.patient-more-fields > .form-label{
+  font-weight: 400;
+  font-size: 16px;
 }

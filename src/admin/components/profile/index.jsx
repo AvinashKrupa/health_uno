@@ -90,6 +90,98 @@ class Profile extends Component {
             id: profile.data.additional_info.address.city,
             name: profile.data.additional_info.address.city,
         };
+
+        //diabetic
+        if(profile.data.additional_info.med_cond[0].selected){
+            this.setState({
+                diabetics:[{id: 'yes', value: 'Yes', checked: true},
+                    {id: 'no', value: 'No', checked: false}],
+                isDiabetic:true,
+                diabeticValue:moment(profile.data.additional_info.med_cond[0].diag_at).format('YYYY-MM-DD')
+            })
+        }else {
+            this.setState({
+                diabetics:[{id: 'yes', value: 'Yes', checked: false},
+                    {id: 'no', value: 'No', checked: true}]
+            })
+        }
+        //hypertensive
+        if(profile.data.additional_info.med_cond[1].selected){
+            this.setState({
+                hypertensives:[{id: 'yes', value: 'Yes', checked: true},
+                    {id: 'no', value: 'No', checked: false}],
+                isHypertensive:true,
+                hypertensiveValue:moment(profile.data.additional_info.med_cond[1].diag_at).format('YYYY-MM-DD')
+            })
+        }else {
+            this.setState({
+                hypertensives:[{id: 'yes', value: 'Yes', checked: false},
+                    {id: 'no', value: 'No', checked: true}]
+            });
+        }
+
+        //diagnosed_with_covid
+        if(profile.data.additional_info.med_cond[2].selected){
+            this.setState({
+                covids:[{id: 'yes', value: 'Yes', checked: true},
+                    {id: 'no', value: 'No', checked: false}],
+                covidDetails:profile.data.additional_info.med_cond[2]?.desc,
+                isCovid:true
+            });
+        }else {
+            this.setState({
+                covids: [{id: 'yes', value: 'Yes', checked: false},
+                    {id: 'no', value: 'No', checked: true}]
+            })
+        }
+
+        //past_surgeries
+        if(profile.data.additional_info.med_cond[3].selected){
+            this.setState({
+                surgerys:[{id: 'yes', value: 'Yes', checked: true},
+                    {id: 'no', value: 'No', checked: false}],
+                surgeryValue:profile.data.additional_info.med_cond[3]?.desc,
+                isSurgery:true
+            })
+        }else {
+            this.setState({
+                surgerys:[{id: 'yes', value: 'Yes', checked: false},
+                    {id: 'no', value: 'No', checked: true}]
+            })
+        }
+
+        //allergy_to_meds
+        if(profile.data.additional_info.med_cond[4].selected){
+            this.setState({
+                allergies:[{id: 'yes', value: 'Yes', checked: true},
+                    {id: 'no', value: 'No', checked: false}],
+                isAllergie:true,
+                allergieValue:profile.data.additional_info.med_cond[4]?.desc
+            })
+        }else {
+            this.setState({
+                allergies:[{id: 'yes', value: 'Yes', checked: false},
+                    {id: 'no', value: 'No', checked: true}]
+            })
+        }
+
+        //covid_vaccinated
+        if(profile.data.additional_info.med_cond[5].selected){
+            this.setState({
+                vaccinated:[{id: 'yes', value: 'Yes', checked: true},
+                    {id: 'no', value: 'No', checked: false}],
+                isVaccinated:true,
+                vaccineDate:moment(profile.data.additional_info.med_cond[5].diag_at).format('YYYY-MM-DD'),
+                dose:profile.data.additional_info.med_cond[5].meta[0]?.desc,
+                vaccineName:profile.data.additional_info.med_cond[5].meta[1]?.desc
+            })
+        }else {
+            this.setState({
+                vaccinated:[{id: 'yes', value: 'Yes', checked: false},
+                    {id: 'no', value: 'No', checked: true}],
+
+            })
+        }
         this.setState({
             data: profile.data,
             countries: countries.data,
@@ -101,6 +193,7 @@ class Profile extends Component {
                 state: selectedState,
                 city: selectedCity,
             },
+            otherMedical:profile.data.additional_info.other_med_cond || ''
         });
     }
 
@@ -365,7 +458,7 @@ class Profile extends Component {
 
     renderPatientMoreFields = () => {
         return(
-            <div className="patient-more-fields">
+            <div className="row form-row">
                 <div className="col-12 col-sm-6">
                     <div className="form-group">
                         <label>Height</label>
@@ -397,15 +490,15 @@ class Profile extends Component {
                 {/*<Row className="g-2">*/}
                 {/*    <Col md>*/}
                 <div className="col-12 col-sm-6">
-                        <Row>
+                    <div className="form-group">
                             <Radio
                                 label="Are you Diabetic?"
                                 id="radioDiabetes"
                                 options={this.state.diabetics}
                                 handleSelect={this.handleDiabetic}
                             />
-                        </Row>
-                        <Row>
+                        </div>
+                    <div className="form-group">
                             {this.state.isDiabetic &&
                             <Col>
                                 <br/>
@@ -418,20 +511,20 @@ class Profile extends Component {
                             </Col>
                             }
 
-                        </Row>
+                        </div>
                 </div>
                     {/*</Col>*/}
                     {/*<Col md>*/}
                     <div className="col-12 col-sm-6">
-                        <Row>
+                        <div className="form-group">
                             <Radio
                                 label="Are you Hypertensive?"
                                 id="radioHypertensive"
                                 options={this.state.hypertensives}
                                 handleSelect={this.handleHypertensive}
                             />
-                        </Row>
-                        <Row>
+                        </div>
+                        <div className="form-group">
                             {this.state.isHypertensive &&
                             <Col>
                                 <br/>
@@ -441,73 +534,73 @@ class Profile extends Component {
                                                     onChange={(e) => this.setState({hypertensiveValue:e.target.value})}/>
                             </Col>
                             }
-                        </Row>
+                        </div>
                     {/*</Col>*/}
                     </div>
                 {/*</Row>*/}
                 <div className="col-12 col-sm-6">
 
-                    <Row className="g-2">
+                    <div className="form-group">
                         <Col md>
-                            <Row>
+                            <div className="form-group">
                                 <Radio
                                     label="Any past surgery?"
                                     id="radioSurgery"
                                     options={this.state.surgerys}
                                     handleSelect={this.handleSurgerys}
                                 />
-                            </Row>
+                            </div>
                             {this.state.isSurgery &&
-                            <Row>
+                            <div className="form-group">
                                 <TextArea
                                     id={'surgery'}
                                     value={this.state.surgeryValue}
                                     placeholder="Please mention in brief"
-                                    onChange={(e) => this.setState({
-                                        surgeryValue:e.target.value
+                                    onChange={(value) => this.setState({
+                                        surgeryValue:value
                                     })}
                                     rows={4}
                                     cols={35}
                                 ></TextArea>
-                            </Row>
+                            </div>
                             }
                         </Col>
                         <Col md>
-                            <Row>
+                            <div className="form-group">
                                 <Radio
                                     label="Any allergies to medications?"
                                     id="radioAllergies"
                                     options={this.state.allergies}
                                     handleSelect={this.handleAllergies}
                                 />
-                            </Row>
-                            <Row>
+                            </div>
+                            <div className="form-group">
                                 {this.state.isAllergie &&
                                 <TextArea
                                     id={'textareaSurgery'}
                                     value={this.state.allergieValue}
                                     placeholder="Please mention in brief"
-                                    onChange={(e) => this.setState({
-                                        allergieValue:e.target.value
+                                    onChange={(value) => this.setState({
+                                        allergieValue:value
                                     })}
                                     rows={4}
                                     cols={35}
                                 ></TextArea>
                                 }
-                            </Row>
+                            </div>
                         </Col>
-                    </Row>
-                    <Row className="g-2">
+                    </div>
+                    <div className="form-group">
                         <Col md>
-                            <Row>
+                            <div className="form-group">
                                 <Radio
                                     label="Have you been diagnosed with Covid?"
                                     id="diagCovid"
                                     options={this.state.covids}
                                     handleSelect={this.handleCovids}
                                 />
-                            </Row>
-                            <Row>
+                            </div>
+                            <div className="form-group">
                                 {this.state.isCovid &&
                                 <Col md>
                                     <Input
@@ -515,24 +608,24 @@ class Profile extends Component {
                                         placeholder="Enter additional details"
                                         label="Provide additional details of Covid illness"
                                         value={this.state.covidDetails}
-                                        onChange={(e) => this.setState({
-                                            covidDetails:e.target.value
+                                        onChange={(value) => this.setState({
+                                            covidDetails:value
                                         })}
                                     />
                                 </Col>
                                 }
-                            </Row>
+                            </div>
                         </Col>
                         <Col md>
-                            <Row>
+                            <div className="form-group">
                                 <Radio
                                     label="Have you been vaccinated against Covid?"
                                     id="vaccinated"
                                     options={this.state.vaccinated}
                                     handleSelect={this.handleVaccinated}
                                 />
-                            </Row>
-                            <Row>
+                            </div>
+                            <div className="form-group">
                                 {this.state.isVaccinated &&
                                 <Col md style={{paddingTop: '32px'}}>
                                     <br/> <Form.Control type="date"
@@ -548,8 +641,8 @@ class Profile extends Component {
                                         id="dose"
                                         options={this.state.dosages}
                                         // handleSelect={this.setDose}
-                                        handleSelect={(e) => this.setState({
-                                            dose:e.target.value
+                                        handleSelect={(item) => this.setState({
+                                            dose:item
                                         })}
                                         value={this.state.dose}
                                     />
@@ -558,28 +651,27 @@ class Profile extends Component {
                                         id="v-name"
                                         options={this.state.vaccineNames}
                                         // handleSelect={setVaccineName}
-                                        handleSelect={(e) => {
-                                            debugger
+                                        handleSelect={(item) => {
                                             this.setState({
-                                                vaccineName: e.target.value
+                                                vaccineName: item
                                             })
                                         }}
                                         value={this.state.vaccineName}
                                     />
                                 </Col>
                                 }
-                            </Row>
+                            </div>
                         </Col>
-                    </Row>
-                    <Row className="g-2">
+                    </div>
+                    <div className="form-group">
                         <Col md>
                             <TextArea
                                 label="Other medical conditions"
                                 id={'other-condition'}
                                 value={this.state.otherMedical}
                                 placeholder="Add conditions"
-                                onChange={(e) => this.setState({
-                                    otherMedical:e.target.value
+                                onChange={(value) => this.setState({
+                                    otherMedical:value
                                 })}
                                 // onChange={setOtherMedical}
                                 rows={1}
@@ -587,7 +679,7 @@ class Profile extends Component {
                             ></TextArea>
                         </Col>
                         <Col md></Col>
-                    </Row>
+                    </div>
 
 
 
@@ -1029,7 +1121,7 @@ class Profile extends Component {
                                                 </div>
                                             </div>
                                         </div>
-                                            <div className="row form-row">
+                                            <div className="patient-more-fields">
                                                 {this.state.type === constants.USER_TYPE_PATIENT && this.renderPatientMoreFields()}
                                             </div>
                                         <button
