@@ -917,6 +917,72 @@ class Profile extends Component {
                                                             )}
                                                         </p>
                                                     </div>
+                                                    {this.state.type === constants.USER_TYPE_PATIENT && <>
+                                                        <div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                            Height
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                            {this.state.data.additional_info.height}
+                                                        </p>
+                                                    </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Weight
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.data.additional_info.weight}
+                                                        </p>
+                                                        </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Are you Diabetic?
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.isDiabetic? 'yes': 'no'}
+                                                        </p>
+                                                        </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Are you Hypertensive?
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.isHypertensive? 'yes': 'no'}
+                                                        </p>
+                                                        </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Any past surgery?
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.isSurgery? 'yes': 'no'}
+                                                        </p>
+                                                        </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Any allergies to medications?
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.isAllergie? 'yes': 'no'}
+                                                        </p>
+                                                        </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Have you been diagnosed with Covid?
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.isCovid? 'yes': 'no'}
+                                                        </p>
+                                                        </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Have you been vaccinated against Covid?
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.isVaccinated? 'yes': 'no'}
+                                                        </p>
+                                                        </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Other medical conditions
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.otherMedical}
+                                                        </p>
+                                                        </div>
+                                                    </>}
                                                 </div>
                                               )}
                                         </div>
