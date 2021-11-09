@@ -82,96 +82,113 @@ class Profile extends Component {
             name: profile.data.additional_info.address.city,
         };
 
-        //diabetic
-        if(profile.data.additional_info.med_cond[0].selected){
-            this.setState({
-                diabetics:[{id: 'yes', value: 'Yes', checked: true},
-                    {id: 'no', value: 'No', checked: false}],
-                isDiabetic:true,
-                diabeticValue:moment(profile.data.additional_info.med_cond[0].diag_at).format('YYYY-MM-DD')
-            })
-        }else {
-            this.setState({
-                diabetics:[{id: 'yes', value: 'Yes', checked: false},
-                    {id: 'no', value: 'No', checked: true}]
-            })
-        }
-        //hypertensive
-        if(profile.data.additional_info.med_cond[1].selected){
-            this.setState({
-                hypertensives:[{id: 'yes', value: 'Yes', checked: true},
-                    {id: 'no', value: 'No', checked: false}],
-                isHypertensive:true,
-                hypertensiveValue:moment(profile.data.additional_info.med_cond[1].diag_at).format('YYYY-MM-DD')
-            })
-        }else {
-            this.setState({
-                hypertensives:[{id: 'yes', value: 'Yes', checked: false},
-                    {id: 'no', value: 'No', checked: true}]
+        if(this.state.type === constants.USER_TYPE_PATIENT){
+            profile.data.additional_info.med_cond.map(info => {
+                console.log(info)
+                ;
+                if (info.name === 'diabetic') {
+                    if(info.selected){
+                        this.setState({
+                            diabetics:[{id: 'yes', value: 'Yes', checked: true},
+                                {id: 'no', value: 'No', checked: false}],
+                            isDiabetic:true,
+                            diabeticValue:moment(info.diag_at).format('YYYY-MM-DD')
+                        })
+                    }else {
+                        this.setState({
+                            diabetics:[{id: 'yes', value: 'Yes', checked: false},
+                                {id: 'no', value: 'No', checked: true}]
+                        })
+                    }
+                } else if (info.name === 'hypertensive') {
+                    if(info.selected){
+                        this.setState({
+                            hypertensives:[{id: 'yes', value: 'Yes', checked: true},
+                                {id: 'no', value: 'No', checked: false}],
+                            isHypertensive:true,
+                            hypertensiveValue:moment(info.diag_at).format('YYYY-MM-DD')
+                        })
+                    }else {
+                        this.setState({
+                            hypertensives:[{id: 'yes', value: 'Yes', checked: false},
+                                {id: 'no', value: 'No', checked: true}]
+                        });
+                    }
+                } else if (info.name === 'diagnosed_with_covid') {
+                    if(info.selected){
+                        this.setState({
+                            covids:[{id: 'yes', value: 'Yes', checked: true},
+                                {id: 'no', value: 'No', checked: false}],
+                            covidDetails:info?.desc,
+                            isCovid:true
+                        });
+                    }else {
+                        this.setState({
+                            covids: [{id: 'yes', value: 'Yes', checked: false},
+                                {id: 'no', value: 'No', checked: true}]
+                        })
+                    }
+                } else if (info.name === 'past_surgeries') {
+                    if(info.selected){
+                        this.setState({
+                            surgerys:[{id: 'yes', value: 'Yes', checked: true},
+                                {id: 'no', value: 'No', checked: false}],
+                            surgeryValue:info?.desc,
+                            isSurgery:true
+                        })
+                    }else {
+                        this.setState({
+                            surgerys:[{id: 'yes', value: 'Yes', checked: false},
+                                {id: 'no', value: 'No', checked: true}]
+                        })
+                    }
+                } else if (info.name === 'allergy_to_meds') {
+                    if(info.selected){
+                        this.setState({
+                            allergies:[{id: 'yes', value: 'Yes', checked: true},
+                                {id: 'no', value: 'No', checked: false}],
+                            isAllergie:true,
+                            allergieValue:info?.desc
+                        })
+                    }else {
+                        this.setState({
+                            allergies:[{id: 'yes', value: 'Yes', checked: false},
+                                {id: 'no', value: 'No', checked: true}]
+                        })
+                    }
+                } else if (info.name === 'covid_vaccinated') {
+                    //covid_vaccinated
+                    if(info.selected){
+                        this.setState({
+                            vaccinated:[{id: 'yes', value: 'Yes', checked: true},
+                                {id: 'no', value: 'No', checked: false}],
+                            isVaccinated:true,
+                            vaccineDate:moment(info.diag_at).format('YYYY-MM-DD'),
+                        })
+                            info.meta.map(dataInfo => {
+                                console.log('ASdsa', dataInfo);
+                                if (dataInfo.name === 'dose_type') {
+                                    this.setState({
+                                        dose:dataInfo.desc,
+                                    })
+                                } else if (dataInfo.name === 'vaccine_name') {
+                                    this.setState({
+                                        vaccineName:dataInfo?.desc
+                                    })
+                                }
+                            });
+                    }else {
+                        this.setState({
+                            vaccinated:[{id: 'yes', value: 'Yes', checked: false},
+                                {id: 'no', value: 'No', checked: true}],
+
+                        })
+                    }
+
+
+
+                }
             });
-        }
-
-        //diagnosed_with_covid
-        if(profile.data.additional_info.med_cond[2].selected){
-            this.setState({
-                covids:[{id: 'yes', value: 'Yes', checked: true},
-                    {id: 'no', value: 'No', checked: false}],
-                covidDetails:profile.data.additional_info.med_cond[2]?.desc,
-                isCovid:true
-            });
-        }else {
-            this.setState({
-                covids: [{id: 'yes', value: 'Yes', checked: false},
-                    {id: 'no', value: 'No', checked: true}]
-            })
-        }
-
-        //past_surgeries
-        if(profile.data.additional_info.med_cond[3].selected){
-            this.setState({
-                surgerys:[{id: 'yes', value: 'Yes', checked: true},
-                    {id: 'no', value: 'No', checked: false}],
-                surgeryValue:profile.data.additional_info.med_cond[3]?.desc,
-                isSurgery:true
-            })
-        }else {
-            this.setState({
-                surgerys:[{id: 'yes', value: 'Yes', checked: false},
-                    {id: 'no', value: 'No', checked: true}]
-            })
-        }
-
-        //allergy_to_meds
-        if(profile.data.additional_info.med_cond[4].selected){
-            this.setState({
-                allergies:[{id: 'yes', value: 'Yes', checked: true},
-                    {id: 'no', value: 'No', checked: false}],
-                isAllergie:true,
-                allergieValue:profile.data.additional_info.med_cond[4]?.desc
-            })
-        }else {
-            this.setState({
-                allergies:[{id: 'yes', value: 'Yes', checked: false},
-                    {id: 'no', value: 'No', checked: true}]
-            })
-        }
-
-        //covid_vaccinated
-        if(profile.data.additional_info.med_cond[5].selected){
-            this.setState({
-                vaccinated:[{id: 'yes', value: 'Yes', checked: true},
-                    {id: 'no', value: 'No', checked: false}],
-                isVaccinated:true,
-                vaccineDate:moment(profile.data.additional_info.med_cond[5].diag_at).format('YYYY-MM-DD'),
-                dose:profile.data.additional_info.med_cond[5].meta[0]?.desc,
-                vaccineName:profile.data.additional_info.med_cond[5].meta[1]?.desc
-            })
-        }else {
-            this.setState({
-                vaccinated:[{id: 'yes', value: 'Yes', checked: false},
-                    {id: 'no', value: 'No', checked: true}],
-
-            })
         }
         this.setState({
             data: profile.data,
@@ -862,7 +879,7 @@ class Profile extends Component {
                                                         </p>
                                                         <p className="col-sm-10">
                                                             {changeCaseFirstLetter(
-                                                                this.state.data.user.language.name
+                                                                this.state.data.user.language?.name
                                                             )}
                                                         </p>
                                                     </div>
@@ -901,7 +918,7 @@ class Profile extends Component {
                                                         </p>
                                                     </div>
                                                 </div>
-                                            )}
+                                              )}
                                         </div>
                                     </div>
                                 </div>
@@ -1064,7 +1081,7 @@ class Profile extends Component {
                                                 <div className="form-group">
                                                     <label>Language</label>
                                                     <select
-                                                        value={this.state.updatedModel.user.language._id}
+                                                        value={this.state.updatedModel.user.language?._id}
                                                         name="language"
                                                         onChange={(e) => this.handleChange(e)}
                                                         className="form-control"
