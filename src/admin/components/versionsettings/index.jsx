@@ -25,44 +25,64 @@ class VersionSettings extends Component{
         this.setState({iosLatVer: e.target.value})
     }
     handleAndriodMandVerChange(e) {
+        console.log("andrio madna >>>", e.target.value )
         this.setState({andriodMandVer: e.target.value})
     }
     handleAndriodLatVerChange(e) {
+        console.log("andrio latest >>>", e.target.value )
         this.setState({andriodLatVer: e.target.value})
     }
 
-    async handleItemClick() {
+    validation(iosMandVer,iosLatVer,andriodMandVer,andriodLatVer) {
         let errorMessage = "Mandatory version should be less than and equal to optional version"
+        console.log( " values are ",iosMandVer,iosLatVer,andriodMandVer,andriodLatVer)
+        if (iosMandVer && iosMandVer !== '' && iosLatVer && iosLatVer !== '') {
+            if(iosMandVer > iosLatVer){
+                toast.error(errorMessage)
+                return false;
+            }
+            
+        }
+        if (andriodMandVer && andriodMandVer !== '' && andriodLatVer && andriodLatVer !== '') {
+            if(andriodMandVer > andriodLatVer){
+                toast.error(errorMessage)
+                return false;
+            } 
+        } 
+
+        return true;
+        
+      }
+
+    async handleItemClick() {
+        
         let iosMandVer = this.state.iosMandVer;
         let iosLatVer = this.state.iosLatVer;
         let andriodMandVer = this.state.andriodMandVer;
         let andriodLatVer = this.state.andriodLatVer;
         
-        
-        if (iosMandVer && iosMandVer !== '' && iosLatVer && iosLatVer !== '') {
-            if(iosMandVer > iosLatVer)
-            toast.error(errorMessage)
-        }
-        if (andriodMandVer && andriodMandVer !== '' && andriodLatVer && andriodLatVer !== '') {
-            if(andriodMandVer > andriodLatVer)
-            toast.error(errorMessage)
+        const isValid = this.validation(iosMandVer,iosLatVer,andriodMandVer,andriodLatVer)
+        console.log("isvalid is ",isValid)
+        if(isValid){
+            try {
+                let result = await fetchApi({
+                  url: "v1/config/updateVersion",
+                  method: "POST",
+                  body: { android_ver_mandatory: andriodMandVer, ios_ver_mandatory: iosMandVer,android_ver_latest: andriodLatVer, ios_ver_latest: andriodLatVer },
+                });
+                if (result) {
+                   toast.success(result.message);
+                 
+                }
+              } catch (e) {
+                console.log("error>>", e);
+              }
         }
        
-        try {
-            let result = await fetchApi({
-              url: "v1/config/updateVersion",
-              method: "POST",
-              body: { android_ver: andriodMandVer, ios_ver: iosMandVer,android_ver_name: andriodLatVer, ios_ver_name: andriodLatVer },
-            });
-            if (result) {
-               toast.success(result.message);
-             
-            }
-          } catch (e) {
-            console.log("error>>", e);
-          }
 
     }
+    
+      
     render(){
         return(
             <>
