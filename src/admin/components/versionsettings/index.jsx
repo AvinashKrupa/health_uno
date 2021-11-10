@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import BlogDetails from '../Blog/blogdetails';
 import toast from "react-hot-toast";
 import SidebarNav from "../sidebar";
+import { fetchApi } from "../../../_utils/http-utils";
 
 class VersionSettings extends Component{
     constructor(props) {
@@ -30,17 +31,36 @@ class VersionSettings extends Component{
         this.setState({andriodLatVer: e.target.value})
     }
 
-    sendMessage() {
+    async handleItemClick() {
         let errorMessage = "Mandatory version should be less than and equal to optional version"
+        let iosMandVer = this.state.iosMandVer;
+        let iosLatVer = this.state.iosLatVer;
+        let andriodMandVer = this.state.andriodMandVer;
+        let andriodLatVer = this.state.andriodLatVer;
         
-        if (this.state.iosMandVer && this.state.iosMandVer !== '' && this.state.iosLatVer && this.state.iosLatVer !== '') {
-            if(this.state.iosMandVer > this.state.iosLatVer)
+        
+        if (iosMandVer && iosMandVer !== '' && iosLatVer && iosLatVer !== '') {
+            if(iosMandVer > iosLatVer)
             toast.error(errorMessage)
         }
-        if (this.state.andriodMandVer && this.state.andriodMandVer !== '' && this.state.andriodLatVer && this.state.andriodLatVer !== '') {
-            if(this.state.andriodMandVer > this.state.andriodLatVer)
+        if (andriodMandVer && andriodMandVer !== '' && andriodLatVer && andriodLatVer !== '') {
+            if(andriodMandVer > andriodLatVer)
             toast.error(errorMessage)
         }
+       
+        try {
+            let result = await fetchApi({
+              url: "v1/config/updateVersion",
+              method: "POST",
+              body: { android_ver: andriodMandVer, ios_ver: iosMandVer,android_ver_name: andriodLatVer, ios_ver_name: andriodLatVer },
+            });
+            if (result) {
+               toast.success(result.message);
+             
+            }
+          } catch (e) {
+            console.log("error>>", e);
+          }
 
     }
     render(){
@@ -118,7 +138,7 @@ class VersionSettings extends Component{
                                     <div className="card-body">
                                         <button class="btn btn-primary" onClick={(e) => {
                                             e.preventDefault();
-                                            this.sendMessage()
+                                            this.handleItemClick()
                                         }}>Update
                                         </button>
                                     </div>
