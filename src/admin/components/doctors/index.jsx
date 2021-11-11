@@ -10,6 +10,7 @@ import { fetchApi } from "../../../_utils/http-utils";
 import {
   getColumnFilterProps,
   getColumnSearchProps,
+  getColumnDropDownSearchProps,
   renderChips,
   renderDate,
   renderDropDown,
@@ -114,7 +115,7 @@ class Doctors extends Component {
         render: (text, record) => renderText(record.qualif.dept_id.title),
         sorter: (a, b) =>
           sorterText(a.qualif.dept_id.title, b.qualif.dept_id.title),
-        ...getColumnSearchProps(
+        ...getColumnDropDownSearchProps(
             this,
             "Department",
             this.handleSearch,

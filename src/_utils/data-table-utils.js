@@ -2,7 +2,7 @@ import React from "react";
 import moment from "moment";
 import {changeCaseFirstLetter, constants, getFormattedDate, getFullName, getNextSlot} from "./common-utils";
 import {Link} from "react-router-dom";
-import {Button, Input, Space} from "antd";
+import {Button, Input, Space,Select} from "antd";
 
 export const sorterDate = (a, b) => {
     return moment(a).diff(moment(b), "seconds")
@@ -163,6 +163,36 @@ export const getColumnSearchProps = (context, dataIndex, handleSearch, handleRes
         }
     },
 });
+export const getColumnDropDownSearchProps = (context, dataIndex, handleSearch, handleReset, recordValueToCompare) => ({
+    filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
+        <div style={{padding: 8}}>
+            <Select defaultValue="None" style={{ width: 120 }} onChange={value => {
+                    setSelectedKeys(value ? [value] : [])
+                    handleSearch(selectedKeys, confirm, dataIndex)
+                }} >
+                <Select.Option 
+                value="Medical"
+                >Medical</Select.Option>
+            </Select>
+        </div>
+    ),
+    onFilter: (value, record) => {
+        let childern = recordValueToCompare.split(".")
+        let finalVal = record
+        childern.forEach(child => {
+            finalVal = finalVal[child]
+        })
+        return finalVal
+            ? finalVal.toString().toLowerCase().includes(value.toLowerCase())
+            : ''
+    },
+    // onFilterDropdownVisibleChange: visible => {
+    //     if (visible) {
+    //         setTimeout(() => context.searchInput.select(), 100);
+    //     }
+    // },
+});
+
 export const getColumnFilterProps = (filterArray, recordValueToCompare) => {
     filterArray = filterArray.map(filter => {
         return {
