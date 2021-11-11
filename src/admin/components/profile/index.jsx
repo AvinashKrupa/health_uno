@@ -1,21 +1,16 @@
 import React, {Component} from "react";
 import SidebarNav from "../sidebar";
-import {Modal, Tab, Tabs} from "react-bootstrap";
+import {Col, Form, Modal, Tab, Tabs} from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import {fetchApi} from "../../../_utils/http-utils";
-import {
-    assign,
-    changeCaseFirstLetter,
-    constants,
-    getAddress,
-    getFullName,
-} from "../../../_utils/common-utils";
+import {assign, changeCaseFirstLetter, constants, getAddress, getFullName,} from "../../../_utils/common-utils";
 import moment from "moment";
-import {
-    getTextClassForStatus,
-    renderDropDown,
-} from "../../../_utils/data-table-utils";
+import {getTextClassForStatus, renderDropDown,} from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
+import Radio from "../../commons/Radio";
+import Selector from "../../commons/Select";
+import TextArea from "../../commons/TextArea";
+import Input from "../../commons/Input";
 
 class Profile extends Component {
     constructor(props) {
@@ -32,6 +27,31 @@ class Profile extends Component {
             states: [],
             cities: [],
             languages: [],
+            height: '',
+            weight: '',
+            dosages : ["First", "Second"],
+            vaccineNames : ["Covishield", "Covaxin", "Sputnik", "J&J", "Pfizer", "Others"],
+            isDiabetic:false,
+            diabetics: [{id: 'yes', value: 'Yes', checked: false}, {id: 'no', value: 'No', checked: false}],
+            diabeticValue:'',
+            hypertensiveValue:'',
+            hypertensives:[{id: 'yes', value: 'Yes', checked: false}, {id: 'no', value: 'No', checked: false}],
+            isHypertensive:false,
+            surgerys:[{id: 'yes', value: 'Yes', checked: false}, {id: 'no', value: 'No', checked: false}],
+            isSurgery:false,
+            surgeryValue:'',
+            allergieValue:'',
+            allergies:[{id: 'yes', value: 'Yes', checked: false}, {id: 'no', value: 'No', checked: false}],
+            isAllergie:false,
+            covids:[{id: 'yes', value: 'Yes', checked: false}, {id: 'no', value: 'No', checked: false}],
+            isCovid:false,
+            otherMedical:'',
+            vaccinated:[{id: 'yes', value: 'Yes', checked: false}, {id: 'no', value: 'No', checked: false}],
+            isVaccinated:false,
+            vaccineDate:'',
+            dose:'',
+            vaccineName:'',
+            covidDetails:'',
         };
     }
 
@@ -61,6 +81,115 @@ class Profile extends Component {
             id: profile.data.additional_info.address.city,
             name: profile.data.additional_info.address.city,
         };
+
+        if(this.state.type === constants.USER_TYPE_PATIENT){
+            profile.data.additional_info.med_cond.map(info => {
+                console.log(info)
+                ;
+                if (info.name === 'diabetic') {
+                    if(info.selected){
+                        this.setState({
+                            diabetics:[{id: 'yes', value: 'Yes', checked: true},
+                                {id: 'no', value: 'No', checked: false}],
+                            isDiabetic:true,
+                            diabeticValue:moment(info.diag_at).format('YYYY-MM-DD')
+                        })
+                    }else {
+                        this.setState({
+                            diabetics:[{id: 'yes', value: 'Yes', checked: false},
+                                {id: 'no', value: 'No', checked: true}]
+                        })
+                    }
+                } else if (info.name === 'hypertensive') {
+                    if(info.selected){
+                        this.setState({
+                            hypertensives:[{id: 'yes', value: 'Yes', checked: true},
+                                {id: 'no', value: 'No', checked: false}],
+                            isHypertensive:true,
+                            hypertensiveValue:moment(info.diag_at).format('YYYY-MM-DD')
+                        })
+                    }else {
+                        this.setState({
+                            hypertensives:[{id: 'yes', value: 'Yes', checked: false},
+                                {id: 'no', value: 'No', checked: true}]
+                        });
+                    }
+                } else if (info.name === 'diagnosed_with_covid') {
+                    if(info.selected){
+                        this.setState({
+                            covids:[{id: 'yes', value: 'Yes', checked: true},
+                                {id: 'no', value: 'No', checked: false}],
+                            covidDetails:info?.desc,
+                            isCovid:true
+                        });
+                    }else {
+                        this.setState({
+                            covids: [{id: 'yes', value: 'Yes', checked: false},
+                                {id: 'no', value: 'No', checked: true}]
+                        })
+                    }
+                } else if (info.name === 'past_surgeries') {
+                    if(info.selected){
+                        this.setState({
+                            surgerys:[{id: 'yes', value: 'Yes', checked: true},
+                                {id: 'no', value: 'No', checked: false}],
+                            surgeryValue:info?.desc,
+                            isSurgery:true
+                        })
+                    }else {
+                        this.setState({
+                            surgerys:[{id: 'yes', value: 'Yes', checked: false},
+                                {id: 'no', value: 'No', checked: true}]
+                        })
+                    }
+                } else if (info.name === 'allergy_to_meds') {
+                    if(info.selected){
+                        this.setState({
+                            allergies:[{id: 'yes', value: 'Yes', checked: true},
+                                {id: 'no', value: 'No', checked: false}],
+                            isAllergie:true,
+                            allergieValue:info?.desc
+                        })
+                    }else {
+                        this.setState({
+                            allergies:[{id: 'yes', value: 'Yes', checked: false},
+                                {id: 'no', value: 'No', checked: true}]
+                        })
+                    }
+                } else if (info.name === 'covid_vaccinated') {
+                    //covid_vaccinated
+                    if(info.selected){
+                        this.setState({
+                            vaccinated:[{id: 'yes', value: 'Yes', checked: true},
+                                {id: 'no', value: 'No', checked: false}],
+                            isVaccinated:true,
+                            vaccineDate:moment(info.diag_at).format('YYYY-MM-DD'),
+                        })
+                            info.meta.map(dataInfo => {
+                                console.log('ASdsa', dataInfo);
+                                if (dataInfo.name === 'dose_type') {
+                                    this.setState({
+                                        dose:dataInfo.desc,
+                                    })
+                                } else if (dataInfo.name === 'vaccine_name') {
+                                    this.setState({
+                                        vaccineName:dataInfo?.desc
+                                    })
+                                }
+                            });
+                    }else {
+                        this.setState({
+                            vaccinated:[{id: 'yes', value: 'Yes', checked: false},
+                                {id: 'no', value: 'No', checked: true}],
+
+                        })
+                    }
+
+
+
+                }
+            });
+        }
         this.setState({
             data: profile.data,
             countries: countries.data,
@@ -72,7 +201,87 @@ class Profile extends Component {
                 state: selectedState,
                 city: selectedCity,
             },
+            otherMedical:profile.data.additional_info.other_med_cond || ''
         });
+    }
+
+    handleDiabetic = (id) => {
+        this.setState({
+            isDiabetic: id === 'yes'
+        })
+       const newDiabetic = this.state.diabetics.map((item) => {
+            return Object.assign({}, item, {checked: item.id === id});
+        })
+        this.setState({
+            diabetics:newDiabetic
+        })
+    }
+
+    handleHypertensive = (id) => {
+        this.setState({
+            isHypertensive: id === 'yes'
+        })
+
+       const newHypertensives = this.state.hypertensives.map((item) => {
+            return Object.assign({}, item, {checked: item.id === id});
+        })
+        this.setState({
+            hypertensives:newHypertensives
+        })
+    }
+
+    handleSurgerys = (id) => {
+        this.setState({
+            isSurgery: id === 'yes'
+        })
+
+       const newSurgerys = this.state.hypertensives.map((item) => {
+            return Object.assign({}, item, {checked: item.id === id});
+        })
+        this.setState({
+            surgerys:newSurgerys
+        })
+    }
+
+    handleAllergies = (id) => {
+        this.setState({
+            isAllergie: id === 'yes'
+        })
+
+       const newAllergies = this.state.allergies.map((item) => {
+            return Object.assign({}, item, {checked: item.id === id});
+        })
+        this.setState({
+            allergies:newAllergies
+        })
+    }
+
+    handleCovids = (id) => {
+        this.setState({
+            isCovid: id === 'yes'
+        })
+
+       const newCovids = this.state.covids.map((item) => {
+            return Object.assign({}, item, {checked: item.id === id});
+        })
+
+        this.setState({
+            covids:newCovids
+        })
+    }
+
+    handleVaccinated = (id) => {
+        this.setState({
+            isVaccinated: id === 'yes'
+        })
+
+       const newVaccinatedList = this.state.vaccinated.map((item) => {
+            return Object.assign({}, item, {checked: item.id === id});
+        })
+
+        this.setState({
+            vaccinated:newVaccinatedList
+        })
     }
 
     handleSelect = (key) => {
@@ -121,6 +330,23 @@ class Profile extends Component {
         });
     };
     updateProfile = async (e) => {
+        const {
+            isDiabetic,
+            diabeticValue,
+            hypertensiveValue,
+            isHypertensive,
+            isSurgery,
+            surgeryValue,
+            allergieValue,
+            isAllergie,
+            isCovid,
+            otherMedical,
+            isVaccinated,
+            vaccineDate,
+            dose,
+            vaccineName,
+            covidDetails,
+        } = this.state;
         e.preventDefault()
         let data = this.state.updatedModel;
         let countryStateCity = this.state.countryStateCity;
@@ -130,6 +356,59 @@ class Profile extends Component {
             state: countryStateCity.state.name,
             country: countryStateCity.country.name,
         };
+        data.additional_info.med_cond = [
+            {
+                name: 'diabetic',
+                selected: isDiabetic,
+                diag_at: isDiabetic ? diabeticValue : '',
+                desc: '',
+            },
+            {
+                name: 'hypertensive',
+                selected: isHypertensive,
+                diag_at: isHypertensive ? hypertensiveValue : '',
+                desc: '',
+            },
+            {
+                name: 'diagnosed_with_covid',
+                selected: isCovid,
+                diag_at: '',
+                desc: isCovid ? covidDetails : '',
+            },
+            {
+                name: 'past_surgeries',
+                selected: isSurgery,
+                diag_at: '',
+                desc: isSurgery ? surgeryValue : '',
+            },
+            {
+                name: 'allergy_to_meds?',
+                selected: isAllergie,
+                diag_at: '',
+                desc: isAllergie ? allergieValue : '',
+            },
+            {
+                name: 'covid_vaccinated',
+                selected: isVaccinated,
+                diag_at: isVaccinated ? vaccineDate : '',
+                desc: '',
+                meta: isVaccinated ? [
+                    {
+                        name: 'dose_type',
+                        selected: true,
+                        diag_at: '',
+                        desc: dose,
+                    },
+                    {
+                        name: 'vaccine_name',
+                        selected: true,
+                        diag_at: '',
+                        desc: vaccineName,
+                    }
+                ] : []
+            },
+        ],
+        data.additional_info.other_med_cond = otherMedical
         try {
             let result = await fetchApi({
                 url: "v1/user/updateProfile",
@@ -255,6 +534,232 @@ class Profile extends Component {
         return this.state.showMenu;
     }
 
+    renderPatientMoreFields = () => {
+        return(
+            <div className="row form-row">
+                <div className="col-12 col-sm-6">
+                    <div className="form-group">
+                        <label>Height</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="additional_info.height"
+                            onChange={this.handleChange}
+                            value={
+                                this.state.updatedModel.additional_info.height
+                            }
+                        />
+                    </div>
+                </div>
+                <div className="col-12 col-sm-6">
+                    <div className="form-group">
+                        <label>Weight</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="additional_info.weight"
+                            onChange={this.handleChange}
+                            value={
+                                this.state.updatedModel.additional_info.weight
+                            }
+                        />
+                    </div>
+                </div>
+                <div className="col-12 col-sm-6">
+                    <div className="form-group">
+                        <Col md>
+                            <div className="form-group">
+                            <Radio
+                                label="Are you Diabetic?"
+                                id="radioDiabetes"
+                                options={this.state.diabetics}
+                                handleSelect={this.handleDiabetic}
+                            />
+                        </div>
+                        {this.state.isDiabetic &&
+                            <div className="form-group">
+                            <Col>
+                                <br/>
+                                <br/> <Form.Control type="date"
+                                                    value={this.state.diabeticValue}
+                                                    max={moment(new Date()).format('YYYY-MM-DD')}
+                                                    onChange={(e) => this.setState({
+                                                        diabeticValue:e.target.value
+                                                    })}/>
+                            </Col>
+                        </div>
+                        }
+                        </Col>
+                    </div>
+                </div>
+                    <div className="col-12 col-sm-6">
+                        <div className="form-group">
+                            <Radio
+                                label="Are you Hypertensive?"
+                                id="radioHypertensive"
+                                options={this.state.hypertensives}
+                                handleSelect={this.handleHypertensive}
+                            />
+                        </div>
+                        <div className="form-group">
+                            {this.state.isHypertensive &&
+                            <Col>
+                                <br/>
+                                <br/> <Form.Control type="date"
+                                                    value={this.state.hypertensiveValue}
+                                                    max={moment(new Date()).format('YYYY-MM-DD')}
+                                                    onChange={(e) => this.setState({hypertensiveValue:e.target.value})}/>
+                            </Col>
+                            }
+                        </div>
+                    </div>
+                <div className="col-12 col-sm-6">
+
+                    <div className="form-group">
+                        <Col md>
+                            <div className="form-group">
+                                <Radio
+                                    label="Any past surgery?"
+                                    id="radioSurgery"
+                                    options={this.state.surgerys}
+                                    handleSelect={this.handleSurgerys}
+                                />
+                            </div>
+                            {this.state.isSurgery &&
+                            <div className="form-group">
+                                <TextArea
+                                    id={'surgery'}
+                                    value={this.state.surgeryValue}
+                                    placeholder="Please mention in brief"
+                                    onChange={(value) => this.setState({
+                                        surgeryValue:value
+                                    })}
+                                    rows={4}
+                                    cols={35}
+                                ></TextArea>
+                            </div>
+                            }
+                        </Col>
+                        <Col md>
+                            <div className="form-group">
+                                <Radio
+                                    label="Any allergies to medications?"
+                                    id="radioAllergies"
+                                    options={this.state.allergies}
+                                    handleSelect={this.handleAllergies}
+                                />
+                            </div>
+                            <div className="form-group">
+                                {this.state.isAllergie &&
+                                <TextArea
+                                    id={'textareaSurgery'}
+                                    value={this.state.allergieValue}
+                                    placeholder="Please mention in brief"
+                                    onChange={(value) => this.setState({
+                                        allergieValue:value
+                                    })}
+                                    rows={4}
+                                    cols={35}
+                                ></TextArea>
+                                }
+                            </div>
+                        </Col>
+                    </div>
+                    <div className="form-group">
+                        <Col md>
+                            <div className="form-group">
+                                <Radio
+                                    label="Have you been diagnosed with Covid?"
+                                    id="diagCovid"
+                                    options={this.state.covids}
+                                    handleSelect={this.handleCovids}
+                                />
+                            </div>
+                            <div className="form-group">
+                                {this.state.isCovid &&
+                                <Col md>
+                                    <Input
+                                        type="text"
+                                        placeholder="Enter additional details"
+                                        label="Provide additional details of Covid illness"
+                                        value={this.state.covidDetails}
+                                        onChange={(value) => this.setState({
+                                            covidDetails:value
+                                        })}
+                                    />
+                                </Col>
+                                }
+                            </div>
+                        </Col>
+                        <Col md>
+                            <div className="form-group">
+                                <Radio
+                                    label="Have you been vaccinated against Covid?"
+                                    id="vaccinated"
+                                    options={this.state.vaccinated}
+                                    handleSelect={this.handleVaccinated}
+                                />
+                            </div>
+                            <div className="form-group">
+                                {this.state.isVaccinated &&
+                                <Col md style={{paddingTop: '32px'}}>
+                                    <br/> <Form.Control type="date"
+                                                        value={this.state.vaccineDate}
+                                                        onKeyDown={(e) => e.preventDefault()}
+                                                        max={moment(new Date()).format('YYYY-MM-DD')}
+                                                        onChange={(e) => this.setState({
+                                                            vaccineDate:e.target.value
+                                                        })}
+                                />
+                                    <Selector
+                                        defaultValue="Choose dose type"
+                                        id="dose"
+                                        options={this.state.dosages}
+                                        // handleSelect={this.setDose}
+                                        handleSelect={(item) => this.setState({
+                                            dose:item
+                                        })}
+                                        value={this.state.dose}
+                                    />
+                                    <Selector
+                                        defaultValue="Choose vaccine name"
+                                        id="v-name"
+                                        options={this.state.vaccineNames}
+                                        // handleSelect={setVaccineName}
+                                        handleSelect={(item) => {
+                                            this.setState({
+                                                vaccineName: item
+                                            })
+                                        }}
+                                        value={this.state.vaccineName}
+                                    />
+                                </Col>
+                                }
+                            </div>
+                        </Col>
+                    </div>
+                    <div className="form-group">
+                        <Col md>
+                            <TextArea
+                                label="Other medical conditions"
+                                id={'other-condition'}
+                                value={this.state.otherMedical}
+                                placeholder="Add conditions"
+                                onChange={(value) => this.setState({
+                                    otherMedical:value
+                                })}
+                                // onChange={setOtherMedical}
+                                rows={1}
+                                cols={20}
+                            ></TextArea>
+                        </Col>
+                        <Col md></Col>
+                    </div>
+                </div>
+            </div>
+        )
+}
+
     render() {
         return (
             <div>
@@ -374,7 +879,7 @@ class Profile extends Component {
                                                         </p>
                                                         <p className="col-sm-10">
                                                             {changeCaseFirstLetter(
-                                                                this.state.data.user.language.name
+                                                                this.state.data.user.language?.name
                                                             )}
                                                         </p>
                                                     </div>
@@ -412,8 +917,74 @@ class Profile extends Component {
                                                             )}
                                                         </p>
                                                     </div>
+                                                    {this.state.type === constants.USER_TYPE_PATIENT && <>
+                                                        <div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                            Height
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                            {this.state.data.additional_info.height}
+                                                        </p>
+                                                    </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Weight
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.data.additional_info.weight}
+                                                        </p>
+                                                        </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Are you Diabetic?
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.isDiabetic? 'yes': 'no'}
+                                                        </p>
+                                                        </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Are you Hypertensive?
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.isHypertensive? 'yes': 'no'}
+                                                        </p>
+                                                        </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Any past surgery?
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.isSurgery? 'yes': 'no'}
+                                                        </p>
+                                                        </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Any allergies to medications?
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.isAllergie? 'yes': 'no'}
+                                                        </p>
+                                                        </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Have you been diagnosed with Covid?
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.isCovid? 'yes': 'no'}
+                                                        </p>
+                                                        </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Have you been vaccinated against Covid?
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.isVaccinated? 'yes': 'no'}
+                                                        </p>
+                                                        </div><div className="row">
+                                                        <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                                        Other medical conditions
+                                                        </p>
+                                                        <p className="col-sm-10 mb-0">
+                                                    {this.state.otherMedical}
+                                                        </p>
+                                                        </div>
+                                                    </>}
                                                 </div>
-                                            )}
+                                              )}
                                         </div>
                                     </div>
                                 </div>
@@ -576,7 +1147,7 @@ class Profile extends Component {
                                                 <div className="form-group">
                                                     <label>Language</label>
                                                     <select
-                                                        value={this.state.updatedModel.user.language._id}
+                                                        value={this.state.updatedModel.user.language?._id}
                                                         name="language"
                                                         onChange={(e) => this.handleChange(e)}
                                                         className="form-control"
@@ -593,7 +1164,7 @@ class Profile extends Component {
                                             </div>
                                             <div className="col-12 col-sm-6">
                                                 <div className="form-group">
-                                                    <label>Address Line1</label>
+                                                    <label>Address Line 1</label>
                                                     <input
                                                         type="text"
                                                         className="form-control"
@@ -608,7 +1179,7 @@ class Profile extends Component {
                                             </div>
                                             <div className="col-12 col-sm-6">
                                                 <div className="form-group">
-                                                    <label>Address Line2</label>
+                                                    <label>Address Line 2</label>
                                                     <input
                                                         type="text"
                                                         className="form-control"
@@ -679,6 +1250,9 @@ class Profile extends Component {
                                                 </div>
                                             </div>
                                         </div>
+                                            <div className="patient-more-fields">
+                                                {this.state.type === constants.USER_TYPE_PATIENT && this.renderPatientMoreFields()}
+                                            </div>
                                         <button
                                             type="submit"
                                             onClick={this.updateProfile}

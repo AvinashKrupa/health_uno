@@ -44,12 +44,13 @@ export const renderName = (record, prefix, suffix, includeImage = false) => {
                 className="avatar avatar-sm mr-2">
                 <img alt="" src={record.user_id.dp}/>
             </Link>}
-            <a>{`${prefix ? prefix + " " : ""}${getFullName(record)}${suffix ? " " + suffix : ""}`}</a>
+            <Link
+                to={createProfileLink(record)}><a>{`${prefix ? prefix + " " : ""}${getFullName(record)}${suffix ? " " + suffix : ""}`}</a></Link>
         </h2>
     )
 }
 const createProfileLink = (record) => {
-    return record ? ("/profile/" + record.user_id._id + "/" + (record.hasOwnProperty("med_cond") ? constants.USER_TYPE_PATIENT : constants.USER_TYPE_DOCTOR))
+    return record ? ("/profile/" + record?.user_id?._id + "/" + (record.hasOwnProperty("med_cond") ? constants.USER_TYPE_PATIENT : constants.USER_TYPE_DOCTOR))
         : "/profile"
 }
 export const renderChips = (items) => {
