@@ -163,16 +163,20 @@ export const getColumnSearchProps = (context, dataIndex, handleSearch, handleRes
         }
     },
 });
-export const getColumnDropDownSearchProps = (context, dataIndex, handleSearch, handleReset, recordValueToCompare) => ({
+export const getColumnDropDownSearchProps = (context,items, dataIndex, handleSearch, handleReset, recordValueToCompare) => ({
     filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
         <div style={{padding: 8}}>
-            <Select defaultValue="None" style={{ width: 120 }} onChange={value => {
+            <Select  style={{ width: 120 }} onChange={value => {
                     setSelectedKeys(value ? [value] : [])
                     handleSearch(selectedKeys, confirm, dataIndex)
                 }} >
-                <Select.Option 
-                value="Medical"
-                >Medical</Select.Option>
+                    {
+                        items.map(item=>{
+                            return (
+                              <Select.Option value={item}> {item} </Select.Option>
+                            )
+                          })
+                    }
             </Select>
         </div>
     ),

@@ -90,7 +90,7 @@ class Doctors extends Component {
 
   render() {
     const { data } = this.state;
-
+    const arr = ['Medical','Surgical'];
     const columns = [
       {
         title: "Doctor Name",
@@ -117,6 +117,7 @@ class Doctors extends Component {
           sorterText(a.qualif.dept_id.title, b.qualif.dept_id.title),
         ...getColumnDropDownSearchProps(
             this,
+            arr,
             "Department",
             this.handleSearch,
             this.handleReset,
