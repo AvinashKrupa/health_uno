@@ -130,7 +130,6 @@ class Doctors extends Component {
             "Department",
             this.handleSearch,
             this.handleReset,
-            'All',
             "qualif.dept_id.title"
           ),    
       },

@@ -170,7 +170,7 @@ export const getColumnDropDownSearchProps = (context,items, dataIndex, handleSea
                     setSelectedKeys(value ? value==='All'?[]: [value] : [])
                     handleSearch(selectedKeys, confirm, dataIndex)
                 }} >
-                    <Select.Option value='All'> All </Select.Option>
+                    <Select.Option value='All'>All</Select.Option>
                     {
                         items.map(item=>{
                             return (
