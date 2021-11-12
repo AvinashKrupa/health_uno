@@ -40,8 +40,11 @@ import FormMask from './components/formask';
 import FormValidation from './components/formvalidation';
 import BlankPage from './components/blankpage';
 import Components from './components/component';
+import VersionSettings from './components/versionsettings';
 import SlotBooking from './components/SlotBooking';
 import PrivateRoute from './HOC/privateRoute';
+import CkEditor from './components/CkEditor';
+import RevenuePage from './components/Revenue';
 
 
 const AppUniversal = function (props) {
@@ -55,6 +58,7 @@ const AppUniversal = function (props) {
                     <PrivateRoute path="/dashboard" exact component={Dashboard}/>
                     <PrivateRoute path="/admin" exact component={Dashboard}/>
                     <PrivateRoute path="/appointment-list" exact component={Appointments}/>
+                    <PrivateRoute path="/revenue" exact component={RevenuePage}/>
                     <PrivateRoute path="/slotBooking/:doctor_id/:appoinment_id" exact component={SlotBooking}/>
                     <PrivateRoute path="/specialities" exact component={Specialities}/>
                     <PrivateRoute path="/sliders" exact component={Sliders}/>
@@ -86,11 +90,13 @@ const AppUniversal = function (props) {
                     <Route path="/500" exact component={ErrorPage}/>
                     <Route path="/blank-page" exact component={BlankPage}/>
                     <Route path="/components" exact component={Components}/>
+                    <Route path="/versionsettings" exact component={VersionSettings} />
                     <Route path="/basic-input" exact component={BasicInput}/>
                     <Route path="/form-input-group" exact component={FormInput}/>
                     <Route path="/form-horizontal" exact component={FormHorizontal}/>
                     <Route path="/form-mask" exact component={FormMask}/>
                     <Route path="/form-validation" exact component={FormValidation}/>
+                    <Route path="/about-us" exact component={CkEditor}/>
                 </Switch>
             </div>
 
