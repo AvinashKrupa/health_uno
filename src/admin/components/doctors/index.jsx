@@ -33,13 +33,17 @@ class Doctors extends Component {
       data: [],
       showMenu: {},
       searchText: "",
+      departments:[],
       searchedColumn: "",
     };
   }
 
   async componentDidMount() {
     let doctors = await fetchApi({ url: "v1/doctors", method: "GET" });
+    let departments = await fetchApi({ url: "v1/departments", method: "GET" });
+    console.log("departments are ",departments)
     this.setState({ data: doctors.data });
+    // this.setState({departments})
   }
 
   async handleItemClick(record, dropdownItem) {
@@ -83,6 +87,10 @@ class Doctors extends Component {
   }
 
   handleDataChange = (pagination, filters, sorter, extra) => {
+    console.log("extra is ",extra)
+    console.log("pagination is ",pagination)
+    console.log("filters is ",filters)
+    console.log("sorter is ",sorter)
     this.setState({
       total: extra.currentDataSource.length,
     });
