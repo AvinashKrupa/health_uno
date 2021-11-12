@@ -40,10 +40,13 @@ class Doctors extends Component {
 
   async componentDidMount() {
     let doctors = await fetchApi({ url: "v1/doctors", method: "GET" });
-    let departments = await fetchApi({ url: "v1/departments", method: "GET" });
+    let deptData = await fetchApi({ url: "v1/departments", method: "GET" });
+    let departments = deptData.data.map((ele)=>{
+      return ele.title
+    })
     console.log("departments are ",departments)
     this.setState({ data: doctors.data });
-    // this.setState({departments})
+    this.setState({departments:departments})
   }
 
   async handleItemClick(record, dropdownItem) {
@@ -65,6 +68,7 @@ class Doctors extends Component {
       console.log("error>>", e);
     }
   }
+ 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     this.setState({
@@ -87,18 +91,15 @@ class Doctors extends Component {
   }
 
   handleDataChange = (pagination, filters, sorter, extra) => {
-    console.log("extra is ",extra)
-    console.log("pagination is ",pagination)
-    console.log("filters is ",filters)
-    console.log("sorter is ",sorter)
+
     this.setState({
       total: extra.currentDataSource.length,
     });
   };
 
   render() {
-    const { data } = this.state;
-    const arr = ['Medical','Surgical'];
+    const { data,departments } = this.state;
+    
     const columns = [
       {
         title: "Doctor Name",
@@ -125,10 +126,11 @@ class Doctors extends Component {
           sorterText(a.qualif.dept_id.title, b.qualif.dept_id.title),
         ...getColumnDropDownSearchProps(
             this,
-            arr,
+            departments,
             "Department",
             this.handleSearch,
             this.handleReset,
+            'All',
             "qualif.dept_id.title"
           ),    
       },

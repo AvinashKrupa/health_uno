@@ -167,9 +167,10 @@ export const getColumnDropDownSearchProps = (context,items, dataIndex, handleSea
     filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
         <div style={{padding: 8}}>
             <Select  style={{ width: 120 }} onChange={value => {
-                    setSelectedKeys(value ? [value] : [])
+                    setSelectedKeys(value ? value==='All'?[]: [value] : [])
                     handleSearch(selectedKeys, confirm, dataIndex)
                 }} >
+                    <Select.Option value='All'> All </Select.Option>
                     {
                         items.map(item=>{
                             return (
