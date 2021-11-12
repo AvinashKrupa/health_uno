@@ -14,20 +14,38 @@ class VersionSettings extends Component{
             andriodMandVer: "",
             andriodLatVer: "",
             invalid: false,
+            data: []
         }
     }
+    async componentDidMount() {
+        await this.reloadData()
+       
+    }
+
+    async reloadData() {
+        let result = await fetchApi({url: "v1/config/getCurrentVersions", method: "GET"})
+        this.setState({data: result.data});
+        this.setState({iosMandVer:this.state.data.ios_ver_mandatory})
+        this.setState({iosLatVer:this.state.data.ios_ver_latest})
+        this.setState({andriodMandVer:this.state.data.android_ver_mandatory})
+        this.setState({andriodLatVer:this.state.data.android_ver_latest})
+    }
+
     handleIosMandVerChange(e) {
         console.log("iso mandatory >>>", e.target.value )
         this.setState({iosMandVer: e.target.value})
     }
+
     handleIosLatVerChange(e) {
         console.log("iso latest >>>", e.target.value )
         this.setState({iosLatVer: e.target.value})
     }
+
     handleAndriodMandVerChange(e) {
         console.log("andrio madna >>>", e.target.value )
         this.setState({andriodMandVer: e.target.value})
     }
+
     handleAndriodLatVerChange(e) {
         console.log("andrio latest >>>", e.target.value )
         this.setState({andriodLatVer: e.target.value})
@@ -36,6 +54,13 @@ class VersionSettings extends Component{
     validation(iosMandVer,iosLatVer,andriodMandVer,andriodLatVer) {
         let errorMessage = "Mandatory version should be less than and equal to optional version"
         console.log( " values are ",iosMandVer,iosLatVer,andriodMandVer,andriodLatVer)
+
+        if (iosMandVer === '' || iosLatVer === '' || andriodMandVer === '' || andriodLatVer === '' ) {
+          let errorMessage = `All fields are required `
+                toast.error(errorMessage)
+                return false;
+        }
+
         if (iosMandVer && iosMandVer !== '' && iosLatVer && iosLatVer !== '') {
             if(iosMandVer > iosLatVer){
                 toast.error(errorMessage)
@@ -111,7 +136,7 @@ class VersionSettings extends Component{
                                         <form action="#">
                                             <div className="form-group" style={{fontWeight:'bold'}}>
                                                 <label>Ios Mandatroy Version</label>
-                                                <input type="text" placeholder="2.04" className="form-control" onChange={(e) => this.handleIosMandVerChange(e)}/>
+                                                <input type="text" placeholder="version number" className="form-control" value={this.state.iosMandVer} onChange={(e) => this.handleIosMandVerChange(e)}/>
                                             </div>
                                         </form>
                                     </div>
@@ -123,7 +148,7 @@ class VersionSettings extends Component{
                                         <form action="#">
                                             <div className="form-group" style={{fontWeight:'bold'}}>
                                                 <label>Ios Latest Version</label>
-                                                <input type="text" placeholder="2.04" className="form-control" onChange={(e) => this.handleIosLatVerChange(e)}/>
+                                                <input type="text" placeholder="version number" className="form-control" value={this.state.iosLatVer} onChange={(e) => this.handleIosLatVerChange(e)}/>
                                             </div>
                                         </form>
                                     </div>
@@ -135,7 +160,7 @@ class VersionSettings extends Component{
                                         <form action="#">
                                             <div className="form-group" style={{fontWeight:'bold'}}>
                                                 <label>Andriod Mandatroy Version</label>
-                                                <input type="text" placeholder="2.05" className="form-control" onChange={(e) => this.handleAndriodMandVerChange(e)}/>
+                                                <input type="text" placeholder="version number" className="form-control" value={this.state.andriodMandVer} onChange={(e) => this.handleAndriodMandVerChange(e)}/>
                                             </div>
                                         </form>
                                     </div>
@@ -147,7 +172,7 @@ class VersionSettings extends Component{
                                         <form action="#">
                                             <div className="form-group" style={{fontWeight:'bold'}}>
                                                 <label>Andriod Latest Version</label>
-                                                <input type="text" placeholder="2.05" className="form-control" onChange={(e) => this.handleAndriodLatVerChange(e)}/>
+                                                <input type="text" placeholder="version number" className="form-control" value={this.state.andriodLatVer}  onChange={(e) => this.handleAndriodLatVerChange(e)}/>
                                             </div>
                                         </form>
                                     </div>
