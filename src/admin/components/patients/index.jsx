@@ -216,13 +216,13 @@ class Patients extends Component {
       createdBy: {
         header: "Created by",
         formatter: (_fieldValue, record) => {
-          return record?.created_by?.first_name;
+          return ((record?.created_by?.first_name?record.created_by.first_name:" ") + " "+ (record?.created_by?.last_name?record.created_by.last_name:" "));
         },
       },
       updatedBy: {
         header: "Updated by",
         formatter: (_fieldValue, record) => {
-          return record?.updated_by?.first_name;
+          return ((record?.updated_by?.first_name?record.updated_by.first_name:" ") + " "+ (record?.updated_by?.last_name?record.updated_by.last_name:" "));
         },
       },
       status: {
