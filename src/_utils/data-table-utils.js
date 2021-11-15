@@ -127,7 +127,7 @@ export const renderDropDown = (
 export const renderEditDisableActions = (handleShow, record, type = 0) => {
   return (
     <div className="actions">
-      {type == 0 && (
+      {type == 0 ? (
         <>
           <a
             href="#0"
@@ -146,6 +146,30 @@ export const renderEditDisableActions = (handleShow, record, type = 0) => {
           >
             {record.enabled ? "Disable" : " Enable"}
           </a>
+        </>
+      ) : (
+        <>
+          {record.status == "inactive" || record.status == "active" ? (
+            <a
+              href="#0"
+              className={`btn btn-sm ${
+                record.status == "active"
+                  ? "bg-danger-light"
+                  : "bg-success-light"
+              }`}
+              onClick={() => handleShow("disable")}
+            >
+              {record.status == "active" ? "Inactive" : " Active"}
+            </a>
+          ) : (
+            <a
+              href="#0"
+              className={`btn btn-sm ${"bg-primary-light"}`}
+              style={{ textTransform: "capitalize" }}
+            >
+              {record.status}
+            </a>
+          )}
         </>
       )}
       <a

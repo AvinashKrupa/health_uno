@@ -66,6 +66,29 @@ class CouponScreen extends Component {
       show: { id: id, record: { ...record } },
     });
   };
+
+  async changeCouponStatus(record) {
+    let body = {
+      _id: record._id,
+      status: record.status == "active" ? "inactive" : "active",
+    };
+    try {
+      let result = await fetchApi({
+        url: "v1/coupon/changeStatus",
+        method: "POST",
+        body: body,
+      });
+      if (result) {
+        toast.success(result.message);
+        this.reloadData();
+      }
+    } catch (e) {
+      console.log("error>>", e);
+    }
+    this.handleClose();
+    await this.reloadData();
+  }
+
   handleTitleChange = (e, key) => {
     let addDataSource = this.state.addDataSource;
     addDataSource[key] = e.target.value;
@@ -229,7 +252,12 @@ class CouponScreen extends Component {
         title: "Actions",
         render: (text, record) =>
           renderEditDisableActions(
-            (elem) => this.handleShow(elem, record),
+            (elem, records) => {
+              console.log("elem", elem, record);
+              if (elem == "disable") {
+                this.changeCouponStatus(record);
+              }
+            },
             record,
             1
           ),
@@ -329,6 +357,9 @@ class CouponScreen extends Component {
                       <div className="form-group">
                         <label>Discount</label>
                         <input
+                          type="number"
+                          min="1"
+                          max="100"
                           value={this.state.addDataSource.discount_pct}
                           type="text"
                           onChange={(e) => {
@@ -370,7 +401,9 @@ class CouponScreen extends Component {
                         <label>Max Usage</label>
                         <input
                           value={this.state.addDataSource.max_usages}
-                          type="text"
+                          type="number"
+                          min="1"
+                          max="100"
                           onChange={(e) => {
                             this.handleTitleChange(e, "max_usages");
                           }}
