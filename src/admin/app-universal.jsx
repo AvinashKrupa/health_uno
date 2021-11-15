@@ -40,6 +40,7 @@ import FormMask from './components/formask';
 import FormValidation from './components/formvalidation';
 import BlankPage from './components/blankpage';
 import Components from './components/component';
+import VersionSettings from './components/versionsettings';
 import SlotBooking from './components/SlotBooking';
 import PrivateRoute from './HOC/privateRoute';
 import CkEditor from './components/CkEditor';
@@ -89,6 +90,7 @@ const AppUniversal = function (props) {
                     <Route path="/500" exact component={ErrorPage}/>
                     <Route path="/blank-page" exact component={BlankPage}/>
                     <Route path="/components" exact component={Components}/>
+                    <Route path="/versionsettings" exact component={VersionSettings} />
                     <Route path="/basic-input" exact component={BasicInput}/>
                     <Route path="/form-input-group" exact component={FormInput}/>
                     <Route path="/form-horizontal" exact component={FormHorizontal}/>
