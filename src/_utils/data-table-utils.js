@@ -69,6 +69,15 @@ export const renderText = (text) => {
 export const renderBoolean = (value) => {
   return <div className="sorting_1">{value ? "Enabled" : "Disabled"}</div>;
 };
+
+export const renderStatus = (value) => {
+  return (
+    <div style={{ textTransform: "capitalize" }} className="sorting_1">
+      {value}
+    </div>
+  );
+};
+
 export const renderTextWithImage = (text, url) => {
   return (
     <h2 className="table-avatar">
@@ -119,23 +128,26 @@ export const renderEditDisableActions = (handleShow, record, type = 0) => {
   return (
     <div className="actions">
       {type == 0 && (
-        <a
-          href="#0"
-          className="btn btn-sm bg-success-light"
-          onClick={() => handleShow("edit")}
-        >
-          <i className="fe fe-pencil"></i> Edit
-        </a>
+        <>
+          <a
+            href="#0"
+            className="btn btn-sm bg-success-light"
+            onClick={() => handleShow("edit")}
+          >
+            <i className="fe fe-pencil"></i> Edit
+          </a>
+
+          <a
+            href="#0"
+            className={`btn btn-sm ${
+              record.enabled ? "bg-danger-light" : "bg-success-light"
+            }`}
+            onClick={() => handleShow("disable")}
+          >
+            {record.enabled ? "Disable" : " Enable"}
+          </a>
+        </>
       )}
-      <a
-        href="#0"
-        className={`btn btn-sm ${
-          record.enabled ? "bg-danger-light" : "bg-success-light"
-        }`}
-        onClick={() => handleShow("disable")}
-      >
-        {record.enabled ? " Disable" : " Enable"}
-      </a>
       <a
         href="#0"
         className="btn btn-sm bg-danger-light"

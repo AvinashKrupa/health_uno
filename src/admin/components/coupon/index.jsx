@@ -20,6 +20,7 @@ import {
   sorterDate,
   sorterNumber,
   sorterText,
+  renderStatus,
 } from "../../../_utils/data-table-utils";
 
 import toast from "react-hot-toast";
@@ -107,6 +108,16 @@ class CouponScreen extends Component {
 
       if (result) {
         toast.success(result.message);
+        this.setState({
+          addDataSource: {
+            code: "",
+            desc: "",
+            discount_pct: "",
+            start_date: "",
+            end_date: "",
+            max_usages: "",
+          },
+        });
         await this.reloadData();
       }
       this.handleClose();
@@ -197,22 +208,22 @@ class CouponScreen extends Component {
         sorter: (a, b) => sorterText(a.desc, b.desc),
       },
       {
-        title: "Created At",
-        dataIndex: "created_at",
+        title: "Start At",
+        dataIndex: "start_date",
         render: (text) => renderDate(text),
-        sorter: (a, b) => sorterDate(a.created_at, b.created_at),
+        sorter: (a, b) => sorterDate(a.created_at, b.start_date),
       },
       {
-        title: "Updated At",
-        dataIndex: "updated_at",
+        title: "End At",
+        dataIndex: "end_date",
         render: (text) => renderDate(text),
-        sorter: (a, b) => sorterDate(a.updated_at, b.updated_at),
+        sorter: (a, b) => sorterDate(a.updated_at, b.end_date),
       },
       {
         title: "Status",
         dataIndex: "status",
-        render: (text) => renderBoolean(text),
-        sorter: (a, b) => sorterBoolean(a.status, b.status),
+        render: (text, record) => renderStatus(record.status),
+        sorter: (a, b) => sorterText(a.status, b.status),
       },
       {
         title: "Actions",
