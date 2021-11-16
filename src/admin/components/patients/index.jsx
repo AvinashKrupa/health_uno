@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Table } from "antd";
+import { Table,ExportTableButton } from "ant-table-extensions";
+import moment from "moment";
 import { Link } from "react-router-dom";
 import SidebarNav from "../sidebar";
 import {
@@ -28,6 +29,7 @@ class Patients extends Component {
     this.state = {
       total: null,
       data: [],
+      exportingData: [],
       showMenu: {},
       searchText: "",
       searchedColumn: "",
@@ -36,7 +38,9 @@ class Patients extends Component {
 
   async componentDidMount() {
     let patients = await fetchApi({ url: "v1/patients", method: "GET" });
-    this.setState({ data: patients.data });
+    let patientsData = patients.data;
+    this.setState({ data: patientsData });
+    this.setState({exportingData:patientsData})
   }
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -82,13 +86,15 @@ class Patients extends Component {
   }
 
   handleDataChange = (pagination, filters, sorter, extra) => {
+    console.log("exported data ",extra.currentDataSource)
     this.setState({
       total: extra.currentDataSource.length,
+      exportingData:extra.currentDataSource
     });
   };
 
   render() {
-    const { data } = this.state;
+    const { data,exportingData } = this.state;
 
     const columns = [
       {
@@ -113,6 +119,19 @@ class Patients extends Component {
         title: "Weight (Kg)",
         dataIndex: "weight",
         sorter: (a, b) => sorterNumber(a.weight, b.weight),
+      },
+      {
+        title: "Mobile Number",
+        render: (text, record) => renderText(record.user_id.mobile_number),
+        sorter: (a, b) =>
+          sorterText(a.user_id.mobile_number, b.user_id.mobile_number),
+        ...getColumnSearchProps(
+          this,
+          "Mobile Number",
+          this.handleSearch,
+          this.handleReset,
+          "user_id.mobile_number"
+        ),
       },
       {
         title: "Created At",
@@ -156,6 +175,52 @@ class Patients extends Component {
           ),
       },
     ];
+    const fields = {
+      patientname: {
+        header: "Patient Name",
+        formatter: (_fieldValue, record) => {
+          return record?.user_id.first_name + " " + record?.user_id.last_name;
+        },
+      },
+      height: {
+        header: "Height (Feet)",
+        formatter: (_fieldValue, record) => {
+          return record?.height;
+        },
+      },
+      weight: {
+        header: "Weight (Kg)",
+        formatter: (_fieldValue, record) => {
+          return record?.weight;
+        },
+      },
+      mobileNumber: {
+        header: "Mobile Number",
+        formatter: (_fieldValue, record) => {
+          return record?.user_id.mobile_number;
+        },
+      },
+     
+      createdAt: {
+        header: "Created At",
+        formatter: (_fieldValue, record) => {
+          return moment(record?.created_at).format('DD/MM/YYYY');
+        },
+      },
+      updatedAt: {
+        header: "Updated At",
+        formatter: (_fieldValue, record) => {
+          return  moment(record?.updated_at).format('DD/MM/YYYY');
+        },
+      },
+      status: {
+        header: "Account Status",
+        formatter: (_fieldValue, record) => {
+          return record?.status;
+        },
+      },
+
+    };
 
     return (
       <>
@@ -184,6 +249,15 @@ class Patients extends Component {
                 <div className="card">
                   <div className="card-body">
                     <div className="table-responsive">
+                      <ExportTableButton
+                        dataSource={exportingData}
+                        columns={columns}
+                        btnProps={{ type: "primary" }}
+                        fileName= "patients-data"
+                        fields={fields}
+                      >
+                        Export
+                      </ExportTableButton>
                       <Table
                         className="table-striped"
                         style={{ overflowX: "auto" }}
