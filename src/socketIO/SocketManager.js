@@ -1,5 +1,5 @@
 const io = require("socket.io-client");
-const URL = "https://uat.healthuno.com:6003";
+const URL = "https://socket.healthuno.com";
 // const URL = "http://localhost:3007";
 const options = {
     reconnection: true,
