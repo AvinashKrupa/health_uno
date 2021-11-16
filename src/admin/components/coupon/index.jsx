@@ -256,6 +256,8 @@ class CouponScreen extends Component {
               console.log("elem", elem, record);
               if (elem == "disable") {
                 this.changeCouponStatus(record);
+              } else {
+                this.handleShow(elem, record);
               }
             },
             record,
