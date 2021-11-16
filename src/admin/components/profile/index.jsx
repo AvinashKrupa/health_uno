@@ -256,9 +256,9 @@ class Profile extends Component {
     this.setState({
       data: profile.data,
       countries: countries.data,
-      selectedDepartment: profile.data.additional_info.qualif.dept_id._id ,
-      selectedQualification: profile.data.additional_info.qualif.highest_qual._id ,
-      selectedSpecialities: profile.data.additional_info.qualif.specl[0]._id ,
+      selectedDepartment: profile.data && profile.data.additional_info &&  profile.data.additional_info.qualif && profile.data.additional_info.qualif.dept_id && profile.data.additional_info.qualif.dept_id._id ,
+      selectedQualification: profile.data && profile.data.additional_info &&  profile.data.additional_info.qualif && profile.data.additional_info.qualif.highest_qual && profile.data.additional_info.qualif.highest_qual._id ,
+      selectedSpecialities: profile.data && profile.data.additional_info &&  profile.data.additional_info.qualif && profile.data.additional_info.qualif.specl[0] && profile.data.additional_info.qualif.specl[0]._id ,
       states: [selectedState],
       cities: [selectedCity],
       department: department.data,
