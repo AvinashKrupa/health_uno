@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import Logo from '../../assets/images/logo.png';
 import {fetchApi} from "../../../_utils/http-utils";
 import toast from 'react-hot-toast';
-import {setJwtToken} from "../../../_utils/localStorage/SessionManager";
+import {setJwtToken, setProfileData} from "../../../_utils/localStorage/SessionManager";
 
 class Login extends Component {
     constructor(props) {
@@ -27,10 +27,9 @@ class Login extends Component {
             errorMessage += "The password field is required."
         }
         if (errorMessage != "") {
-            toast(errorMessage)
+            toast.error(errorMessage)
             return
         }
-        console.log("handleSubmit>>", this.state)
         try {
             let result = await fetchApi({
                 url: "v1/auth/admin/login",
@@ -38,8 +37,10 @@ class Login extends Component {
                 body: {email: this.state.email, password: this.state.password}
             })
             if (result) {
-                toast(result.message)
+                toast.success(result.message)
                 await setJwtToken(result.data.session.access_token)
+                console.log("login>>>",result.data)
+                await setProfileData(result.data.user._id)
                 this.props.history.push("/dashboard")
             }
         } catch (e) {

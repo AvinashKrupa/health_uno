@@ -18,6 +18,16 @@ const getData = (key) => {
     console.log('Get data in asyncStorage');
 };
 
+const getStorageData = (key) => {
+    try {
+        const value = localStorage.getItem(key);
+        return value;
+    } catch (e) {
+        console.log('Error in retrieving value from asyncStorage', e.message);
+        return null
+    }
+};
+
 const removeData = (key) => {
     try {
         const value = localStorage.removeItem(key);
@@ -27,4 +37,4 @@ const removeData = (key) => {
     console.log('removed data in asyncStorage');
 };
 
-export {storeData, getData, removeData};
+export {storeData, getData, getStorageData, removeData};
