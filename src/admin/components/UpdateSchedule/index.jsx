@@ -178,9 +178,7 @@ const UpdateSchedule = ({ data }) => {
     })
       .then((response) => {
         if (response.status === 200) {
-          if (response.data) {
             getSlots();
-          }
           toast.success(response.data.message);
         } else {
           toast.error(response.data.message);
@@ -329,34 +327,36 @@ const UpdateSchedule = ({ data }) => {
             setSelectedDay={onDateSelect}
             slot_id={slot}
           />
-          {Object.entries(dataMorningShift).length > 0 && (
+        </Row>
+        {Object.entries(dataMorningShift).length > 0 && (
+          <div>
             <Row
               className="slot-day"
               style={{ marginTop: "30px", marginBottom: "32px" }}
             >
-              <Col lg="3">
+              <Col lg="12">
                 <span className="shift-name">Day Shift</span>
               </Col>
             </Row>
-          )}
-          {Object.entries(dataMorningShift).length > 0 && dayShiftSlot()}
-          <div className="slot-evening">
-            {Object.entries(dataEveningShift).length > 0 && (
-              <Row style={{ marginTop: "30px", marginBottom: "32px" }}>
-                <Col lg="3">
-                  <span className="shift-name">Evening Shift</span>
-                </Col>
-              </Row>
-            )}
-            {Object.entries(dataEveningShift).length > 0 && EveningShiftSlot()}
           </div>
-          {!Object.entries(dataMorningShift).length &&
-            !Object.entries(dataEveningShift).length && (
-              <div className="empty-list-container_center">
-                <h4>No slots found, please choose another date</h4>
-              </div>
-            )}
-        </Row>
+        )}
+        {Object.entries(dataMorningShift).length > 0 && dayShiftSlot()}
+        <div className="slot-evening">
+          {Object.entries(dataEveningShift).length > 0 && (
+            <Row style={{ marginTop: "30px", marginBottom: "32px" }}>
+              <Col lg="3">
+                <span className="shift-name">Evening Shift</span>
+              </Col>
+            </Row>
+          )}
+          {Object.entries(dataEveningShift).length > 0 && EveningShiftSlot()}
+        </div>
+        {!Object.entries(dataMorningShift).length &&
+          !Object.entries(dataEveningShift).length && (
+            <div className="empty-list-container_center">
+              <h4>No slots found, please choose another date</h4>
+            </div>
+          )}
       </>
     );
   };
@@ -423,6 +423,7 @@ const UpdateSchedule = ({ data }) => {
 
               <Form.Control
                 type="time"
+                style={{ marginLeft: "5%" }}
                 placeholder="To"
                 className="shift-timings-input"
                 value={dayShiftTo}
@@ -437,17 +438,17 @@ const UpdateSchedule = ({ data }) => {
               <InputGroup>
                 <span className="shift-name">Evening Shift</span>
                 <div
-                style={{
-                  marginTop: "auto",
-                  marginBottom: "auto",
-                  marginLeft: "20%",
-                }}
-              >
-                <Checkbox
-                  id="term"
-                  checked={isEveningShift}
-                  handleSelect={setIsEveningShift}
-                />
+                  style={{
+                    marginTop: "auto",
+                    marginBottom: "auto",
+                    marginLeft: "20%",
+                  }}
+                >
+                  <Checkbox
+                    id="term"
+                    checked={isEveningShift}
+                    handleSelect={setIsEveningShift}
+                  />
                 </div>
               </InputGroup>
             </Col>
@@ -465,6 +466,7 @@ const UpdateSchedule = ({ data }) => {
                   type="time"
                   placeholder="To"
                   value={eveningShiftTo}
+                  style={{ marginLeft: "5%" }}
                   className="shift-timings-input"
                   onChange={(e) => setEveningShiftTo(e.target.value)}
                 />
@@ -489,9 +491,6 @@ const UpdateSchedule = ({ data }) => {
     <>
       <Row className="update-schedule-container">
         <Col lg="12" md="12" sm="6" xs="6">
-          <Row>
-            <span className="section-title">Update Schedule</span>
-          </Row>
           {renderGeneralAvailability()}
           {renderUpdateByDate()}
         </Col>

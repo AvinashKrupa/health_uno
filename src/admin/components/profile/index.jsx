@@ -1216,62 +1216,8 @@ class Profile extends Component {
                           <div className="card-body">
                             <h5 className="card-title d-flex justify-content-between">
                               <span>Update Slots</span>
-                              <a
-                                className="edit-link"
-                                onClick={() => this.handleShow("2")}
-                              >
-                                <i className="fa fa-edit mr-1"></i>Edit
-                              </a>
                             </h5>
                             <UpdateSchedule data={this.state.data} />
-                            {/* <div className="row">
-                              <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                                Qualification
-                              </p>
-                              <p className="col-sm-10">
-                                {
-                                  this.state.data.additional_info.qualif
-                                    .highest_qual.name
-                                }
-                              </p>
-                            </div>
-                            <div className="row">
-                              <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                                Department
-                              </p>
-                              <p className="col-sm-10">
-                                {
-                                  this.state.data.additional_info.qualif.dept_id
-                                    .title
-                                }
-                              </p>
-                            </div>
-                            {this.state.data.additional_info.qualif.exp && (
-                              <div className="row">
-                                <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                                  Experience
-                                </p>
-                                <p className="col-sm-10">
-                                  {this.state.data.additional_info.qualif.exp}
-                                </p>
-                              </div>
-                            )}
-                            <div className="row">
-                              <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                              Specialities
-                              </p>
-                              <p className="col-sm-10">
-                                {this.state.data.additional_info.qualif.specl[0].title}
-                              </p>
-                            </div>
-                            <div className="row">
-                              <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                                Fee
-                              </p>
-                              <p className="col-sm-10">
-                                ₹{this.state.data.additional_info.qualif.fee}
-                              </p>
-                            </div> */}
                           </div>
                         )}
                       </div>
