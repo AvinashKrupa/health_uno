@@ -5508,3 +5508,220 @@ input#menu[type="checkbox"] {
   font-weight: 400;
   font-size: 16px;
 }
+
+
+/* update schedule */
+
+.update-schedule-container {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.update-schedule-container .section-title {
+  font-family: Montserrat;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  margin-top: 10px;
+}
+.update-schedule-container .section-sub-title {
+  font-family: Montserrat;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  margin-bottom: 20px;
+  line-height: 24px;
+  letter-spacing: 0.3003489971px;
+  text-align: left;
+  color: #000;
+  margin-bottom: 32px;
+  margin-right: 18px;
+}
+.update-schedule-container .H4 {
+  font-family: Montserrat;
+  height: 24px;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.3003489971px;
+  text-align: left;
+  color: #000;
+  margin-top: 32px;
+  margin-bottom: 32px;
+  margin-right: 18px;
+}
+.update-schedule-container .shift-name {
+  font-family: Montserrat;
+  font-size: 18px;
+  margin-top: 1.67em;
+  margin-bottom: 1.67em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: 500;
+  height: 24px;
+  font-style: normal;
+  letter-spacing: 0.3003489971px;
+  text-align: left;
+  color: #000;
+  line-height: 9px;
+}
+.update-schedule-container .days-selection-container {
+  display: flex;
+  flex-flow: row nowrap;
+}
+.update-schedule-container .days-selection-button {
+  height: 55px;
+  width: auto;
+  max-width: 110px;
+  min-width: 110px;
+  border-radius: 12px;
+  border: 2px solid rgba(27, 27, 27, 0.2);
+  margin-right: 10px;
+  margin-bottom: 48px;
+  background: white;
+}
+.update-schedule-container .update-button {
+  position: inherit;
+  font-family: Montserrat;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 17px;
+  letter-spacing: -0.4200002849px;
+  text-align: center;
+  max-width: 300px;
+  height: 40px;
+  background: #28a3da;
+  border-radius: 6px !important;
+  margin-top: 24px;
+  margin-bottom: 34px;
+}
+.margin-top-bottom {
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+.days-button-auto {
+  width: auto !important;
+  margin-bottom: 10px !important;
+  margin-right: 10px !important;
+  height: 55px;
+  border-radius: 12px;
+  border: 2px solid rgba(27, 27, 27, 0.2);
+  margin-right: 10px;
+  background: white;
+}
+.slot-schedule-calender-container {
+  display: flex;
+  flex-direction: row;
+  width: max-content;
+}
+.slot-schedule-calender-container .slot-booking-calendar {
+  display: flex;
+  flex-direction: row;
+  flex: 3;
+}
+.slot-schedule-calender-container .slot-booking-calendar .choose-date-slots-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 3;
+}
+.slot-schedule-calender-container .slot-booking-calendar .choose-date-slots-container .fa-chevron-left {
+  cursor: pointer;
+  font-size: 20px;
+  padding-right: 51px !important;
+}
+.slot-schedule-calender-container .slot-booking-calendar .choose-date-slots-container .fa-chevron-right {
+  cursor: pointer;
+  font-size: 20px;
+  padding-left: 45px !important;
+}
+.slot-schedule-calender-container .slot-booking-calendar .choose-date-slots-container .days-button {
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: row;
+}
+.slot-schedule-calender-container .slot-booking-calendar .choose-date-slots-container .calendar-days-button {
+  border-radius: 12px;
+  border: 2px solid rgba(27, 27, 27, 0.2);
+  background: white;
+  margin-right: 10px !important;
+}
+.slot-schedule-calender-container .slot-booking-calendar .choose-date-calendar {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  align-items: center;
+}
+.slot-schedule-calender-container .slot-booking-calendar .choose-date-calendar .react-datepicker-wrapper {
+  padding-left: 10px !important;
+}
+.slot-schedule-calender-container .slot-booking-calendar .choose-date-calendar .react-datepicker-wrapper input {
+  width: 100px;
+}
+@media screen and (max-width: 1024px) {
+  .update-schedule-container .days-selection-button {
+    height: 40px;
+    width: auto;
+    max-width: 20%;
+    min-width: 10%;
+ }
+  .slot-schedule-calender-container .slot-booking-calendar {
+    flex-direction: row;
+ }
+  .slot-schedule-calender-container .slot-booking-calendar .react-datepicker__input-container {
+    padding-left: unset;
+ }
+  .slot-schedule-calender-container .slot-booking-calendar .react-datepicker__input-container .date-text-icon {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+ }
+}
+@media screen and (max-width: 768px) {
+  .slot-schedule-calender-container .slot-booking-calendar .react-datepicker__input-container {
+    padding-left: 130px;
+ }
+}
+@media screen and (max-width: 425px) {
+  .update-schedule-container .days-selection-container {
+    display: flex;
+    flex-flow: row wrap;
+ }
+  .update-schedule-container .days-selection-button {
+    height: 40px;
+    width: auto;
+    min-width: 105px;
+ }
+  .slot-schedule-calender-container .slot-booking-calendar {
+    flex-direction: column-reverse !important;
+ }
+  .slot-schedule-calender-container .slot-booking-calendar .choose-date-calendar {
+    padding-top: unset !important;
+    margin-bottom: 10px;
+ }
+  .slot-schedule-calender-container .slot-booking-calendar .react-datepicker__input-container {
+    padding-left: 30px;
+ }
+}
+@media screen and (max-width: 1660px) and (min-width: 1500px) {
+  .calendar-days-button {
+    width: 80px;
+ }
+}
+@media screen and (max-width: 375px) {
+  .slot-schedule-calender-container .slot-booking-calendar {
+    flex-direction: column-reverse !important;
+ }
+  .slot-schedule-calender-container .slot-booking-calendar .fa-calendar-alt-slot {
+    width: 30px;
+    height: 26px;
+ }
+  .slot-schedule-calender-container .slot-booking-calendar .choose-date-calendar {
+    padding-top: unset !important;
+    margin-bottom: 10px;
+ }
+  .slot-schedule-calender-container .slot-booking-calendar .react-datepicker__input-container {
+    padding-left: 20px;
+ }
+}
