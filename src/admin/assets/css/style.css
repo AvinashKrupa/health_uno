@@ -5709,6 +5709,13 @@ input#menu[type="checkbox"] {
     width: 80px;
  }
 }
+
+@media screen and (max-width: 1400px) and (min-width: 1300px) {
+  .calendar-days-button {
+    width: 80px;
+  }
+}
+
 @media screen and (max-width: 375px) {
   .slot-schedule-calender-container .slot-booking-calendar {
     flex-direction: column-reverse !important;

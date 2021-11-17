@@ -3,7 +3,7 @@ import moment from 'moment';
 import {Button, Image} from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { calendar_blue } from '../../assets/images/icon-calendar-blue.svg';
+import calendar_blue from '../../assets/images/icon-calendar-blue.svg';
 
 
 const UpdateScheduleHorizontalCalendar = (props) => {
