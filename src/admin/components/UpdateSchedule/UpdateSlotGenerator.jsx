@@ -26,10 +26,7 @@ const UpdateSlotGenerator = (props) => {
                   props.selectedSlots.indexOf(slot.slot_id) > -1 ? "active" : ""
                 }`}
                 onClick={(e) => {
-                  userType === 2
-                    ? props.handleSlotClick(slot)
-                    : slot.status === "available" &&
-                      props.handleSlotClick(slot.slot_id, slot.start);
+                  props.handleSlotClick(slot)
                 }}
               >
                 <span

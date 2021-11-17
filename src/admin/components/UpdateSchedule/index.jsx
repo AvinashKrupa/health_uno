@@ -119,7 +119,6 @@ const UpdateSchedule = ({ data }) => {
     } else {
       toast.error("This slot already have an appointment");
     }
-
     fetchApi({ url: "v1/doctor/updateSchedule", body: params, method: "POST" })
       .then((response) => {
         if (response.status === 200) {
@@ -127,7 +126,7 @@ const UpdateSchedule = ({ data }) => {
             getSlots();
             toast.success(response.data.message);
           } else {
-            toast.success(response.data.message);
+            toast.success(response.message);
             getSlots();
           }
         } else {
@@ -179,13 +178,13 @@ const UpdateSchedule = ({ data }) => {
       .then((response) => {
         if (response.status === 200) {
             getSlots();
-          toast.success(response.data.message);
+          toast.success(response.message);
         } else {
-          toast.error(response.data.message);
+          toast.error(response.message);
         }
       })
       .catch((error) => {
-        toast.error(error.response.data.message);
+        toast.error(error.response.message);
       });
   }
 
