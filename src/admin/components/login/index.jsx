@@ -39,6 +39,7 @@ class Login extends Component {
             if (result) {
                 toast.success(result.message)
                 await setJwtToken(result.data.session.access_token)
+                localStorage.setItem("userData", JSON.stringify(result.data.user));
                 console.log("login>>>",result.data)
                 await setProfileData(result.data.user._id)
                 this.props.history.push("/dashboard")
