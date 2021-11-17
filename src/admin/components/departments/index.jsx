@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Table} from 'antd';
+import { Table,ExportTableButton } from "ant-table-extensions";
+import moment from "moment";
 import {Link} from 'react-router-dom';
 import SidebarNav from '../sidebar';
 import {Modal} from 'react-bootstrap';
@@ -21,8 +22,8 @@ class Departments extends Component {
         super(props);
         this.state = {
             show: {id: null, record: null},
-            data: []
-
+            data: [],
+            exportingData: []
         }
     }
 
@@ -31,7 +32,11 @@ class Departments extends Component {
     }
     async reloadData() {
         let result = await fetchApi({url: "v1/departments?showAll=true", method: "GET"})
-        this.setState({data: result.data});
+        let deps=result.data;
+        this.setState({
+            data: deps,
+            exportingData:deps
+        });
     }
     handleClose = () => {
         this.setState({
@@ -110,7 +115,7 @@ class Departments extends Component {
 
     render() {
 
-        const {data} = this.state
+        const {data,exportingData} = this.state
 
         const columns = [
 
@@ -143,6 +148,33 @@ class Departments extends Component {
                 render: (text, record) => renderEditDisableActions((elem) => this.handleShow(elem, record), record),
             },
         ]
+        const fields = {
+            title: {
+              header: "Title",
+              formatter: (_fieldValue, record) => {
+                return record?.title;
+              },
+            },
+            created_at: {
+              header: "Created At",
+              formatter: (_fieldValue, record) => {
+                return moment(record?.created_at).format('DD/MM/YYYY');
+              },
+            },
+            updated_at: {
+              header: "Updated At",
+              formatter: (_fieldValue, record) => {
+                return moment(record?.updated_at).format('DD/MM/YYYY');
+              },
+            },
+            status: {
+              header: "Status",
+              formatter: (_fieldValue, record) => {
+                return record?.enabled?"Enabled":"Disabled";
+              },
+            },
+      
+          };
 
         return (
             <>
@@ -172,9 +204,16 @@ class Departments extends Component {
                                 <div className="card">
                                     <div className="card-body">
                                         <div className="table-responsive">
-
+                                            <ExportTableButton
+                                                dataSource={exportingData}
+                                                columns={columns}
+                                                btnProps={{ type: "primary" }}
+                                                fileName= "departments-data"
+                                                fields={fields}
+                                            >
+                                                Export
+                                            </ExportTableButton>
                                             <Table className="table-striped"
-
                                                    style={{overflowX: 'auto'}}
                                                    columns={columns}
                                                 // bordered
