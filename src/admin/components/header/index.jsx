@@ -65,6 +65,7 @@ class Header extends Component {
     }
 
     render() {
+        const userDetails = localStorage.getItem("userData") && JSON.parse(localStorage.getItem("userData"))
         const exclusionArray = [
             "/login",
             "/register",
@@ -198,7 +199,7 @@ class Header extends Component {
                   <span className="user-img">
                     <img
                         className="rounded-circle"
-                        src={avatar}
+                        src={userDetails.dp || avatar}
                         width="31"
                         alt="Paramveer Singh"
                     />
@@ -210,13 +211,13 @@ class Header extends Component {
                                     <div className="user-header">
                                         <div className="avatar avatar-sm">
                                             <img
-                                                src={avatar}
+                                                src={userDetails.dp || avatar}
                                                 alt="User"
                                                 className="avatar-img rounded-circle"
                                             />
                                         </div>
                                         <div className="user-text">
-                                            <h6>Paramveer Singh</h6>
+                                            <h6>{userDetails.first_name} {userDetails.last_name}</h6>
                                             <p className="text-muted mb-0">Administrator</p>
                                         </div>
                                     </div>
