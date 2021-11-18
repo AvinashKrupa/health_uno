@@ -435,95 +435,105 @@ class Profile extends Component {
       state: countryStateCity.state.name,
       country: countryStateCity.country.name,
     };
-    if(selectedQualification !== data.additional_info.qualif.highest_qual._id){
-      const QualificationData = this.state.qualification.find(
-        (qual) => qual._id === selectedQualification
-      );
-      data.additional_info.qualif['highest_qual']["name"] = QualificationData.name;
-      data.additional_info.qualif['highest_qual']["_id"] = QualificationData._id;
+    if (this.state.type === constants.USER_TYPE_DOCTOR) {
+      if(selectedQualification !== data.additional_info.qualif.highest_qual._id){
+        const QualificationData = this.state.qualification.find(
+            (qual) => qual._id === selectedQualification
+        );
+        data.additional_info.qualif['highest_qual']["name"] = QualificationData.name;
+        data.additional_info.qualif['highest_qual']["_id"] = QualificationData._id;
+      }
+      if(selectedDepartment !== data.additional_info.qualif.dept_id._id){
+        const DepartmentData = this.state.department.find(
+            (depart) => depart._id === selectedDepartment
+        );
+        data.additional_info.qualif['dept_id']["title"] = DepartmentData.title;
+        data.additional_info.qualif['dept_id']["_id"] = DepartmentData._id;
+      }
+      if(selectedSpecialities !== data.additional_info.qualif.specl[0]._id){
+        const SpecialitiesData = this.state.specialities.find(
+            (specl) => specl._id === selectedSpecialities
+        );
+        data.additional_info.qualif['specl'][0]["title"] = SpecialitiesData.title;
+        data.additional_info.qualif['specl'][0]["_id"] = SpecialitiesData._id;
+      }
     }
-    if(selectedDepartment !== data.additional_info.qualif.dept_id._id){
-      const DepartmentData = this.state.department.find(
-        (depart) => depart._id === selectedDepartment
-      );
-      data.additional_info.qualif['dept_id']["title"] = DepartmentData.title;
-      data.additional_info.qualif['dept_id']["_id"] = DepartmentData._id;
+    if (this.state.type === constants.USER_TYPE_PATIENT) {
+      data.additional_info.med_cond = [
+        {
+          name: 'diabetic',
+          selected: isDiabetic,
+          diag_at: isDiabetic ? diabeticValue : '',
+          desc: '',
+        },
+        {
+          name: 'hypertensive',
+          selected: isHypertensive,
+          diag_at: isHypertensive ? hypertensiveValue : '',
+          desc: '',
+        },
+        {
+          name: 'diagnosed_with_covid',
+          selected: isCovid,
+          diag_at: '',
+          desc: isCovid ? covidDetails : '',
+        },
+        {
+          name: 'past_surgeries',
+          selected: isSurgery,
+          diag_at: '',
+          desc: isSurgery ? surgeryValue : '',
+        },
+        {
+          name: 'allergy_to_meds?',
+          selected: isAllergie,
+          diag_at: '',
+          desc: isAllergie ? allergieValue : '',
+        },
+        {
+          name: 'covid_vaccinated',
+          selected: isVaccinated,
+          diag_at: isVaccinated ? vaccineDate : '',
+          desc: '',
+          meta: isVaccinated ? [
+            {
+              name: 'dose_type',
+              selected: true,
+              diag_at: '',
+              desc: dose,
+            },
+            {
+              name: 'vaccine_name',
+              selected: true,
+              diag_at: '',
+              desc: vaccineName,
+            }
+          ] : []
+        },
+      ],
+          data.additional_info.other_med_cond = otherMedical
     }
-    if(selectedSpecialities !== data.additional_info.qualif.specl[0]._id){
-      const SpecialitiesData = this.state.specialities.find(
-        (specl) => specl._id === selectedSpecialities
-      );
-      data.additional_info.qualif['specl'][0]["title"] = SpecialitiesData.title;
-      data.additional_info.qualif['specl'][0]["_id"] = SpecialitiesData._id;
-    }
-    (data.additional_info.med_cond = [
-      {
-        name: "diabetic",
-        selected: isDiabetic,
-        diag_at: isDiabetic ? diabeticValue : "",
-        desc: "",
-      },
-      {
-        name: "hypertensive",
-        selected: isHypertensive,
-        diag_at: isHypertensive ? hypertensiveValue : "",
-        desc: "",
-      },
-      {
-        name: "diagnosed_with_covid",
-        selected: isCovid,
-        diag_at: "",
-        desc: isCovid ? covidDetails : "",
-      },
-      {
-        name: "past_surgeries",
-        selected: isSurgery,
-        diag_at: "",
-        desc: isSurgery ? surgeryValue : "",
-      },
-      {
-        name: "allergy_to_meds",
-        selected: isAllergie,
-        diag_at: "",
-        desc: isAllergie ? allergieValue : "",
-      },
-      {
-        name: "covid_vaccinated",
-        selected: isVaccinated,
-        diag_at: isVaccinated ? vaccineDate : "",
-        desc: "",
-        meta: isVaccinated
-          ? [
-              {
-                name: "dose_type",
-                selected: true,
-                diag_at: "",
-                desc: dose,
-              },
-              {
-                name: "vaccine_name",
-                selected: true,
-                diag_at: "",
-                desc: vaccineName,
-              },
-            ]
-          : [],
-      },
-    ]),
-      (data.additional_info.other_med_cond = otherMedical);
+
     try {
+      let requestBody = {
+        ...data.user,
+        user_id: data.user._id,
+        type: this.state.type,
+        additional_info: data.additional_info,
+      }
+      if (this.state.type === constants.USER_TYPE_DOCTOR) {
+        requestBody = {
+          ...requestBody,
+          qualif: {
+            ...data.additional_info.qualif,
+            //   address: data.additional_info.address,
+          },
+        }
+      }
       let result = await fetchApi({
         url: "v1/user/updateProfile",
         method: "POST",
-        body: {
-          ...data.user,
-          qualif: {
-            ...data.additional_info.qualif,
-          },
-          //   address: data.additional_info.address,
-          user_id: data.user._id,
-          type: this.state.type,
-        },
+        body: requestBody,
       });
 
       if (result) {
