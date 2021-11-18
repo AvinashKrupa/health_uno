@@ -187,6 +187,10 @@ class Sliders extends Component {
                     data.append('file', record.mobilefile)
                     data.append('device_type', record.device_type_mobile)
                 }
+                if (record.webfile){
+                    data.append('file', record.webfile)
+                    data.append('device_type', record.device_type_web)
+                }
                     // data.append('file', record.mobilefile)
                 data.append('title', record.title)
                 data.append('desc', record.desc)
