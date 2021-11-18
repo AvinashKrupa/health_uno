@@ -482,7 +482,7 @@ class Profile extends Component {
         desc: isSurgery ? surgeryValue : "",
       },
       {
-        name: "allergy_to_meds?",
+        name: "allergy_to_meds",
         selected: isAllergie,
         diag_at: "",
         desc: isAllergie ? allergieValue : "",
