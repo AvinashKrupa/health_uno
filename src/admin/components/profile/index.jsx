@@ -20,6 +20,7 @@ import Radio from "../../commons/Radio";
 import Selector from "../../commons/Select";
 import TextArea from "../../commons/TextArea";
 import Input from "../../commons/Input";
+import UpdateSchedule from "../UpdateSchedule";
 
 class Profile extends Component {
   constructor(props) {
@@ -895,6 +896,7 @@ class Profile extends Component {
   };
 
   render() {
+    console.log('this.state :>> ', this.state);
     return (
       <div>
         <SidebarNav />
@@ -1204,6 +1206,28 @@ class Profile extends Component {
                                 ₹{this.state.data.additional_info.qualif.fee}
                               </p>
                             </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Tab>
+              )}
+              {this.state.type == constants.USER_TYPE_DOCTOR && (
+                <Tab
+                  className="nav-link"
+                  eventKey={3}
+                  title="Update Slots"
+                >
+                  <div className="row">
+                    <div className="col-lg-12">
+                      <div className="card">
+                        {this.state.data && (
+                          <div className="card-body">
+                            <h5 className="card-title d-flex justify-content-between">
+                              <span>Update Slots</span>
+                            </h5>
+                            <UpdateSchedule data={this.state.data} />
                           </div>
                         )}
                       </div>

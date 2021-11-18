@@ -1,4 +1,4 @@
-const io = require("socket.io-client");
+const { io } = require("socket.io-client");
 const URL = "https://dev.healthuno.com:6003";
 // const URL = "http://localhost:3007";
 const options = {
