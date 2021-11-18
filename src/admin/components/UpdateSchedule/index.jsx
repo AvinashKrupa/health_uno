@@ -8,7 +8,7 @@ import { fetchApi } from "../../../_utils/http-utils";
 // import {API, post} from "../../../api/config/APIController";
 import UpdateSlotGenerator from "./UpdateSlotGenerator";
 import { getData } from "../../../_utils/localStorage/LocalAsyncStorage";
-import { convert24hto12h } from "../../../_utils/common-utils";
+import { constants, convert24hto12h } from "../../../_utils/common-utils";
 import Checkbox from "../../commons/Checkbox";
 import _ from "lodash";
 
@@ -109,12 +109,14 @@ const UpdateSchedule = ({ data }) => {
         unavailable_slots: [],
         available_slots: [timeSlot.slot_id],
         date: moment(currentDate).format("YYYY-MM-DD"),
+        doctor_id: data.additional_info._id,
       };
     } else if (timeSlot.status === "available") {
       params = {
         unavailable_slots: [timeSlot.slot_id],
         available_slots: [],
         date: moment(currentDate).format("YYYY-MM-DD"),
+        doctor_id: data.additional_info._id,
       };
     } else {
       toast.error("This slot already have an appointment");
@@ -169,6 +171,8 @@ const UpdateSchedule = ({ data }) => {
           },
         },
       },
+      user_id: data.user._id,
+      type: constants.USER_TYPE_DOCTOR
     };
     fetchApi({
       url: "v1/user/updateProfile",
