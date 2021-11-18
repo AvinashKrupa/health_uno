@@ -682,7 +682,8 @@ class Profile extends Component {
                     <Form.Control
                       type="date"
                       value={this.state.diabeticValue}
-                      max={moment(new Date()).format("YYYY-MM-DD")}
+                      min={moment(new Date()).subtract(50, 'years').format('YYYY-MM-DD')}
+                      max={moment(new Date()).format('YYYY-MM-DD')}
                       onChange={(e) =>
                         this.setState({
                           diabeticValue: e.target.value,
@@ -712,7 +713,8 @@ class Profile extends Component {
                 <Form.Control
                   type="date"
                   value={this.state.hypertensiveValue}
-                  max={moment(new Date()).format("YYYY-MM-DD")}
+                  min={moment(new Date()).subtract(50, 'years').format('YYYY-MM-DD')}
+                  max={moment(new Date()).format('YYYY-MM-DD')}
                   onChange={(e) =>
                     this.setState({ hypertensiveValue: e.target.value })
                   }
@@ -821,7 +823,8 @@ class Profile extends Component {
                       type="date"
                       value={this.state.vaccineDate}
                       onKeyDown={(e) => e.preventDefault()}
-                      max={moment(new Date()).format("YYYY-MM-DD")}
+                      min={moment(new Date()).subtract(50, 'years').format('YYYY-MM-DD')}
+                      max={moment(new Date()).format('YYYY-MM-DD')}
                       onChange={(e) =>
                         this.setState({
                           vaccineDate: e.target.value,
@@ -1244,6 +1247,8 @@ class Profile extends Component {
                           <DatePicker
                             className="form-control"
                             dateFormat={"yyyy-MM-dd"}
+                            minDate={new Date(moment(new Date()).subtract(100, 'years').format('DD-MM-YYYY'))}
+                            maxDate={new Date(moment(new Date()).format('DD-MM-YYYY'))}
                             selected={
                               new Date(this.state.updatedModel.user.dob)
                             }
