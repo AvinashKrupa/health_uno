@@ -17,6 +17,7 @@ import {
 
 import toast from "react-hot-toast";
 import {changeCaseFirstLetter} from "../../../_utils/common-utils";
+import { some } from 'lodash';
 
 const sliderTypes = ["promo"]
 const userTypes = {
@@ -29,6 +30,8 @@ class Sliders extends Component {
         super(props);
         this.state = {
             show: {id: null, record: null},
+            title:"",
+            edited:false,
             data: []
         }
     }
@@ -43,17 +46,28 @@ class Sliders extends Component {
     }
 
     handleClose = () => {
+        console.log("edit is closed")
         this.setState({
-            show: {id: null, record: null}
+            show: {id: null, record: null},
+            edited:false
+        });
+    }
+    handleEdit = () => {
+        console.log("handleEdit is called ")
+        this.setState({
+            edited:true
         });
     }
 
     handleShow = (id, record) => {
+        console.log("hadnle show  is called")
         let showRecord = {...record}
+        console.log("show record is ",showRecord.title)
         showRecord["selectedUserType"] = showRecord.user_type || "1"
         showRecord["selectedType"] = showRecord.type || sliderTypes[0]
         this.setState({
-            show: {id: id, record: showRecord}
+            show: {id: id, record: showRecord},
+            title:showRecord.title
         });
     }
     handleChange = (e) => {
@@ -61,48 +75,148 @@ class Sliders extends Component {
         let show = this.state.show
         show.record[name] = e.target.value
         this.setState({
-            show: show
+            show: show,
         });
     }
-
-    handleFileSelection = (e) => {
+    handleTitleChange = (e) => {
+        const name = e.target.name
         let show = this.state.show
-        show.record["file"] = e.target.files[0]
+        show.record[name] = e.target.value
         this.setState({
-            show: show
+            show: show,
+            title:e.target.value
         });
     }
-    handleRecordUpdate = async (record) => {
-        let result
-        if (record && record._id) {
-            let data = new FormData()
-            if (record.file)
-                data.append('file', record.file)
-            data.append('title', record.title)
-            data.append('desc', record.desc)
-            data.append('type', record.selectedType)
-            data.append('user_type', record.selectedUserType)
-            data.append('_id', record._id)
-            result = await fetchApiWithFileUpload({url: "v1/slider/update", method: "POST", formData: data})
+    validateImageDimentions= async (e,type)=>{
+        var reader = new FileReader();
+        //Read the contents of Image File.
+        reader.readAsDataURL(e.target.files[0]);
+        const dim = await new Promise(function (resolve, reject) {
+            
+            reader.onload = async function (e) {
+        
+                //Initiate the JavaScript Image object.
+                var image = new Image();
+                //Set the Base64 string return from FileReader as source.
+                image.src = e.target.result;
+                const dimensions = await  new Promise(function (resolve, reject) {
+                    image.onload = function() {
+                      resolve({width:image.width,height:image.height})
+                    };
+                  })
+                  console.log("dimensions are ",dimensions)
+                  resolve(dimensions)
+                  
+                };
+               
+        })
+        console.log("dimensions are in outer promise ",dim)
+        if(type==='web'){
+            if(dim.width!==1200 || dim.height!==320 ){
+                toast.error("Selected invalid Web Banner expecting 1200*320 width and height")
+                  return false;
+              }
+        }else{
+            if(dim.width!==400 || dim.height!==200 ){
+                toast.error("Selected invalid Mobile Banner, expecting 400*200 width and height ")
+                  return false;
+              }
+        }
+          return true;
+        
+      }
+    handleWebFileSelection = async (e) => {
+        const targetFile = e.target.files[0];
+        const type="web"
+        let valid =  await this.validateImageDimentions(e,type)
+            this.newMethod(valid, targetFile,type);
+    }
+    handleMobileFileSelection =async (e) => {
+        const targetFile = e.target.files[0];
+        const type="mobile"
+        let valid = await this.validateImageDimentions(e,type)
+        this.newMethod(valid, targetFile,type);
+    }
+    newMethod(valid, targetFile,type) {
+        if (valid) {
+            let show = this.state.show;
+            const fileName = targetFile.name;
+            console.log("file name  after promise is ", fileName);
+            if(type==="web"){
+                show.record["webfile"] = targetFile
+                show.record["device_type_web"] = "web"
+            }else{
+                show.record["mobilefile"] = targetFile
+                show.record["device_type_mobile"] = "mobile"
+            }
+            console.log("show value is ", show);
+            this.setState({
+                show: show,
+            });
 
         } else {
-            let data = new FormData()
-            if (!record.file) {
-                toast.error("Please select valid file")
-                return
+            type==="web"?this.fileInput.value = "":this.fileMobileInput.value = ""
+        }
+    }
+
+    checkFields(){
+        if(this.state.edited){
+            console.log(" this.show.show ", this.state.show)
+            console.log("his.state.edited if ",this.state.edited)
+            console.log("state ttiel value is ",this.state.edited)
+            if(this.state.title===""){
+                toast.error("Please enter Title ")
+                return false;
+             }
+        }else{
+            console.log("his.state.edited in else ",this.state.edited)
+            if(this.state.title==="" ||this.fileInput.value === "" || this.fileMobileInput.value === "" ){
+                toast.error("Title, Mobile Banner and Web Banner is Mandatory ")
+                return false;
+             }
+        }
+         return true;
+    }
+    handleRecordUpdate = async (record) => {
+        const valid = this.checkFields()
+        if(valid){
+            let result
+            if (record && record._id) {
+                let data = new FormData()
+                if (record.mobilefile){
+                    data.append('file', record.mobilefile)
+                    data.append('device_type', record.device_type_mobile)
+                }
+                    // data.append('file', record.mobilefile)
+                data.append('title', record.title)
+                data.append('desc', record.desc)
+                data.append('type', record.selectedType)
+                data.append('user_type', record.selectedUserType)
+                data.append('_id', record._id)
+                result = await fetchApiWithFileUpload({url: "v1/slider/update", method: "POST", formData: data})
+    
+            } else {
+                let data = new FormData()
+                // if (!record.file) {
+                //     toast.error("Please select valid file")
+                //     return
+                // }
+                data.append('file', record.mobilefile)
+                data.append('device_type', record.device_type_mobile)
+                data.append('file', record.webfile)
+                data.append('device_type', record.device_type_web)
+                data.append('title', record.title)
+                data.append('desc', record.desc?record.desc:"")
+                data.append('type', record.selectedType)
+                data.append('user_type', record.selectedUserType)
+                result = await fetchApiWithFileUpload({url: "v1/slider/addNewMulti", method: "POST", formData: data})
             }
-            data.append('file', record.file)
-            data.append('title', record.title)
-            data.append('desc', record.desc)
-            data.append('type', record.selectedType)
-            data.append('user_type', record.selectedUserType)
-            result = await fetchApiWithFileUpload({url: "v1/slider/addNew", method: "POST", formData: data})
+            if (result) {
+                toast.success(result.message)
+            }
+            this.handleClose()
+            await this.reloadData()
         }
-        if (result) {
-            toast.success(result.message)
-        }
-        this.handleClose()
-        await this.reloadData()
     }
     changeStatus = async (record) => {
 
@@ -153,8 +267,21 @@ class Sliders extends Component {
                 title: 'Title',
                 dataIndex: 'title',
                 ellipsis:true,
-                render: (text, record) => renderTextWithImage(record.title, record.image),
                 sorter: (a, b) => sorterText(a.title, b.title),
+            },
+            {
+                title: 'Mobile Banner',
+                dataIndex: 'mob_image',
+                ellipsis:true,
+                render: (text, record) => renderTextWithImage("", record.mob_image),
+                //sorter: (a, b) => sorterText(a.mob_image, b.mob_image),
+            },
+            {
+                title: 'Web Banner',
+                dataIndex: 'image',
+                ellipsis:true,
+                render: (text, record) => renderTextWithImage("", record.image),
+                //sorter: (a, b) => sorterText(a.image, b.image),
             },
             {
                 title: 'Type',
@@ -192,7 +319,7 @@ class Sliders extends Component {
             },
             {
                 title: 'Actions',
-                render: (text, record) => renderEditDisableActions((elem) => this.handleShow(elem, record), record),
+                render: (text, record) => renderEditDisableActions((elem) => this.handleShow(elem, record),this.handleEdit, record),
             },
         ]
 
@@ -268,16 +395,25 @@ class Sliders extends Component {
                                                    type="text"
                                                    name="title"
                                                    onChange={(e) => {
-                                                       this.handleChange(e)
+                                                       this.handleTitleChange(e)
                                                    }}
                                                    className="form-control"/>
                                         </div>
                                     </div>
+                                </div>
+                                <div className="row form-row">
                                     <div className="col-12 col-sm-6">
                                         <div className="form-group">
-                                            <label>Image</label>
-                                            <input type="file" className="form-control"
-                                                   onChange={(e) => this.handleFileSelection(e)}/>
+                                            <label>Mobile Banner</label>
+                                            <input type="file" className="form-control" ref={ref=> this.fileMobileInput = ref}
+                                                   onChange={(e) => this.handleMobileFileSelection(e)}/>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <div className="form-group">
+                                            <label>Web Banner</label>
+                                            <input type="file" className="form-control" ref={ref=> this.fileInput = ref}
+                                                   onChange={(e) => this.handleWebFileSelection(e)}/>
                                         </div>
                                     </div>
 
@@ -327,7 +463,9 @@ class Sliders extends Component {
                                     </div>
 
                                 </div>
-                                <button type="submit" onClick={() => this.handleRecordUpdate(this.state.show.record)}
+                                <button type="submit" onClick={(e) =>{
+                                 e.preventDefault();
+                                 this.handleRecordUpdate(this.state.show.record)}}
                                         className="btn btn-primary btn-block">Save Changes
                                 </button>
                             </form>

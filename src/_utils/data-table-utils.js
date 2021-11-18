@@ -124,7 +124,7 @@ export const renderDropDown = (
     </div>
   );
 };
-export const renderEditDisableActions = (handleShow, record, type = 0) => {
+export const renderEditDisableActions = (handleShow,handleEdit, record, type = 0) => {
   return (
     <div className="actions">
       {type == 0 ? (
@@ -132,7 +132,10 @@ export const renderEditDisableActions = (handleShow, record, type = 0) => {
           <a
             href="#0"
             className="btn btn-sm bg-success-light"
-            onClick={() => handleShow("edit")}
+            onClick={() =>{
+              handleEdit()
+              handleShow("edit")
+            } }
           >
             <i className="fe fe-pencil"></i> Edit
           </a>
