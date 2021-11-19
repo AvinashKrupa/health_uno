@@ -20,6 +20,7 @@ import Radio from "../../commons/Radio";
 import Selector from "../../commons/Select";
 import TextArea from "../../commons/TextArea";
 import Input from "../../commons/Input";
+import UpdateSchedule from "../UpdateSchedule";
 
 class Profile extends Component {
   constructor(props) {
@@ -482,7 +483,7 @@ class Profile extends Component {
         desc: isSurgery ? surgeryValue : "",
       },
       {
-        name: "allergy_to_meds?",
+        name: "allergy_to_meds",
         selected: isAllergie,
         diag_at: "",
         desc: isAllergie ? allergieValue : "",
@@ -682,7 +683,8 @@ class Profile extends Component {
                     <Form.Control
                       type="date"
                       value={this.state.diabeticValue}
-                      max={moment(new Date()).format("YYYY-MM-DD")}
+                      min={moment(new Date()).subtract(50, 'years').format('YYYY-MM-DD')}
+                      max={moment(new Date()).format('YYYY-MM-DD')}
                       onChange={(e) =>
                         this.setState({
                           diabeticValue: e.target.value,
@@ -712,7 +714,8 @@ class Profile extends Component {
                 <Form.Control
                   type="date"
                   value={this.state.hypertensiveValue}
-                  max={moment(new Date()).format("YYYY-MM-DD")}
+                  min={moment(new Date()).subtract(50, 'years').format('YYYY-MM-DD')}
+                  max={moment(new Date()).format('YYYY-MM-DD')}
                   onChange={(e) =>
                     this.setState({ hypertensiveValue: e.target.value })
                   }
@@ -821,7 +824,8 @@ class Profile extends Component {
                       type="date"
                       value={this.state.vaccineDate}
                       onKeyDown={(e) => e.preventDefault()}
-                      max={moment(new Date()).format("YYYY-MM-DD")}
+                      min={moment(new Date()).subtract(50, 'years').format('YYYY-MM-DD')}
+                      max={moment(new Date()).format('YYYY-MM-DD')}
                       onChange={(e) =>
                         this.setState({
                           vaccineDate: e.target.value,
@@ -882,6 +886,7 @@ class Profile extends Component {
   };
 
   render() {
+    console.log('this.state :>> ', this.state);
     return (
       <div>
         <SidebarNav />
@@ -1198,6 +1203,28 @@ class Profile extends Component {
                   </div>
                 </Tab>
               )}
+              {this.state.type == constants.USER_TYPE_DOCTOR && (
+                <Tab
+                  className="nav-link"
+                  eventKey={3}
+                  title="Update Slots"
+                >
+                  <div className="row">
+                    <div className="col-lg-12">
+                      <div className="card">
+                        {this.state.data && (
+                          <div className="card-body">
+                            <h5 className="card-title d-flex justify-content-between">
+                              <span>Update Slots</span>
+                            </h5>
+                            <UpdateSchedule data={this.state.data} />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Tab>
+              )}
             </Tabs>
           </div>
         </div>
@@ -1244,6 +1271,8 @@ class Profile extends Component {
                           <DatePicker
                             className="form-control"
                             dateFormat={"yyyy-MM-dd"}
+                            minDate={new Date(moment(new Date()).subtract(100, 'years').format('DD-MM-YYYY'))}
+                            maxDate={new Date(moment(new Date()).format('DD-MM-YYYY'))}
                             selected={
                               new Date(this.state.updatedModel.user.dob)
                             }
