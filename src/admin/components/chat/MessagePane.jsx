@@ -38,48 +38,65 @@ class MessagePane extends Component {
     }
   }
 
-  async loadMessagesForUser(conv, pageId = 1) {
-    try {
+  componentDidUpdate(prevProps) {
+    if (this.props.selectedConv !== prevProps.selectedConv) {
       this.setState({
-        loading: true,
+        pageId: 1,
+        messages: [],
+        totalMessages: null,
+        shouldScrollMore: true,
       });
-      let result = await fetchApi({
-        url: "v1/chat/getMessages",
-        method: "POST",
-        body: {
-          room_id: conv.room_id,
-          limit: 20,
-          page: pageId,
-        },
-      });
-      let messages = result.data.docs.reverse();
-      let total = result.data.total;
-      if (this.state.messages.length === 0)
+    }
+  }
+
+  loadMessagesForUser = async (conv, pageId = 1) => {
+    try {
+      const limit = 10;
+      if (
+        this.state.totalMessages > limit * (pageId - 1) ||
+        this.state.totalMessages === null
+      ) {
         this.setState({
-          messages: messages,
-          pageId: pageId + 1,
-          totalMessages: total,
-          shouldScrollMore: this.state.messages.length < total,
-          loading: false,
+          loading: true,
         });
-      else {
-        messages = _.concat(messages, this.state.messages);
-        this.setState({
-          messages: messages,
-          pageId: pageId + 1,
-          totalMessages: total,
-          shouldScrollMore: this.state.messages.length < total,
-          loading: false,
+        let result = await fetchApi({
+          url: "v1/chat/getMessages",
+          method: "POST",
+          body: {
+            room_id: conv.room_id,
+            limit: limit,
+            page: pageId,
+          },
         });
+        let messages = result.data.docs.reverse();
+        let total = result.data.total;
+        if (this.state.messages.length === 0)
+          this.setState({
+            messages: messages,
+            pageId: pageId + 1,
+            totalMessages: total,
+            shouldScrollMore: this.state.messages.length < total,
+            loading: false,
+          });
+        else {
+          messages = _.concat(messages, this.state.messages);
+          this.setState({
+            messages: messages,
+            pageId: pageId + 1,
+            totalMessages: total,
+            shouldScrollMore: this.state.messages.length < total,
+            loading: false,
+          });
+        }
+        return Promise.resolve();
       }
-      return Promise.resolve();
     } catch (e) {
       this.setState({
         loading: false,
       });
       console.log("Error>>>", e);
     }
-  }
+  };
 
   async initializeChatWithUser(conv) {
     let socketObj = getNewSocket();
@@ -158,7 +175,7 @@ class MessagePane extends Component {
       socketObj.off("disconnect");
       socketObj.disconnect();
     }
-    this.setState({ selectedConv: null });
+    this.setState({ selectedConv: null, messages: [] });
   }
 
   render() {
@@ -210,6 +227,7 @@ class MessagePane extends Component {
           user_id={this.state.user_id}
           loadMessagesForUser={this.loadMessagesForUser}
           pageId={this.state.pageId}
+          selectedConv={this.state.selectedConv}
           shouldScrollMore={this.state.shouldScrollMore}
           loadingChatIndicator={this.state.loading}
         />

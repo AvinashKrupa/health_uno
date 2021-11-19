@@ -132,7 +132,9 @@ export const renderEditDisableActions = (handleShow, record, type = 0) => {
           <a
             href="#0"
             className="btn btn-sm bg-success-light"
-            onClick={() => handleShow("edit")}
+            onClick={() => {
+              handleShow("edit");
+            }}
           >
             <i className="fe fe-pencil"></i> Edit
           </a>

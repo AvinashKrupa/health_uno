@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Table } from "antd";
+import { Table,ExportTableButton } from "ant-table-extensions";
+import moment from "moment";
 import { Link } from "react-router-dom";
 import SidebarNav from "../sidebar";
 import {
@@ -31,6 +32,7 @@ class Doctors extends Component {
     this.state = {
       total: null,
       data: [],
+      exportingData: [],
       showMenu: {},
       searchText: "",
       departments:[],
@@ -45,8 +47,13 @@ class Doctors extends Component {
       return ele.title
     })
     console.log("departments are ",departments)
-    this.setState({ data: doctors.data });
-    this.setState({departments:departments})
+    let doctorsData = doctors.data;
+    this.setState({ data: doctorsData,
+      exportingData: doctorsData,
+      departments:departments
+     });
+    // this.setState({ exportingData: doctorsData });
+    // this.setState({departments:departments})
   }
 
   async handleItemClick(record, dropdownItem) {
@@ -91,14 +98,15 @@ class Doctors extends Component {
   }
 
   handleDataChange = (pagination, filters, sorter, extra) => {
-
+    console.log("exported data ",extra.currentDataSource)
     this.setState({
       total: extra.currentDataSource.length,
+      exportingData:extra.currentDataSource
     });
   };
 
   render() {
-    const { data,departments } = this.state;
+    const { data,departments,exportingData } = this.state;
     
     const columns = [
       {
@@ -196,6 +204,73 @@ class Doctors extends Component {
       },
     ];
 
+    const fields = {
+      doctorname: {
+        header: "Doctor Name",
+        formatter: (_fieldValue, record) => {
+          return record?.first_name + " " + record?.last_name;
+        },
+      },
+      med_reg_num: {
+        header: "Med Reg No.",
+        formatter: (_fieldValue, record) => {
+          return record?.qualif.med_reg_num;
+        },
+      },
+      dept: {
+        header: "Department",
+        formatter: (_fieldValue, record) => {
+          return record?.qualif.dept_id.title;
+        },
+      },
+      exp: {
+        header: "Experience (Years)",
+        formatter: (_fieldValue, record) => {
+          return record?.qualif.exp;
+        },
+      },
+     
+      fees: {
+        header: "Fees (Rupees)",
+        formatter: (_fieldValue, record) => {
+          return record?.qualif.fee;
+        },
+      },
+      highest_qualify: {
+        header: "Highest Qualification",
+        formatter: (_fieldValue, record) => {
+          return  record?.qualif.highest_qual.name;
+        },
+      },
+      specialities: {
+        header: "Specialities",
+        formatter: (_fieldValue, record) => {
+          return record?.qualif.specl.map(item=>item.title);
+        },
+      },
+      
+      created_at: {
+        header: "Created At",
+        formatter: (_fieldValue, record) => {
+          return moment(record?.created_at).format('DD/MM/YYYY');
+        },
+      },
+      updated_at: {
+        header: "Updated At",
+        formatter: (_fieldValue, record) => {
+          return moment(record?.updated_at).format('DD/MM/YYYY');
+        },
+      },
+      status: {
+        header: "Account Status",
+        formatter: (_fieldValue, record) => {
+          return record?.status;
+        },
+      },
+
+    };
+
+
     return (
       <>
         <SidebarNav />
@@ -223,6 +298,15 @@ class Doctors extends Component {
                 <div className="card">
                   <div className="card-body">
                     <div className="table-responsive">
+                      <ExportTableButton
+                        dataSource={exportingData}
+                        columns={columns}
+                        btnProps={{ type: "primary" }}
+                        fileName= "doctors-data"
+                        fields={fields}
+                      >
+                        Export
+                      </ExportTableButton>
                       <Table
                         className="table-striped"
                         style={{ overflowX: "auto" }}
