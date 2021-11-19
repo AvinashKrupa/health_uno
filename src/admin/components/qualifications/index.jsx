@@ -298,7 +298,7 @@ class Qualifications extends Component {
                             </div>
 
                         </Modal.Body>}
-                    </Modal>}
+                    </Modal>
                     {/* Delete Modal */}
                 </div>
             </>
