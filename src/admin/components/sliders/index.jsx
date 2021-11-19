@@ -112,7 +112,7 @@ class Sliders extends Component {
         })
         console.log("dimensions are in outer promise ",dim)
         if(type==='web'){
-            if(dim.width!==1200 || dim.height!==320 ){
+            if(dim.width!==1250 || dim.height!==320 ){
                 toast.error("Selected invalid Web Banner expecting 1200*320 width and height")
                   return false;
               }
