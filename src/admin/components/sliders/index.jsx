@@ -212,7 +212,7 @@ class Sliders extends Component {
         }
         // data.append('file', record.mobilefile)
         data.append("title", record.title);
-        data.append("desc", record.desc);
+        data.append("desc", record.desc || "");
         data.append("type", record.selectedType);
         data.append("user_type", record.selectedUserType);
         data.append("_id", record._id);
