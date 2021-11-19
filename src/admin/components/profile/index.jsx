@@ -207,7 +207,7 @@ class Profile extends Component {
           if (info.selected) {
             this.setState({
               allergies: [
-                { id: "yes", value: "Yes", checked: true },
+                { id: "yes", value: "Yes",   checked: true },
                 { id: "no", value: "No", checked: false },
               ],
               isAllergie: true,
@@ -674,223 +674,6 @@ class Profile extends Component {
             />
           </div>
         </div>
-        <div className="col-12 col-sm-6">
-          <div className="form-group">
-            <Col md>
-              <div className="form-group">
-                <Radio
-                  label="Are you Diabetic?"
-                  id="radioDiabetes"
-                  options={this.state.diabetics}
-                  handleSelect={this.handleDiabetic}
-                />
-              </div>
-              {this.state.isDiabetic && (
-                <div className="form-group">
-                  <Col>
-                    <br />
-                    <br />{" "}
-                    <Form.Control
-                      type="date"
-                      value={this.state.diabeticValue}
-                      min={moment(new Date()).subtract(50, 'years').format('YYYY-MM-DD')}
-                      max={moment(new Date()).format('YYYY-MM-DD')}
-                      onChange={(e) =>
-                        this.setState({
-                          diabeticValue: e.target.value,
-                        })
-                      }
-                    />
-                  </Col>
-                </div>
-              )}
-            </Col>
-          </div>
-        </div>
-        <div className="col-12 col-sm-6">
-          <div className="form-group">
-            <Radio
-              label="Are you Hypertensive?"
-              id="radioHypertensive"
-              options={this.state.hypertensives}
-              handleSelect={this.handleHypertensive}
-            />
-          </div>
-          <div className="form-group">
-            {this.state.isHypertensive && (
-              <Col>
-                <br />
-                <br />{" "}
-                <Form.Control
-                  type="date"
-                  value={this.state.hypertensiveValue}
-                  min={moment(new Date()).subtract(50, 'years').format('YYYY-MM-DD')}
-                  max={moment(new Date()).format('YYYY-MM-DD')}
-                  onChange={(e) =>
-                    this.setState({ hypertensiveValue: e.target.value })
-                  }
-                />
-              </Col>
-            )}
-          </div>
-        </div>
-        <div className="col-12 col-sm-6">
-          <div className="form-group">
-            <Col md>
-              <div className="form-group">
-                <Radio
-                  label="Any past surgery?"
-                  id="radioSurgery"
-                  options={this.state.surgerys}
-                  handleSelect={this.handleSurgerys}
-                />
-              </div>
-              {this.state.isSurgery && (
-                <div className="form-group">
-                  <TextArea
-                    id={"surgery"}
-                    value={this.state.surgeryValue}
-                    placeholder="Please mention in brief"
-                    onChange={(value) =>
-                      this.setState({
-                        surgeryValue: value,
-                      })
-                    }
-                    rows={4}
-                    cols={35}
-                  ></TextArea>
-                </div>
-              )}
-            </Col>
-            <Col md>
-              <div className="form-group">
-                <Radio
-                  label="Any allergies to medications?"
-                  id="radioAllergies"
-                  options={this.state.allergies}
-                  handleSelect={this.handleAllergies}
-                />
-              </div>
-              <div className="form-group">
-                {this.state.isAllergie && (
-                  <TextArea
-                    id={"textareaSurgery"}
-                    value={this.state.allergieValue}
-                    placeholder="Please mention in brief"
-                    onChange={(value) =>
-                      this.setState({
-                        allergieValue: value,
-                      })
-                    }
-                    rows={4}
-                    cols={35}
-                  ></TextArea>
-                )}
-              </div>
-            </Col>
-          </div>
-          <div className="form-group">
-            <Col md>
-              <div className="form-group">
-                <Radio
-                  label="Have you been diagnosed with Covid?"
-                  id="diagCovid"
-                  options={this.state.covids}
-                  handleSelect={this.handleCovids}
-                />
-              </div>
-              <div className="form-group">
-                {this.state.isCovid && (
-                  <Col md>
-                    <Input
-                      type="text"
-                      placeholder="Enter additional details"
-                      label="Provide additional details of Covid illness"
-                      value={this.state.covidDetails}
-                      onChange={(value) =>
-                        this.setState({
-                          covidDetails: value,
-                        })
-                      }
-                    />
-                  </Col>
-                )}
-              </div>
-            </Col>
-            <Col md>
-              <div className="form-group">
-                <Radio
-                  label="Have you been vaccinated against Covid?"
-                  id="vaccinated"
-                  options={this.state.vaccinated}
-                  handleSelect={this.handleVaccinated}
-                />
-              </div>
-              <div className="form-group">
-                {this.state.isVaccinated && (
-                  <Col md style={{ paddingTop: "32px" }}>
-                    <br />{" "}
-                    <Form.Control
-                      type="date"
-                      value={this.state.vaccineDate}
-                      onKeyDown={(e) => e.preventDefault()}
-                      min={moment(new Date()).subtract(50, 'years').format('YYYY-MM-DD')}
-                      max={moment(new Date()).format('YYYY-MM-DD')}
-                      onChange={(e) =>
-                        this.setState({
-                          vaccineDate: e.target.value,
-                        })
-                      }
-                    />
-                    <Selector
-                      defaultValue="Choose dose type"
-                      id="dose"
-                      options={this.state.dosages}
-                      // handleSelect={this.setDose}
-                      handleSelect={(item) =>
-                        this.setState({
-                          dose: item,
-                        })
-                      }
-                      value={this.state.dose}
-                    />
-                    <Selector
-                      defaultValue="Choose vaccine name"
-                      id="v-name"
-                      options={this.state.vaccineNames}
-                      // handleSelect={setVaccineName}
-                      handleSelect={(item) => {
-                        this.setState({
-                          vaccineName: item,
-                        });
-                      }}
-                      value={this.state.vaccineName}
-                    />
-                  </Col>
-                )}
-              </div>
-            </Col>
-          </div>
-          <div className="form-group">
-            <Col md>
-              <TextArea
-                label="Other medical conditions"
-                id={"other-condition"}
-                value={this.state.otherMedical}
-                placeholder="Add conditions"
-                onChange={(value) =>
-                  this.setState({
-                    otherMedical: value,
-                  })
-                }
-                // onChange={setOtherMedical}
-                rows={1}
-                cols={20}
-              ></TextArea>
-            </Col>
-            <Col md></Col>
-          </div>
-        </div>
       </div>
     );
   };
@@ -1074,62 +857,6 @@ class Profile extends Component {
                                   {this.state.data.additional_info.weight}
                                 </p>
                               </div>
-                              <div className="row">
-                                <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                                  Are you Diabetic?
-                                </p>
-                                <p className="col-sm-10 mb-0">
-                                  {this.state.isDiabetic ? "yes" : "no"}
-                                </p>
-                              </div>
-                              <div className="row">
-                                <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                                  Are you Hypertensive?
-                                </p>
-                                <p className="col-sm-10 mb-0">
-                                  {this.state.isHypertensive ? "yes" : "no"}
-                                </p>
-                              </div>
-                              <div className="row">
-                                <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                                  Any past surgery?
-                                </p>
-                                <p className="col-sm-10 mb-0">
-                                  {this.state.isSurgery ? "yes" : "no"}
-                                </p>
-                              </div>
-                              <div className="row">
-                                <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                                  Any allergies to medications?
-                                </p>
-                                <p className="col-sm-10 mb-0">
-                                  {this.state.isAllergie ? "yes" : "no"}
-                                </p>
-                              </div>
-                              <div className="row">
-                                <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                                  Have you been diagnosed with Covid?
-                                </p>
-                                <p className="col-sm-10 mb-0">
-                                  {this.state.isCovid ? "yes" : "no"}
-                                </p>
-                              </div>
-                              <div className="row">
-                                <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                                  Have you been vaccinated against Covid?
-                                </p>
-                                <p className="col-sm-10 mb-0">
-                                  {this.state.isVaccinated ? "yes" : "no"}
-                                </p>
-                              </div>
-                              <div className="row">
-                                <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                                  Other medical conditions
-                                </p>
-                                <p className="col-sm-10 mb-0">
-                                  {this.state.otherMedical}
-                                </p>
-                              </div>
                             </>
                           )}
                         </div>
@@ -1206,6 +933,94 @@ class Profile extends Component {
                                 ₹{this.state.data.additional_info.qualif.fee}
                               </p>
                             </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Tab>
+              )}
+              {this.state.type == constants.USER_TYPE_PATIENT && (
+                <Tab
+                  className="nav-link"
+                  eventKey={2}
+                  title="Additional Details"
+                >
+                  <div className="row">
+                    <div className="col-lg-12">
+                      <div className="card">
+                        {this.state.data && (
+                          <div className="card-body">
+                            <h5 className="card-title d-flex justify-content-between">
+                              <span>Additional Details</span>
+                              <a
+                                className="edit-link"
+                                onClick={() => this.handleShow("2")}
+                              >
+                                <i className="fa fa-edit mr-1"></i>Edit
+                              </a>
+                            </h5>
+                            {/**/}
+                            {this.state.type === constants.USER_TYPE_PATIENT && (
+                                <>
+                                  <div className="row">
+                                    <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                      Are you Diabetic?
+                                    </p>
+                                    <p className="col-sm-10 mb-0">
+                                      {`${this.state.isDiabetic ? "yes" : "no"} since ${this.state.isDiabetic && moment(this.state.diabeticValue)?.format('DD-MM-YYYY')}`}
+                                    </p>
+                                  </div>
+                                  <div className="row">
+                                    <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                      Are you Hypertensive?
+                                    </p>
+                                    <p className="col-sm-10 mb-0">
+                                      {`${this.state.isHypertensive ? "yes" : "no"} since ${this.state.isHypertensive && moment(this.state.hypertensiveValue)?.format('DD-MM-YYYY')}`}
+                                    </p>
+                                  </div>
+                                  <div className="row">
+                                    <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                      Any past surgery?
+                                    </p>
+                                    <p className="col-sm-10 mb-0">
+                                      {`${this.state.isSurgery ? "yes" : "no"}, ${this.state.isSurgery ? this.state.surgeryValue : ""}`}
+                                    </p>
+                                  </div>
+                                  <div className="row">
+                                    <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                      Any allergies to medications?
+                                    </p>
+                                    <p className="col-sm-10 mb-0">
+                                      {`${this.state.isAllergie ? "yes" : "no"}, ${this.state.isAllergie ? this.state.allergieValue : ""}`}
+                                    </p>
+                                  </div>
+                                  <div className="row">
+                                    <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                      Have you been diagnosed with Covid?
+                                    </p>
+                                    <p className="col-sm-10 mb-0">
+                                      {`${this.state.isCovid ? "yes" : "no"}, ${this.state.isCovid ? this.state.covidDetails : ""}`}
+                                    </p>
+                                  </div>
+                                  <div className="row">
+                                    <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                      Have you been vaccinated against Covid?
+                                    </p>
+                                    <p className="col-sm-10 mb-0">
+                                      {`${this.state.isVaccinated ? "yes" : "no"} since ${this.state.isVaccinated && moment(this.state.vaccineDate)?.format('DD-MM-YYYY')} with ${this.state.dose}`}
+                                    </p>
+                                  </div>
+                                  <div className="row">
+                                    <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                      Other medical conditions
+                                    </p>
+                                    <p className="col-sm-10 mb-0">
+                                      {this.state.otherMedical}
+                                    </p>
+                                  </div>
+                                </>
+                            )}
                           </div>
                         )}
                       </div>
@@ -1561,6 +1376,274 @@ class Profile extends Component {
                           </select>
                         </div>
                       </div>
+                    </div>
+                    <button
+                      type="submit"
+                      onClick={this.updateProfile}
+                      className="btn btn-primary btn-block"
+                    >
+                      Save Changes
+                    </button>
+                  </form>
+                </div>
+              )}
+            </Modal.Body>
+          </Modal>
+        )}
+        {/* Addition Details Modal for Patient */}
+        {this.state.type === constants.USER_TYPE_PATIENT && (
+          <Modal show={this.state.show === "2"} onHide={this.handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>
+                <h5 className="modal-title">Additional Details</h5>
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {this.state.updatedModel && (
+                <div className="modal-body">
+                  <form>
+                    <div className="row form-row">
+                      <div className="col-12 col-sm-6">
+                        <div className="form-group">
+                          {/*<Col md>*/}
+                            <div className="form-group">
+                              <Radio
+                                  labelStyle={{paddingLeft: '15px'}}
+                                  inputRowStyle={{paddingLeft: '15px'}}
+                                  label="Are you Diabetic?"
+                                  id="radioDiabetes"
+                                  options={this.state.diabetics}
+                                  handleSelect={this.handleDiabetic}
+                              />
+                            </div>
+                            {this.state.isDiabetic && (
+                                <div className="form-group">
+                                  <Col className="no-padding">
+                                    <br />
+                                    <br />{" "}
+                                    <Form.Control
+                                        type="date"
+                                        value={this.state.diabeticValue}
+                                        min={moment(new Date()).subtract(50, 'years').format('YYYY-MM-DD')}
+                                        max={moment(new Date()).format('YYYY-MM-DD')}
+                                        onChange={(e) =>
+                                            this.setState({
+                                              diabeticValue: e.target.value,
+                                            })
+                                        }
+                                    />
+                                  </Col>
+                                </div>
+                            )}
+                          {/*</Col>*/}
+                        </div>
+                      </div>
+                      <div className="col-12 col-sm-6">
+                        <div className="form-group">
+                          <Radio
+                              labelStyle={{paddingLeft: '15px'}}
+                              inputRowStyle={{paddingLeft: '15px'}}
+                              label="Are you Hypertensive?"
+                              id="radioHypertensive"
+                              options={this.state.hypertensives}
+                              handleSelect={this.handleHypertensive}
+                          />
+                        </div>
+                        <div className="form-group">
+                          {this.state.isHypertensive && (
+                              <Col className="no-padding">
+                                <br />
+                                <br />{" "}
+                                <Form.Control
+                                    type="date"
+                                    value={this.state.hypertensiveValue}
+                                    min={moment(new Date()).subtract(50, 'years').format('YYYY-MM-DD')}
+                                    max={moment(new Date()).format('YYYY-MM-DD')}
+                                    onChange={(e) =>
+                                        this.setState({ hypertensiveValue: e.target.value })
+                                    }
+                                />
+                              </Col>
+                          )}
+                        </div>
+                      </div>
+                      <div className="col-12 col-sm-6">
+                        <div className="form-group">
+                          <Col md className="no-padding">
+                            <div className="form-group">
+                              <Radio
+                                  labelStyle={{paddingLeft: '15px'}}
+                                  inputRowStyle={{paddingLeft: '15px'}}
+                                  label="Any past surgery?"
+                                  id="radioSurgery"
+                                  options={this.state.surgerys}
+                                  handleSelect={this.handleSurgerys}
+                              />
+                            </div>
+                            {this.state.isSurgery && (
+                                <div className="form-group">
+                                  <TextArea
+                                      noPadding
+                                      id={"surgery"}
+                                      value={this.state.surgeryValue}
+                                      placeholder="Please mention in brief"
+                                      onChange={(value) =>
+                                          this.setState({
+                                            surgeryValue: value,
+                                          })
+                                      }
+                                      rows={4}
+                                      cols={35}
+                                  ></TextArea>
+                                </div>
+                            )}
+                          </Col>
+                        </div>
+                      </div>
+                          <div className="col-12 col-sm-6">
+                            <div className="form-group">
+                              <Col md className="no-padding">
+                                <div className="form-group">
+                                  <Radio
+                                      labelStyle={{paddingLeft: '15px'}}
+                                      inputRowStyle={{paddingLeft: '15px'}}
+                                      label="Any allergies to medications?"
+                                      id="radioAllergies"
+                                      options={this.state.allergies}
+                                      handleSelect={this.handleAllergies}
+                                  />
+                                </div>
+                                {/*<div className="form-group">*/}
+                                  {this.state.isAllergie && (
+                                      <TextArea
+                                          noPadding
+                                          id={"textareaSurgery"}
+                                          value={this.state.allergieValue}
+                                          placeholder="Please mention in brief"
+                                          onChange={(value) =>
+                                              this.setState({
+                                                allergieValue: value,
+                                              })
+                                          }
+                                          // rows={4}
+                                          // cols={35}
+                                      ></TextArea>
+                                  )}
+                                {/*</div>*/}
+                              </Col>
+                            </div>
+                        </div>
+                        {/*</div>*/}
+                        <div className="form-group">
+                          <Col md>
+                            <div className="form-group">
+                              <Radio
+                                  label="Have you been diagnosed with Covid?"
+                                  id="diagCovid"
+                                  options={this.state.covids}
+                                  handleSelect={this.handleCovids}
+                              />
+                            </div>
+                          </Col>
+                          <Col md className="no-padding">
+                            <div className="form-group">
+                              {this.state.isCovid && (
+                                  <Col md className="no-padding">
+                                    <Input
+                                        type="text"
+                                        placeholder="Enter additional details"
+                                        label="Provide additional details of Covid illness"
+                                        value={this.state.covidDetails}
+                                        onChange={(value) =>
+                                            this.setState({
+                                              covidDetails: value,
+                                            })
+                                        }
+                                    />
+                                  </Col>
+                              )}
+                            </div>
+                          </Col>
+                          <Col md>
+                            <div className="form-group">
+                              <Radio
+                                  label="Have you been vaccinated against Covid?"
+                                  id="vaccinated"
+                                  options={this.state.vaccinated}
+                                  handleSelect={this.handleVaccinated}
+                              />
+                            </div>
+                            <div className="form-group">
+                              {this.state.isVaccinated && (
+                                  <Col md>
+
+                                    <Form.Control
+                                        type="date"
+                                        value={this.state.vaccineDate}
+                                        onKeyDown={(e) => e.preventDefault()}
+                                        min={moment(new Date()).subtract(50, 'years').format('YYYY-MM-DD')}
+                                        max={moment(new Date()).format('YYYY-MM-DD')}
+                                        onChange={(e) =>
+                                            this.setState({
+                                              vaccineDate: e.target.value,
+                                            })
+                                        }
+                                    />
+                                    <div className='p-15'/>
+                                    <Selector
+                                        defaultValue="Choose dose type"
+                                        id="dose"
+                                        options={this.state.dosages}
+                                        // handleSelect={this.setDose}
+                                        handleSelect={(item) =>
+                                            this.setState({
+                                              dose: item,
+                                            })
+                                        }
+                                        value={this.state.dose}
+                                    />
+                                    <div className='p-15'/>
+                                    <Selector
+                                        defaultValue="Choose vaccine name"
+                                        id="v-name"
+                                        options={this.state.vaccineNames}
+                                        // handleSelect={setVaccineName}
+                                        handleSelect={(item) => {
+                                          this.setState({
+                                            vaccineName: item,
+                                          });
+                                        }}
+                                        value={this.state.vaccineName}
+                                    />
+                                  </Col>
+                              )}
+                            </div>
+                          </Col>
+                        </div>
+                      {/*<div className="col-12 col-sm-6">*/}
+                        <div className="form-group">
+                          <Col md className="no-padding">
+                            <div className="form-group">
+                              <TextArea
+                                  noPadding
+                                  label="Other medical conditions"
+                                  id={"other-condition"}
+                                  value={this.state.otherMedical}
+                                  placeholder="Add conditions"
+                                  onChange={(value) =>
+                                      this.setState({
+                                        otherMedical: value,
+                                      })
+                                  }
+                                  // onChange={setOtherMedical}
+                                  rows={1}
+                                  cols={20}
+                              ></TextArea>
+                            </div>
+                          </Col>
+                          {/*<Col md></Col>*/}
+                        </div>
+                      {/*</div>*/}
                     </div>
                     <button
                       type="submit"

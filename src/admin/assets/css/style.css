@@ -341,6 +341,12 @@ table.table td h2 span {
   width: 240px !important;
 }
 /* .menu-dropdown li:hover{background:#000;} */
+.p-15 {
+  padding: 15px !important;
+}
+.p-15-left {
+  padding-left: 15px !important;
+}
 .p-20 {
   padding: 20px !important;
 }
