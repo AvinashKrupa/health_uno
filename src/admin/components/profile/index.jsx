@@ -531,6 +531,7 @@ class Profile extends Component {
           },
         }
       }
+      console.info('updateProfile requestBody :', requestBody);
       let result = await fetchApi({
         url: "v1/user/updateProfile",
         method: "POST",

@@ -79,7 +79,6 @@ const SlotBooking = (props) => {
       toast.error("Please select the day");
       return false;
     } else if (!slot) {
-      debugger
       toast.error("Please select the slot");
       return false;
     } else {
