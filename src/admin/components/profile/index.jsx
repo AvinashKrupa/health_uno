@@ -1009,7 +1009,7 @@ class Profile extends Component {
                                       Have you been vaccinated against Covid?
                                     </p>
                                     <p className="col-sm-10 mb-0">
-                                      {`${this.state.isVaccinated ? "yes" : "no"} since ${this.state.isVaccinated && moment(this.state.vaccineDate)?.format('DD-MM-YYYY')} with ${this.state.dose}`}
+                                      {`${this.state.isVaccinated ? "yes" : "no"} since ${this.state.isVaccinated && moment(this.state.vaccineDate)?.format('DD-MM-YYYY')} with ${this.state.dose} dose of ${this.state.vaccineName}`}
                                     </p>
                                   </div>
                                   <div className="row">
