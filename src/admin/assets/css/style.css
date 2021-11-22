@@ -5746,3 +5746,10 @@ input#menu[type="checkbox"] {
     padding-left: 20px;
  }
 }
+
+.ant-table-content{
+  overflow: visible !important;  
+}
+.ant-table{
+  z-index: 2 !important;
+}
