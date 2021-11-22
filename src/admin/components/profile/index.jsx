@@ -486,7 +486,7 @@ class Profile extends Component {
           desc: isSurgery ? surgeryValue : '',
         },
         {
-          name: 'allergy_to_meds?',
+          name: 'allergy_to_meds',
           selected: isAllergie,
           diag_at: '',
           desc: isAllergie ? allergieValue : '',
@@ -518,9 +518,9 @@ class Profile extends Component {
     try {
       let requestBody = {
         ...data.user,
+        ...data.additional_info,
         user_id: data.user._id,
         type: this.state.type,
-        additional_info: data.additional_info,
       }
       if (this.state.type === constants.USER_TYPE_DOCTOR) {
         requestBody = {
