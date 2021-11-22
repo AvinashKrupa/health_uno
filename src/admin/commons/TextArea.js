@@ -3,7 +3,7 @@ import { Form, Container } from "react-bootstrap";
 
 const TextArea = (props) => {
   return (
-    <Container>
+    <Container className={props.noPadding? 'no-padding': 'p-15'}>
       <Form.Label className="textarea-label">{props.label}</Form.Label>
       <Form.Control
         className="textarea-field"
