@@ -524,7 +524,9 @@ class Profile extends Component {
       }
       if (this.state.type === constants.USER_TYPE_DOCTOR) {
         requestBody = {
-          ...requestBody,
+          ...data.user,
+          user_id: data.user._id,
+          type: this.state.type,
           qualif: {
             ...data.additional_info.qualif,
             //   address: data.additional_info.address,
@@ -646,6 +648,15 @@ class Profile extends Component {
 
   showDropDownMenu() {
     return this.state.showMenu;
+  }
+
+  renderLanguage = (language) => {
+    if(language.hasOwnProperty('name')){
+      return changeCaseFirstLetter(language?.name)
+    }else{
+      const selectedLanguage = this.state.languages.find(lang => lang._id === language)
+      return changeCaseFirstLetter(selectedLanguage?.name)
+    }
   }
 
   renderPatientMoreFields = () => {
@@ -801,9 +812,7 @@ class Profile extends Component {
                               Language
                             </p>
                             <p className="col-sm-10">
-                              {changeCaseFirstLetter(
-                                this.state.data.user.language?.name
-                              )}
+                              {this.renderLanguage(this.state.data.user.language)}
                             </p>
                           </div>
                           <div className="row">
