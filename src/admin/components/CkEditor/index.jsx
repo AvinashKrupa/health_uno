@@ -73,6 +73,7 @@ const CkEditor = ({}) => {
               data={editorValue}
               config={{
                 toolbarLocation: "bottom",
+                removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed', 'Link'],
               }}
               onReady={(editor) => {
                 // You can store the "editor" and use when it is needed.
