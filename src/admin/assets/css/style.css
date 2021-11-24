@@ -5748,7 +5748,7 @@ input#menu[type="checkbox"] {
 }
 
 .ant-table-content{
-  overflow: visible !important;  
+  overflow: auto !important;  
 }
 .ant-table{
   z-index: 2 !important;
