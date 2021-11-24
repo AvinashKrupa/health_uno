@@ -456,6 +456,7 @@ class Sliders extends Component {
                           ref={(ref) => (this.fileMobileInput = ref)}
                           onChange={(e) => this.handleMobileFileSelection(e)}
                         />
+                        <p><em>800w * 400h (2 : 1 aspect ration) </em></p>
                       </div>
                     </div>
                     <div className="col-12 col-sm-6">
@@ -467,6 +468,7 @@ class Sliders extends Component {
                           ref={(ref) => (this.fileInput = ref)}
                           onChange={(e) => this.handleWebFileSelection(e)}
                         />
+                        <p><em>2400w * 600h (4 : 1 aspect ration) </em></p>
                       </div>
                     </div>
                   </div>
