@@ -57,21 +57,15 @@ class Chat extends Component {
 
     socketObj.auth = {
       user_id: user_id,
-      chat_type: ChatType.CHAT_TYPE_DOC_TO_PATIENT,
-      //   receiver_id: conv.recipient._id,
-      //   conversation_id: conv._id,
+      chat_type: ChatType.CHAT_TYPE_DOC_TO_DOC,
     };
     socketObj.connect();
 
     socketObj.on("connect", () => {
       console.log("socket connected>>>");
     });
-    socketObj.on("onConversation", ({ conversation_id, room_id }) => {
-      console.log("conversation updated");
-    });
-
-    socketObj.on("onNewMessage", (data) => {
-      console.log("onNewMessage>>>>", data);
+    socketObj.on("onConversationUpdated", (data) => {
+      console.log("conversation updated",data);
     });
 
     socketObj.on("disconnect", (response) => {
