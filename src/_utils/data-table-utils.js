@@ -8,7 +8,7 @@ import {
   getNextSlot,
 } from "./common-utils";
 import { Link } from "react-router-dom";
-import { Button, Input, Space, Select } from "antd";
+import { Tag, Button, Input, Space, Select } from "antd";
 
 export const sorterDate = (a, b) => {
   return moment(a).diff(moment(b), "seconds");
@@ -330,4 +330,11 @@ export const getColumnFilterProps = (filterArray, recordValueToCompare) => {
         : "";
     },
   };
+};
+
+export const renderTagStatus = (status) => {
+
+  return (
+    <Tag style={{ padding: "10px", textTransform: "uppercase" }} color={status==='completed'? "success" : 'processing'}>{changeCaseFirstLetter(status)}</Tag>
+  );
 };

@@ -120,6 +120,7 @@ const UpdateSchedule = ({ data }) => {
       };
     } else {
       toast.error("This slot already have an appointment");
+      return
     }
     fetchApi({ url: "v1/doctor/updateSchedule", body: params, method: "POST" })
       .then((response) => {

@@ -102,54 +102,54 @@ class Sliders extends Component {
       title: e.target.value,
     });
   };
-  validateImageDimentions = async (e, type) => {
-    var reader = new FileReader();
-    //Read the contents of Image File.
-    reader.readAsDataURL(e.target.files[0]);
-    const dim = await new Promise(function (resolve, reject) {
-      reader.onload = async function (e) {
-        //Initiate the JavaScript Image object.
-        var image = new Image();
-        //Set the Base64 string return from FileReader as source.
-        image.src = e.target.result;
-        const dimensions = await new Promise(function (resolve, reject) {
-          image.onload = function () {
-            resolve({ width: image.width, height: image.height });
-          };
-        });
-        console.log("dimensions are ", dimensions);
-        resolve(dimensions);
-      };
-    });
-    console.log("dimensions are in outer promise ", dim);
-    if (type === "web") {
-      if (dim.width !== 1200 || dim.height !== 320) {
-        toast.error(
-          "Selected invalid Web Banner expecting 1200*320 width and height"
-        );
-        return false;
-      }
-    } else {
-      if (dim.width !== 400 || dim.height !== 200) {
-        toast.error(
-          "Selected invalid Mobile Banner, expecting 400*200 width and height "
-        );
-        return false;
-      }
-    }
-    return true;
-  };
+  // validateImageDimentions = async (e, type) => {
+  //   var reader = new FileReader();
+  //   //Read the contents of Image File.
+  //   reader.readAsDataURL(e.target.files[0]);
+  //   const dim = await new Promise(function (resolve, reject) {
+  //     reader.onload = async function (e) {
+  //       //Initiate the JavaScript Image object.
+  //       var image = new Image();
+  //       //Set the Base64 string return from FileReader as source.
+  //       image.src = e.target.result;
+  //       const dimensions = await new Promise(function (resolve, reject) {
+  //         image.onload = function () {
+  //           resolve({ width: image.width, height: image.height });
+  //         };
+  //       });
+  //       console.log("dimensions are ", dimensions);
+  //       resolve(dimensions);
+  //     };
+  //   });
+  //   console.log("dimensions are in outer promise ", dim);
+  //   if (type === "web") {
+  //     if (dim.width !== 1200 || dim.height !== 320) {
+  //       toast.error(
+  //         "Selected invalid Web Banner expecting 1200*320 width and height"
+  //       );
+  //       return false;
+  //     }
+  //   } else {
+  //     if (dim.width !== 400 || dim.height !== 200) {
+  //       toast.error(
+  //         "Selected invalid Mobile Banner, expecting 400*200 width and height "
+  //       );
+  //       return false;
+  //     }
+  //   }
+  //   return true;
+  // };
   handleWebFileSelection = async (e) => {
     const targetFile = e.target.files[0];
     const type = "web";
-    let valid = await this.validateImageDimentions(e, type);
-    this.newMethod(valid, targetFile, type);
+    // let valid = await this.validateImageDimentions(e, type);
+    this.newMethod(true, targetFile, type);
   };
   handleMobileFileSelection = async (e) => {
     const targetFile = e.target.files[0];
     const type = "mobile";
-    let valid = await this.validateImageDimentions(e, type);
-    this.newMethod(valid, targetFile, type);
+    // let valid = await this.validateImageDimentions(e, type);
+    this.newMethod(true, targetFile, type);
   };
   newMethod(valid, targetFile, type) {
     if (valid) {
@@ -317,12 +317,12 @@ class Sliders extends Component {
         dataIndex: "user_type",
         render: (text, record) => renderText(userTypes[record.user_type]),
       },
-      {
-        title: "Description",
-        dataIndex: "title",
-        ellipsis: true,
-        render: (text, record) => renderText(record.desc),
-      },
+      // {
+      //   title: "Description",
+      //   dataIndex: "title",
+      //   ellipsis: true,
+      //   render: (text, record) => renderText(record.desc),
+      // },
       {
         title: "Created At",
         dataIndex: "created_at",
@@ -456,6 +456,7 @@ class Sliders extends Component {
                           ref={(ref) => (this.fileMobileInput = ref)}
                           onChange={(e) => this.handleMobileFileSelection(e)}
                         />
+                        <p><em>800w * 400h (2 : 1 aspect ration) </em></p>
                       </div>
                     </div>
                     <div className="col-12 col-sm-6">
@@ -467,6 +468,7 @@ class Sliders extends Component {
                           ref={(ref) => (this.fileInput = ref)}
                           onChange={(e) => this.handleWebFileSelection(e)}
                         />
+                        <p><em>2400w * 600h (4 : 1 aspect ration) </em></p>
                       </div>
                     </div>
                   </div>
@@ -510,7 +512,7 @@ class Sliders extends Component {
                       </div>
                     </div>
                   </div>
-                  <div className="row form-row">
+                  {/* <div className="row form-row">
                     <div className="col-12 col-sm-12">
                       <div className="form-group">
                         <label>Description</label>
@@ -528,7 +530,7 @@ class Sliders extends Component {
                         />
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                   <button
                     type="submit"
                     onClick={(e) => {
