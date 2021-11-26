@@ -250,6 +250,7 @@ class CouponScreen extends Component {
       },
       {
         title: "Actions",
+        align: 'right',
         render: (text, record) =>
           renderEditDisableActions(
             (elem, records) => {
@@ -261,7 +262,8 @@ class CouponScreen extends Component {
               }
             },
             record,
-            1
+            1,
+            true
           ),
       },
     ];
