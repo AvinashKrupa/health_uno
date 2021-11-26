@@ -61,7 +61,7 @@ const AppUniversal = function (props) {
             exact
             component={Appointments}
           />
-          <PrivateRoute path="/revenue" exact component={RevenuePage} />
+          {/* <PrivateRoute path="/revenue" exact component={RevenuePage} /> */}
           <PrivateRoute
             path="/slotBooking/:doctor_id/:appoinment_id"
             exact
@@ -110,7 +110,6 @@ const AppUniversal = function (props) {
           <Route path="/register" exact component={Register} />
           <Route path="/forgotPassword" exact component={ForgotPassword} />
           <Route path="/lockscreen" exact component={Lockscreen} />
-          <Route path="/404" exact component={Error} />
           <Route path="/500" exact component={ErrorPage} />
           <Route path="/blank-page" exact component={BlankPage} />
           <Route path="/components" exact component={Components} />
@@ -121,6 +120,7 @@ const AppUniversal = function (props) {
           <Route path="/form-mask" exact component={FormMask} />
           <Route path="/form-validation" exact component={FormValidation} />
           <Route path="/about-us" exact component={CkEditor} />
+          <Route path="*" exact component={Error} />
         </Switch>
       </div>
     </Router>
