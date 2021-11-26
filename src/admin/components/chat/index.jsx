@@ -66,6 +66,7 @@ class Chat extends Component {
     });
     socketObj.on("onConversationUpdated", (data) => {
       console.log("conversation updated",data);
+      this.handleConversationList(data, user_id)
     });
 
     socketObj.on("disconnect", (response) => {
@@ -75,6 +76,27 @@ class Chat extends Component {
     this.setState({ socketObj: socketObj });
     // await this.loadMessagesForUser(conv);
   };
+
+  handleConversationList = (conversationList, user_id) => {
+    const existingConversationList = [...this.state.conversations]
+    const ConversationIndex = this.state.conversations.findIndex(conversation => conversation._id === conversationList._id )
+
+    if(ConversationIndex > -1){
+      existingConversationList[ConversationIndex] = conversationList
+      existingConversationList[ConversationIndex].recipient = conversationList.participants.find((obj) => {
+        return obj._id !== user_id;
+      }),
+      this.setState({ conversations: existingConversationList });
+    }else{
+      const newConversation = conversationList;
+      newConversation.recipient = conversationList.participants.find((obj) => {
+        return obj._id !== user_id;
+      }),
+      existingConversationList.push(newConversation)
+      this.setState({ conversations: existingConversationList });
+    }
+
+  }
 
   terminateConnection() {
     let socketObj = this.state.socketObj;
