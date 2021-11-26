@@ -154,11 +154,11 @@ class SidebarNav extends Component {
                   <span>Specialities</span>
                 </Link>
               </li>
-              <li className={pathname.includes("revenue") ? "active" : ""}>
+              {/* <li className={pathname.includes("revenue") ? "active" : ""}>
                 <Link to="/revenue">
                   <i className="fe fe-money" /> <span>Revenue</span>
                 </Link>
-              </li>
+              </li> */}
               <li
                 className={pathname.includes("versionsettings") ? "active" : ""}
               >

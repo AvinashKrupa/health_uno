@@ -120,15 +120,29 @@ class Profile extends Component {
       (country) => profile.data.additional_info.address.country == country.name
     );
     if (!selectedCountry) selectedCountry = countries.data[0];
-    let selectedState = {
-      id: profile.data.additional_info.address.state,
-      name: profile.data.additional_info.address.state,
-    };
-    let selectedCity = {
-      id: profile.data.additional_info.address.city,
-      name: profile.data.additional_info.address.city,
-    };
-
+    let states;
+    if(selectedCountry){
+       states = await fetchApi({
+        url: "v1/state",
+        method: "POST",
+        body: { countryId: selectedCountry.id },
+      });
+    
+    }
+    let selectedState = states.data.find(
+      (state) => profile.data.additional_info.address.state == state.name
+    );
+    let cities;
+    if(selectedState){
+      cities = await fetchApi({
+        url: "v1/city",
+        method: "POST",
+        body: { countryId:  selectedCountry.id, stateId: selectedState.id },
+      });
+    }
+    let selectedCity = cities.data.find(
+      (city) => profile.data.additional_info.address.city == city.name
+    );
     if (this.state.type === constants.USER_TYPE_PATIENT) {
       profile.data.additional_info.med_cond.map((info) => {
         if (info.name === "diabetic") {
@@ -260,16 +274,16 @@ class Profile extends Component {
       selectedDepartment: profile.data && profile.data.additional_info &&  profile.data.additional_info.qualif && profile.data.additional_info.qualif.dept_id && profile.data.additional_info.qualif.dept_id._id ,
       selectedQualification: profile.data && profile.data.additional_info &&  profile.data.additional_info.qualif && profile.data.additional_info.qualif.highest_qual && profile.data.additional_info.qualif.highest_qual._id ,
       selectedSpecialities: profile.data && profile.data.additional_info &&  profile.data.additional_info.qualif && profile.data.additional_info.qualif.specl[0] && profile.data.additional_info.qualif.specl[0]._id ,
-      states: [selectedState],
-      cities: [selectedCity],
+      states: states.data,
+      cities: cities.data,
       department: department.data,
       specialities: specialities.data,
       qualification: qualification.data,
       languages: languages.data,
       countryStateCity: {
         country: { id: selectedCountry.id, name: selectedCountry.name },
-        state: selectedState,
-        city: selectedCity,
+        state: { id: selectedState.id, name: selectedState.name },
+        city:{ id: selectedCity.id, name: selectedCity.name },
       },
       otherMedical: profile.data.additional_info.other_med_cond || "",
     });
