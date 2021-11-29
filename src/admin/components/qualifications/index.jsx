@@ -75,8 +75,9 @@ class Qualifications extends Component {
       show: show,
     });
   };
-  handleRecordUpdate = async (record) => {
+  handleRecordUpdate = async (e, record) => {
     let result;
+    e.preventDefault();
     if (record && record._id) {
       let body = {
         _id: record._id,
@@ -296,8 +297,8 @@ class Qualifications extends Component {
                   </div>
                   <button
                     type="submit"
-                    onClick={() =>
-                      this.handleRecordUpdate(this.state.show.record)
+                    onClick={(e) =>
+                      this.handleRecordUpdate(e, this.state.show.record)
                     }
                     className="btn btn-primary btn-block"
                   >
