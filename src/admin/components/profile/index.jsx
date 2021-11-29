@@ -21,6 +21,7 @@ import Selector from "../../commons/Select";
 import TextArea from "../../commons/TextArea";
 import Input from "../../commons/Input";
 import UpdateSchedule from "../UpdateSchedule";
+import MultiSelect from "../MultiSelect/MultiSelect";
 
 class Profile extends Component {
   constructor(props) {
@@ -93,6 +94,7 @@ class Profile extends Component {
       dose: "",
       vaccineName: "",
       covidDetails: "",
+      selectedLanguage: [],
     };
   }
 
@@ -268,6 +270,12 @@ class Profile extends Component {
         }
       });
     }
+
+    const selectedLanguage = profile.data.user.language.map(
+      (lang) => lang._id
+    );
+
+
     this.setState({
       data: profile.data,
       countries: countries.data,
@@ -280,6 +288,7 @@ class Profile extends Component {
       specialities: specialities.data,
       qualification: qualification.data,
       languages: languages.data,
+      selectedLanguage: selectedLanguage,
       countryStateCity: {
         country: { id: selectedCountry.id, name: selectedCountry.name },
         state: { id: selectedState.id, name: selectedState.name },
@@ -441,7 +450,8 @@ class Profile extends Component {
       covidDetails,
       selectedQualification,
       selectedDepartment,
-      selectedSpecialities
+      selectedSpecialities,
+      selectedLanguage,
     } = this.state;
     e.preventDefault();
     let data = this.state.updatedModel;
@@ -543,13 +553,13 @@ class Profile extends Component {
           ...data.user,
           user_id: data.user._id,
           type: this.state.type,
+          language: selectedLanguage,
           qualif: {
             ...data.additional_info.qualif,
             //   address: data.additional_info.address,
           },
         }
       }
-      console.info('updateProfile requestBody :', requestBody);
       let result = await fetchApi({
         url: "v1/user/updateProfile",
         method: "POST",
@@ -558,7 +568,7 @@ class Profile extends Component {
 
       if (result) {
         toast.success(result.message);
-        this.setState({ data: data });
+        this.setState({ data: result.data });
       }
     } catch (e) {
       console.log("error>>", e);
@@ -648,6 +658,14 @@ class Profile extends Component {
     }
   }
 
+  renderLanguage = (language) => {
+    if (language.length > 0) {
+      const languageName = language.map((lang) => lang.name);
+      return languageName.join(", ");
+    }
+   
+  };
+
   async selectCity(dropdownItem) {
     let countryStateCity = this.state.countryStateCity;
     let city = dropdownItem.target.value;
@@ -657,6 +675,13 @@ class Profile extends Component {
     });
   }
 
+  handleLanguage = async (e) => {
+    const value = e.target.value;
+    this.setState({
+      selectedLanguage:value
+    })
+  };
+
   handleDropdownClick() {
     let isShown = this.state.showMenu;
     this.setState({ showMenu: !isShown });
@@ -664,15 +689,6 @@ class Profile extends Component {
 
   showDropDownMenu() {
     return this.state.showMenu;
-  }
-
-  renderLanguage = (language) => {
-    if(language.hasOwnProperty('name')){
-      return changeCaseFirstLetter(language?.name)
-    }else{
-      const selectedLanguage = this.state.languages.find(lang => lang._id === language)
-      return changeCaseFirstLetter(selectedLanguage?.name)
-    }
   }
 
   renderPatientMoreFields = () => {
@@ -707,7 +723,6 @@ class Profile extends Component {
   };
 
   render() {
-    console.log('this.state :>> ', this.state);
     return (
       <div>
         <SidebarNav />
@@ -823,14 +838,18 @@ class Profile extends Component {
                               {this.state.data.user.dob}
                             </p>
                           </div>
-                          <div className="row">
-                            <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                              Language
-                            </p>
-                            <p className="col-sm-10">
-                              {this.renderLanguage(this.state.data.user.language)}
-                            </p>
-                          </div>
+                          {this.state.type === constants.USER_TYPE_DOCTOR && (
+                            <div className="row">
+                              <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                Language
+                              </p>
+                              <p className="col-sm-10">
+                                {this.renderLanguage(
+                                  this.state.data.user.language
+                                )}
+                              </p>
+                            </div>
+                          )}
                           <div className="row">
                             <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
                               Gender
@@ -1175,25 +1194,18 @@ class Profile extends Component {
                         </select>
                       </div>
                     </div>
-                    <div className="col-12 col-sm-6">
-                      <div className="form-group">
-                        <label>Language</label>
-                        <select
-                          value={this.state.updatedModel.user.language?._id}
-                          name="language"
-                          onChange={(e) => this.handleChange(e)}
-                          className="form-control"
-                        >
-                          {this.state.languages?.map((lang) => {
-                            return (
-                              <option value={lang._id}>
-                                {changeCaseFirstLetter(lang.name)}
-                              </option>
-                            );
-                          })}
-                        </select>
+                    {this.state.type === constants.USER_TYPE_DOCTOR && (
+                      <div className="col-12 col-sm-6">
+                      
+                        <MultiSelect
+                          className="languageRegistration"
+                          label="Language"
+                          selected={this.state.selectedLanguage}
+                          options={this.state.languages}
+                          handleChange={this.handleLanguage}
+                        />
                       </div>
-                    </div>
+                    )}
                     <div className="col-12 col-sm-6">
                       <div className="form-group">
                         <label>Address Line 1</label>
