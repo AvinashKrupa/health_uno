@@ -395,11 +395,13 @@ class Profile extends Component {
     });
   };
   handleDateChange = (date) => {
-    let data = this.state.updatedModel;
-    data.user.dob = moment(date).format("YYYY-MM-DD");
-    this.setState({
-      updatedModel: data,
-    });
+    if(date){
+      let data = this.state.updatedModel;
+      data.user.dob = moment(date).format("YYYY-MM-DD");
+      this.setState({
+        updatedModel: data,
+      });
+    }
   };
   handleChange = (e) => {
     e.preventDefault();
@@ -1116,7 +1118,7 @@ class Profile extends Component {
                     <div className="col-12">
                       <div className="form-group">
                         <label>Date of Birth</label>
-                        <div className="cal-icon">
+                        <div className="cal-icon-modal">
                           <DatePicker
                             className="form-control"
                             dateFormat={"yyyy-MM-dd"}
@@ -1125,6 +1127,7 @@ class Profile extends Component {
                             selected={
                               new Date(this.state.updatedModel.user.dob)
                             }
+                            placeholderText="yyyy-mm-dd"
                             onChange={this.handleDateChange}
                           />
                         </div>
