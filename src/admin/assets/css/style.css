@@ -423,6 +423,28 @@ table.table td h2 span {
   top: 10px;
 }
 
+.cal-icon-modal {
+  position: relative;
+  width: 100%;
+}
+.cal-icon-modal .react-datepicker-wrapper {
+  padding-left: 0px !important;
+}
+.cal-icon-modal .react-datepicker-wrapper input {
+  width: 100%;
+}
+.cal-icon-modal:after {
+  color: #979797;
+  content: "\f073";
+  display: block;
+  font-family: "FontAwesome";
+  font-size: 15px;
+  margin: auto;
+  position: absolute;
+  right: 15px;
+  top: 10px;
+}
+
 /*-----------------
 	4. Bootstrap Classes
 -----------------------*/
