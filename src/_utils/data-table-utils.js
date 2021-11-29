@@ -8,7 +8,7 @@ import {
   getNextSlot,
 } from "./common-utils";
 import { Link } from "react-router-dom";
-import { Button, Input, Space, Select } from "antd";
+import { Tag, Button, Input, Space, Select } from "antd";
 
 export const sorterDate = (a, b) => {
   return moment(a).diff(moment(b), "seconds");
@@ -124,63 +124,131 @@ export const renderDropDown = (
     </div>
   );
 };
-export const renderEditDisableActions = (handleShow, record, type = 0) => {
-  return (
-    <div className="actions">
-      {type == 0 ? (
-        <>
-          <a
-            href="#0"
-            className="btn btn-sm bg-success-light"
-            onClick={() => handleShow("edit")}
-          >
-            <i className="fe fe-pencil"></i> Edit
-          </a>
+export const renderEditDisableActions = (
+  handleShow,
+  record,
+  type = 0,
+  isCoupon = false
+) => {
+  if (isCoupon) {
+    return (
+      <div className="actions">
+        {type == 0 ? (
+          <>
+            <a
+              href="#0"
+              className="btn btn-sm bg-success-light"
+              onClick={() => {
+                handleShow("edit");
+              }}
+            >
+              <i className="fe fe-pencil"></i> Edit
+            </a>
 
-          <a
-            href="#0"
-            className={`btn btn-sm ${
-              record.enabled ? "bg-danger-light" : "bg-success-light"
-            }`}
-            onClick={() => handleShow("disable")}
-          >
-            {record.enabled ? "Disable" : " Enable"}
-          </a>
-        </>
-      ) : (
-        <>
-          {record.status == "inactive" || record.status == "active" ? (
             <a
               href="#0"
               className={`btn btn-sm ${
-                record.status == "active"
-                  ? "bg-danger-light"
-                  : "bg-success-light"
+                record.enabled ? "bg-danger-light" : "bg-success-light"
               }`}
               onClick={() => handleShow("disable")}
             >
-              {record.status == "active" ? "Inactive" : " Active"}
+              {record.enabled ? "Disable" : " Enable"}
             </a>
-          ) : (
+          </>
+        ) : (
+          <>
+            {record.status == "inactive" || record.status == "active" ? (
+              <a
+                href="#0"
+                className={`btn btn-sm ${
+                  record.status == "active"
+                    ? "bg-danger-light"
+                    : "bg-success-light"
+                }`}
+                onClick={() => handleShow("disable")}
+              >
+                {record.status == "active" ? "Deactivate" : "Activate"}
+              </a>
+            ) : record.status !== "expired" ? (
+              <a
+                href="#0"
+                className={`btn btn-sm ${"bg-primary-light"}`}
+                style={{ textTransform: "capitalize" }}
+              >
+                {record.status}
+              </a>
+            ) : null}
+          </>
+        )}
+        <a
+          href="#0"
+          className="btn btn-sm bg-danger-light"
+          onClick={() => handleShow("delete")}
+        >
+          <i className="fe fe-trash"></i>
+        </a>
+      </div>
+    );
+  } else {
+    return (
+      <div className="actions">
+        {type == 0 ? (
+          <>
             <a
               href="#0"
-              className={`btn btn-sm ${"bg-primary-light"}`}
-              style={{ textTransform: "capitalize" }}
+              className="btn btn-sm bg-success-light"
+              onClick={() => {
+                handleShow("edit");
+              }}
             >
-              {record.status}
+              <i className="fe fe-pencil"></i> Edit
             </a>
-          )}
-        </>
-      )}
-      <a
-        href="#0"
-        className="btn btn-sm bg-danger-light"
-        onClick={() => handleShow("delete")}
-      >
-        <i className="fe fe-trash"></i>
-      </a>
-    </div>
-  );
+
+            <a
+              href="#0"
+              className={`btn btn-sm ${
+                record.enabled ? "bg-danger-light" : "bg-success-light"
+              }`}
+              onClick={() => handleShow("disable")}
+            >
+              {record.enabled ? "Disable" : " Enable"}
+            </a>
+          </>
+        ) : (
+          <>
+            {record.status == "inactive" || record.status == "active" ? (
+              <a
+                href="#0"
+                className={`btn btn-sm ${
+                  record.status == "active"
+                    ? "bg-danger-light"
+                    : "bg-success-light"
+                }`}
+                onClick={() => handleShow("disable")}
+              >
+                {record.status == "active" ? "Inactive" : " Active"}
+              </a>
+            ) : (
+              <a
+                href="#0"
+                className={`btn btn-sm ${"bg-primary-light"}`}
+                style={{ textTransform: "capitalize" }}
+              >
+                {record.status}
+              </a>
+            )}
+          </>
+        )}
+        <a
+          href="#0"
+          className="btn btn-sm bg-danger-light"
+          onClick={() => handleShow("delete")}
+        >
+          <i className="fe fe-trash"></i>
+        </a>
+      </div>
+    );
+  }
 };
 export const renderAppointment = (date, text) => {
   return (
@@ -328,4 +396,15 @@ export const getColumnFilterProps = (filterArray, recordValueToCompare) => {
         : "";
     },
   };
+};
+
+export const renderTagStatus = (status) => {
+  return (
+    <Tag
+      style={{ padding: "10px", textTransform: "uppercase" }}
+      color={status === "completed" ? "success" : "processing"}
+    >
+      {changeCaseFirstLetter(status)}
+    </Tag>
+  );
 };

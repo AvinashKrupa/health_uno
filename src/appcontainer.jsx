@@ -12,7 +12,6 @@ const AppContainer = function (props) {
 
         return (
             <Router basename={`${config.publicPath}`}>
-                (
                 <div>
                     <Switch>
                         <Route path="/" component={AppUniversal}/>

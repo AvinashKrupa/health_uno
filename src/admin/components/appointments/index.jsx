@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Table } from "antd";
+import { Table, ExportTableButton } from "ant-table-extensions";
+import moment from "moment";
 import SidebarNav from "../sidebar";
 import {
   itemRender,
@@ -13,6 +14,7 @@ import {
   renderDate,
   renderDropDown,
   renderName,
+  renderTagStatus,
   renderText,
   sorterDate,
   sorterNumber,
@@ -30,12 +32,18 @@ const statusArray = [
   "reschedule",
 ];
 
+const statusHasNoOption = [
+  "pending",
+  "completed",
+]
+
 class Appointments extends Component {
   constructor(props) {
     super(props);
     this.state = {
       total: null,
       data: [],
+      exportingData: [],
       showMenu: {},
       searchText: "",
       searchedColumn: "",
@@ -55,8 +63,10 @@ class Appointments extends Component {
       method: "GET",
     });
     let appointmentStats = this.getStats(appointments.data);
+    let apnts = appointments.data;
     this.setState({
-      data: appointments.data,
+      data: apnts,
+      exportingData: apnts,
       appointmentStats: appointmentStats,
     });
   }
@@ -135,6 +145,7 @@ class Appointments extends Component {
     this.setState({
       appointmentStats: appointmentStats,
       total: extra.currentDataSource.length,
+      exportingData: extra.currentDataSource,
     });
   };
   handleReset = (clearFilters) => {
@@ -148,20 +159,53 @@ class Appointments extends Component {
   }
 
   handleChangeOption = (status) => {
-    const optionData = statusArray.filter((item) => item !== status);
-    if (status === "scheduled") {
-      return optionData;
-    } else {
-      const index = optionData.findIndex((option) => option === "reschedule");
-      if (index > -1) {
-        optionData.splice(index, 1);
-      }
-      return optionData;
+    // const optionData = statusArray.filter((item) => item !== status);
+    // if (status === "scheduled") {
+    //   return optionData;
+    // } else {
+    //   const index = optionData.findIndex((option) => option === "reschedule");
+    //   if (index > -1) {
+    //     optionData.splice(index, 1);
+    //   }
+    //   return optionData;
+    // }
+    let optionData;
+    switch (status) {
+      case "scheduled":
+        optionData = [
+          "cancelled",
+          "rejected",
+          "completed",
+          "reschedule",
+        ];
+        break;
+      case "cancelled":
+        optionData = ["rejected"];
+        break;
+      case "rejected":
+        optionData = ["cancelled"];
+        break;
+      case "ongoing":
+        optionData = ["completed"];
+        break;
+      case "reschedule":
+        optionData = [
+          "cancelled",
+          "rejected",
+          "completed",
+          "reschedule",
+        ];
+        break;
+
+      default:
+        optionData = statusArray;
+        break;
     }
+    return optionData;
   };
 
   render() {
-    const { data } = this.state;
+    const { data, exportingData } = this.state;
 
     const columns = [
       {
@@ -247,7 +291,9 @@ class Appointments extends Component {
       },
       {
         title: "Actions",
+        align: 'center',
         render: (text, record) =>
+        statusHasNoOption.includes(record.status) ? renderTagStatus(record.status) :
           renderDropDown(
             "Change Status",
             this.handleChangeOption(record.status),
@@ -257,6 +303,67 @@ class Appointments extends Component {
           ),
       },
     ];
+    const fields = {
+      appointment_time: {
+        header: "Appointment Time",
+        formatter: (_fieldValue, record) => {
+          return record?.time.utc_time;
+        },
+      },
+      patient: {
+        header: "Patient",
+        formatter: (_fieldValue, record) => {
+          return (
+            record?.patient?.user_id?.first_name +
+            " " +
+            record?.patient?.user_id?.last_name
+          );
+        },
+      },
+      Doctor: {
+        header: "Doctor",
+        formatter: (_fieldValue, record) => {
+          return record?.doctor?.first_name + " " + record?.doctor?.last_name;
+        },
+      },
+      reason: {
+        header: "Reason",
+        formatter: (_fieldValue, record) => {
+          return record?.reason;
+        },
+      },
+      consulting_type: {
+        header: "Consulting type",
+        formatter: (_fieldValue, record) => {
+          return record?.consulting_type;
+        },
+      },
+
+      fees: {
+        header: "Fees (Rupees)",
+        formatter: (_fieldValue, record) => {
+          return record?.fee;
+        },
+      },
+      created_at: {
+        header: "Created At",
+        formatter: (_fieldValue, record) => {
+          return moment(record?.created_at).format("DD/MM/YYYY");
+        },
+      },
+      updated_at: {
+        header: "Updated At",
+        formatter: (_fieldValue, record) => {
+          return moment(record?.updated_at).format("DD/MM/YYYY");
+        },
+      },
+      status: {
+        header: "Status",
+        formatter: (_fieldValue, record) => {
+          return record?.status;
+        },
+      },
+    };
 
     return (
       <>
@@ -383,6 +490,15 @@ class Appointments extends Component {
                 <div className="card">
                   <div className="card-body">
                     <div>
+                      <ExportTableButton
+                        dataSource={exportingData}
+                        columns={columns}
+                        btnProps={{ type: "primary" }}
+                        fileName="appointments-data"
+                        fields={fields}
+                      >
+                        Export
+                      </ExportTableButton>
                       <Table
                         className="table-striped"
                         columns={columns}
