@@ -1118,6 +1118,7 @@ class Profile extends Component {
                           className="form-control"
                           name="first_name"
                           onChange={this.handleChange}
+                          maxlength="20"
                           value={this.state.updatedModel.user.first_name}
                         />
                       </div>
@@ -1130,6 +1131,7 @@ class Profile extends Component {
                           className="form-control"
                           name="last_name"
                           onChange={this.handleChange}
+                          maxlength="20"
                           value={this.state.updatedModel.user.last_name}
                         />
                       </div>
