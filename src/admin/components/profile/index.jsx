@@ -554,6 +554,7 @@ class Profile extends Component {
           user_id: data.user._id,
           type: this.state.type,
           language: selectedLanguage,
+          address: data.additional_info.address,
           qualif: {
             ...data.additional_info.qualif,
             //   address: data.additional_info.address,
