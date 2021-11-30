@@ -90,6 +90,10 @@ class MessagePane extends Component {
                     });
                 }
                 return Promise.resolve();
+            }else{
+                this.setState({
+                    shouldScrollMore: false,
+                })
             }
         } catch (e) {
             this.setState({
