@@ -53,7 +53,7 @@ class MessageList extends Component {
   scrollToBottom = () => {
     const { messageList } = this.refs;
     messageList.scrollIntoView({
-      behavior: "smooth",
+      behavior: "auto",
       block: "end",
       inline: "nearest",
     });
