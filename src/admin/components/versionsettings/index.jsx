@@ -204,7 +204,7 @@ class VersionSettings extends Component {
                             className="form-group"
                             style={{ fontWeight: "bold" }}
                           >
-                            <label>Ios Mandatroy Version</label>
+                            <label>Ios Mandatory Version</label>
                             <input
                               type="text"
                               placeholder="version number"
@@ -252,7 +252,7 @@ class VersionSettings extends Component {
                             className="form-group"
                             style={{ fontWeight: "bold" }}
                           >
-                            <label>Andriod Mandatroy Version</label>
+                            <label>Android Mandatory Version</label>
                             <input
                               type="text"
                               placeholder="version number"
@@ -278,7 +278,7 @@ class VersionSettings extends Component {
                             className="form-group"
                             style={{ fontWeight: "bold" }}
                           >
-                            <label>Andriod Latest Version</label>
+                            <label>Android Latest Version</label>
                             <input
                               type="text"
                               placeholder="version number"
@@ -335,7 +335,7 @@ class VersionSettings extends Component {
                             className="form-group"
                             style={{ fontWeight: "bold" }}
                           >
-                            <label>Ios Mandatroy Version</label>
+                            <label>Ios Mandatory Version</label>
                             <input
                               type="text"
                               placeholder="version number"
@@ -383,7 +383,7 @@ class VersionSettings extends Component {
                             className="form-group"
                             style={{ fontWeight: "bold" }}
                           >
-                            <label>Andriod Mandatroy Version</label>
+                            <label>Android Mandatory Version</label>
                             <input
                               type="text"
                               placeholder="version number"
@@ -409,7 +409,7 @@ class VersionSettings extends Component {
                             className="form-group"
                             style={{ fontWeight: "bold" }}
                           >
-                            <label>Andriod Latest Version</label>
+                            <label>Android Latest Version</label>
                             <input
                               type="text"
                               placeholder="version number"
