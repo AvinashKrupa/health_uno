@@ -554,6 +554,7 @@ class Profile extends Component {
           user_id: data.user._id,
           type: this.state.type,
           language: selectedLanguage,
+          address: data.additional_info.address,
           qualif: {
             ...data.additional_info.qualif,
             //   address: data.additional_info.address,
@@ -1118,6 +1119,7 @@ class Profile extends Component {
                           className="form-control"
                           name="first_name"
                           onChange={this.handleChange}
+                          maxlength="20"
                           value={this.state.updatedModel.user.first_name}
                         />
                       </div>
@@ -1130,6 +1132,7 @@ class Profile extends Component {
                           className="form-control"
                           name="last_name"
                           onChange={this.handleChange}
+                          maxlength="20"
                           value={this.state.updatedModel.user.last_name}
                         />
                       </div>
