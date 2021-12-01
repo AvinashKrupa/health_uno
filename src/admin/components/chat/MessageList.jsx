@@ -53,7 +53,7 @@ class MessageList extends Component {
   scrollToBottom = () => {
     const { messageList } = this.refs;
     messageList.scrollIntoView({
-      behavior: "smooth",
+      behavior: "auto",
       block: "end",
       inline: "nearest",
     });
@@ -65,7 +65,7 @@ class MessageList extends Component {
       this.props.shouldScrollMore &&
       !this.props.loadingChatIndicator
     ) {
-      // e.target.scrollTop += 10;
+      e.target.scrollTop += 30;
       this.setState({
         scrollPosition: "top",
       });
