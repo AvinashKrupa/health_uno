@@ -98,12 +98,8 @@ class Profile extends Component {
     };
   }
 
-  async componentDidMount() {
-    let profile = await fetchApi({
-      url: "v1/user/getUserProfile",
-      method: "POST",
-      body: { user_id: this.state.user_id, type: this.state.type },
-    });
+  getDropdownData = async() => {
+    const { data } = this.state;
     let countries = await fetchApi({
       url: "v1/country",
       method: "GET",
@@ -119,7 +115,7 @@ class Profile extends Component {
     let department = await fetchApi({ url: "v1/departments", method: "GET" });
     let specialities = await fetchApi({url: "v1/specialities?showAll=true", method: "GET"});
     let selectedCountry = countries.data.find(
-      (country) => profile.data.additional_info.address.country == country.name
+      (country) => data.additional_info.address.country == country.name
     );
     if (!selectedCountry) selectedCountry = countries.data[0];
     let states;
@@ -129,11 +125,11 @@ class Profile extends Component {
         method: "POST",
         body: { countryId: selectedCountry.id },
       });
-    
     }
     let selectedState = states.data.find(
-      (state) => profile.data.additional_info.address.state == state.name
+      (state) => data.additional_info.address.state == state.name
     );
+    if (!selectedState) selectedState = states.data[0];
     let cities;
     if(selectedState){
       cities = await fetchApi({
@@ -143,8 +139,40 @@ class Profile extends Component {
       });
     }
     let selectedCity = cities.data.find(
-      (city) => profile.data.additional_info.address.city == city.name
+      (city) => data.additional_info.address.city == city.name
     );
+    if (!selectedCity) selectedCity = cities.data[0];
+
+    const selectedLanguage = data.user.language.map(
+      (lang) => lang._id
+    );
+
+    this.setState({
+      countries: countries.data,
+      selectedDepartment: data && data.additional_info &&  data.additional_info.qualif && data.additional_info.qualif.dept_id && data.additional_info.qualif.dept_id._id ,
+      selectedQualification: data && data.additional_info &&  data.additional_info.qualif && data.additional_info.qualif.highest_qual && data.additional_info.qualif.highest_qual._id ,
+      selectedSpecialities: data && data.additional_info &&  data.additional_info.qualif && data.additional_info.qualif.specl[0] && data.additional_info.qualif.specl[0]._id ,
+      states: states.data,
+      cities: cities.data,
+      department: department.data,
+      specialities: specialities.data,
+      qualification: qualification.data,
+      languages: languages.data,
+      selectedLanguage: selectedLanguage,
+      countryStateCity: {
+        country: { id: selectedCountry.id, name: selectedCountry.name },
+        state: { id: selectedState.id, name: selectedState.name },
+        city:{ id: selectedCity.id, name: selectedCity.name },
+      },
+    })
+  }
+
+  async componentDidMount() {
+    let profile = await fetchApi({
+      url: "v1/user/getUserProfile",
+      method: "POST",
+      body: { user_id: this.state.user_id, type: this.state.type },
+    });
     if (this.state.type === constants.USER_TYPE_PATIENT) {
       profile.data.additional_info.med_cond.map((info) => {
         if (info.name === "diabetic") {
@@ -271,29 +299,9 @@ class Profile extends Component {
       });
     }
 
-    const selectedLanguage = profile.data.user.language.map(
-      (lang) => lang._id
-    );
-
 
     this.setState({
       data: profile.data,
-      countries: countries.data,
-      selectedDepartment: profile.data && profile.data.additional_info &&  profile.data.additional_info.qualif && profile.data.additional_info.qualif.dept_id && profile.data.additional_info.qualif.dept_id._id ,
-      selectedQualification: profile.data && profile.data.additional_info &&  profile.data.additional_info.qualif && profile.data.additional_info.qualif.highest_qual && profile.data.additional_info.qualif.highest_qual._id ,
-      selectedSpecialities: profile.data && profile.data.additional_info &&  profile.data.additional_info.qualif && profile.data.additional_info.qualif.specl[0] && profile.data.additional_info.qualif.specl[0]._id ,
-      states: states.data,
-      cities: cities.data,
-      department: department.data,
-      specialities: specialities.data,
-      qualification: qualification.data,
-      languages: languages.data,
-      selectedLanguage: selectedLanguage,
-      countryStateCity: {
-        country: { id: selectedCountry.id, name: selectedCountry.name },
-        state: { id: selectedState.id, name: selectedState.name },
-        city:{ id: selectedCity.id, name: selectedCity.name },
-      },
       otherMedical: profile.data.additional_info.other_med_cond || "",
     });
   }
@@ -395,6 +403,10 @@ class Profile extends Component {
   }
 
   handleShow = (activeTab) => {
+    const { show } = this.state;
+    if(show == ''){
+      this.getDropdownData();
+    }
     this.setState({
       show: activeTab,
       updatedModel: {
@@ -806,6 +818,8 @@ class Profile extends Component {
               className="profile tab-view"
               activeKey={this.state.key}
               onSelect={this.handleSelect}
+              unmountOnExit={true}
+              mountOnEnter={true}
               id="controlled-tab-example"
             >
               <Tab className="nav-link" eventKey={1} title="About">
