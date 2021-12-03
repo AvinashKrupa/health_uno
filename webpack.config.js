@@ -4,6 +4,7 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const Dotenv = require('dotenv-webpack');
 // const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 // const publicPath = '/template/';
@@ -33,7 +34,7 @@ module.exports = {
     // global app config object
     config: JSON.stringify({
       // apiUrl: 'http://localhost:3005/',
-      apiUrl: "https://uat.healthuno.com:6002/",
+      apiUrl: "https://dev.healthuno.com:6002/",
       imageapiUrl: "",
       publicPath: "/",
     }),
@@ -112,6 +113,7 @@ module.exports = {
     hints: process.env.NODE_ENV === "production" ? "warning" : false,
   },
   plugins: [
+    new Dotenv(),
     new HtmlWebpackPlugin({
       template: "./public/index.html",
       filename: "./index.html",
@@ -136,5 +138,7 @@ module.exports = {
       jQuery: "jquery",
       "window.jQuery": "jquery",
     }),
+    new webpack.optimize.UglifyJsPlugin(), //minify everything
+    new webpack.optimize.AggressiveMergingPlugin()//Merge chunks
   ],
 };
