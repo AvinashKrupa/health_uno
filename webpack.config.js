@@ -93,17 +93,7 @@ module.exports = {
         test: /\.(woff|woff2|eot|ttf|svg)$/,
         loader: "url-loader?limit=100000",
       },
-      //  { // config for fonts
-      //    test: /\.(woff|woff2|eot|ttf|otf)$/,
-      //    use: [
-      //      {
-      //        loader: 'file-loader',
-      //        options: {
-      //          outputPath: 'fonts',
-      //        }
-      //      }
-      //    ],
-      //  }
+
     ],
   },
   //  optimization: {
@@ -138,7 +128,5 @@ module.exports = {
       jQuery: "jquery",
       "window.jQuery": "jquery",
     }),
-    new webpack.optimize.UglifyJsPlugin(), //minify everything
-    new webpack.optimize.AggressiveMergingPlugin()//Merge chunks
   ],
 };
