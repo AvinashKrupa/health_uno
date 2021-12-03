@@ -46,7 +46,6 @@ class Doctors extends Component {
     let departments = deptData.data.map((ele)=>{
       return ele.title
     })
-    console.log("departments are ",departments)
     let doctorsData = doctors.data;
     this.setState({ data: doctorsData,
       exportingData: doctorsData,
@@ -72,7 +71,6 @@ class Doctors extends Component {
         this.setState({ data: data });
       }
     } catch (e) {
-      console.log("error>>", e);
     }
   }
  
@@ -98,7 +96,6 @@ class Doctors extends Component {
   }
 
   handleDataChange = (pagination, filters, sorter, extra) => {
-    console.log("exported data ",extra.currentDataSource)
     this.setState({
       total: extra.currentDataSource.length,
       exportingData:extra.currentDataSource

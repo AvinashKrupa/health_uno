@@ -116,7 +116,6 @@ class Appointments extends Component {
           this.setState({ data: data });
         }
       } catch (e) {
-        console.log("error>>", e);
       }
     } else {
       const { history } = this.props;

@@ -72,7 +72,6 @@ class Patients extends Component {
         this.setState({ data: data });
       }
     } catch (e) {
-      console.log("error>>", e);
     }
   }
 
@@ -86,7 +85,6 @@ class Patients extends Component {
   }
 
   handleDataChange = (pagination, filters, sorter, extra) => {
-    console.log("exported data ",extra.currentDataSource)
     this.setState({
       total: extra.currentDataSource.length,
       exportingData:extra.currentDataSource

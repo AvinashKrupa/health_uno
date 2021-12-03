@@ -25,7 +25,6 @@ class MessagePane extends Component {
   }
 
   async componentDidMount() {
-    console.log("componentDidMount>>>");
     document.body.classList.add("chat-page");
     if (this.state.user_id)
       await this.initializeChatWithUser(this.state.selectedConv);
@@ -33,7 +32,6 @@ class MessagePane extends Component {
 
   async componentWillReceiveProps(nextProps) {
     if (nextProps.selectedConv !== this.state.selectedConv) {
-      console.log("componentWillReceiveProps>>>");
       this.terminateConnection();
       this.setState({
         pageId: 1,
@@ -94,7 +92,6 @@ class MessagePane extends Component {
       this.setState({
         loading: false,
       });
-      console.log("Error>>>", e);
     }
   };
 
@@ -110,7 +107,6 @@ class MessagePane extends Component {
     socketObj.connect();
 
     socketObj.on("connect", () => {
-      console.log("socket connected>>>");
     });
     socketObj.on("onConversation", ({ conversation_id, room_id }) => {
       this.setState({ room_id: room_id });
@@ -122,7 +118,6 @@ class MessagePane extends Component {
     });
 
     socketObj.on("onNewMessage", (data) => {
-      console.log("onNewMessage>>>>", data);
       let messages = this.state.messages;
       messages.push(data);
       this.setState({
@@ -131,7 +126,6 @@ class MessagePane extends Component {
     });
 
     socketObj.on("disconnect", (response) => {
-      console.log("disconnected>>>>");
     });
 
     this.setState(

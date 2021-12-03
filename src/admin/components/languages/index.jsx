@@ -80,7 +80,6 @@ class Languages extends Component {
                 toast.success(result.message)
             }
         } catch (e) {
-            console.log("error>>", e)
 
         }
         this.handleClose()
@@ -100,7 +99,6 @@ class Languages extends Component {
                 toast.success(result.message)
             }
         } catch (e) {
-            console.log("error>>", e)
 
         }
         this.handleClose()
@@ -259,7 +257,7 @@ class Languages extends Component {
                             </div>
 
                         </Modal.Body>}
-                    </Modal>}
+                    </Modal>
                     {/* Delete Modal */}
                 </div>
             </>

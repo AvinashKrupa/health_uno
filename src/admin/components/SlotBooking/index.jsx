@@ -68,7 +68,6 @@ const SlotBooking = (props) => {
           toast.error(result.message);
         }
       } catch (e) {
-        console.log('e.error :>> ', e.error);
         toast.error(e.error);
       }
     }
@@ -173,7 +172,6 @@ const SlotBooking = (props) => {
       }
     } catch (e) {
       toast.error(e.error);
-      console.log("error>>", e);
     }
   }
 

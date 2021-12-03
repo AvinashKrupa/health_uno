@@ -47,13 +47,11 @@ class Chat extends Component {
       });
       this.setState({ conversations: conversations, user_id: user_id });
     } catch (e) {
-      console.log("Error>>>", e);
     }
   }
 
   initializeChatWithUser = (user_id) => {
     let socketObj = getNewSocket();
-    console.log("socketObj :>> ", socketObj);
 
     socketObj.auth = {
       user_id: user_id,
@@ -62,15 +60,12 @@ class Chat extends Component {
     socketObj.connect();
 
     socketObj.on("connect", () => {
-      console.log("socket connected>>>");
     });
     socketObj.on("onConversationUpdated", (data) => {
-      console.log("conversation updated",data);
       this.handleConversationList(data, user_id)
     });
 
     socketObj.on("disconnect", (response) => {
-      console.log("disconnected>>>>");
     });
 
     this.setState({ socketObj: socketObj });

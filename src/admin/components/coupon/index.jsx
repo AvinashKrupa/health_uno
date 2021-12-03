@@ -52,7 +52,6 @@ class CouponScreen extends Component {
       url: "v1/coupons",
       method: "GET",
     });
-    console.log(result.data);
     this.setState({ data: result.data });
   }
   handleClose = () => {
@@ -83,7 +82,6 @@ class CouponScreen extends Component {
         this.reloadData();
       }
     } catch (e) {
-      console.log("error>>", e);
     }
     this.handleClose();
     await this.reloadData();
@@ -172,7 +170,6 @@ class CouponScreen extends Component {
         toast.success(result.message);
       }
     } catch (e) {
-      console.log("error>>", e);
     }
     this.handleClose();
     await this.reloadData();
@@ -189,7 +186,6 @@ class CouponScreen extends Component {
         toast.success(result.message);
       }
     } catch (e) {
-      console.log("error>>", e);
     }
     this.handleClose();
     await this.reloadData();
@@ -254,7 +250,6 @@ class CouponScreen extends Component {
         render: (text, record) =>
           renderEditDisableActions(
             (elem, records) => {
-              console.log("elem", elem, record);
               if (elem == "disable") {
                 this.changeCouponStatus(record);
               } else {
