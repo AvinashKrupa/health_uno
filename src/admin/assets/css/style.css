@@ -3895,7 +3895,7 @@ table.table-inbox tbody tr.checked {
   background-color: transparent;
 }
 .profile-header img {
-  height: auto;
+  height: 120px;
   max-width: 120px;
   width: 120px;
 }
@@ -5775,3 +5775,12 @@ input#menu[type="checkbox"] {
 .ant-table{
   z-index: 2 !important;
 }
+.rc-btn-ghost {
+  border: none;
+  position: absolute;
+   left: 40px;
+   top: 50px;
+ }
+ .rc-btn-ghost:hover {
+   border: none;
+ }

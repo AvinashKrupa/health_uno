@@ -10,6 +10,8 @@ import {
   getAddress,
   getFullName,
 } from "../../../_utils/common-utils";
+import cameraIco from '../../assets/images/camera.svg'
+import whiteBgIco from '../../assets/images/white_background.png'
 import moment from "moment";
 import {
   getTextClassForStatus,
@@ -22,6 +24,7 @@ import TextArea from "../../commons/TextArea";
 import Input from "../../commons/Input";
 import UpdateSchedule from "../UpdateSchedule";
 import MultiSelect from "../MultiSelect/MultiSelect";
+import UploadImage from "../UploadImage";
 
 class Profile extends Component {
   constructor(props) {
@@ -704,6 +707,32 @@ class Profile extends Component {
     return this.state.showMenu;
   }
 
+  updateUserProfile = async(file) => {
+    let params = {
+      dp: file,
+      user_id: this.state.user_id,
+      type: this.state.type,
+    };
+    try {
+      let result = await fetchApi({
+        url: "v1/user/updateProfile",
+        method: "POST",
+        body: params,
+      });
+
+      if (result) {
+        toast.success(result.message);
+        this.setState({ data: result.data });
+      }
+    } catch (e) {
+      console.log("error>>", e);
+    }
+  }
+
+  handleImage = (file) => {
+    this.updateUserProfile(file);
+  };
+
   renderPatientMoreFields = () => {
     return (
       <div className="row form-row">
@@ -765,11 +794,19 @@ class Profile extends Component {
                   <div className="profile-header">
                     <div className="row align-items-center">
                       <div className="col-auto profile-image">
-                        <img
+                      {this.state.data.user.dp ? <img
                           className="rounded-circle"
                           alt="User"
                           src={this.state.data.user.dp}
+                        />: 
+                        <img
+                          className="rounded-circle"
+                          alt="User"
+                          src = {whiteBgIco}
                         />
+                        }
+                        <UploadImage getImage={this.handleImage} />
+                        {/* <img className="profile_camera_icon" src={cameraIco} alt="camera-icon" /> */}
                       </div>
                       <div className="col ml-md-n2 profile-user-info">
                         <h4 className="user-name mb-0">
