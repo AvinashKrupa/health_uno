@@ -96,7 +96,6 @@ class Categories extends Component {
         toast.success(result.message);
       }
     } catch (e) {
-      console.log("error>>", e);
     }
     this.handleClose();
     await this.reloadData();
@@ -113,7 +112,6 @@ class Categories extends Component {
         toast.success(result.message);
       }
     } catch (e) {
-      console.log("error>>", e);
     }
     this.handleClose();
     await this.reloadData();

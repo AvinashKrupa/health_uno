@@ -39,35 +39,24 @@ class VersionSettings extends Component {
   }
 
   handleIosMandVerChange(e) {
-    console.log("iso mandatory >>>", e.target.value);
     this.setState({ iosMandVer: e.target.value });
   }
 
   handleIosLatVerChange(e) {
-    console.log("iso latest >>>", e.target.value);
     this.setState({ iosLatVer: e.target.value });
   }
 
   handleAndriodMandVerChange(e) {
-    console.log("andrio madna >>>", e.target.value);
     this.setState({ andriodMandVer: e.target.value });
   }
 
   handleAndriodLatVerChange(e) {
-    console.log("andrio latest >>>", e.target.value);
     this.setState({ andriodLatVer: e.target.value });
   }
 
   validation(iosMandVer, iosLatVer, andriodMandVer, andriodLatVer) {
     let errorMessage =
       "Mandatory version should be less than and equal to optional version";
-    console.log(
-      " values are ",
-      iosMandVer,
-      iosLatVer,
-      andriodMandVer,
-      andriodLatVer
-    );
 
     if (
       iosMandVer === "" ||
@@ -141,7 +130,6 @@ class VersionSettings extends Component {
         },
       };
     }
-    console.log("isvalid is ", params);
     if (isValid) {
       try {
         let result = await fetchApi({
@@ -153,7 +141,6 @@ class VersionSettings extends Component {
           toast.success(result.message);
         }
       } catch (e) {
-        console.log("error>>", e);
       }
     }
   }

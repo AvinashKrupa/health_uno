@@ -115,7 +115,6 @@ class Qualifications extends Component {
         toast.success(result.message);
       }
     } catch (e) {
-      console.log("error>>", e);
     }
     this.handleClose();
     await this.reloadData();
@@ -132,7 +131,6 @@ class Qualifications extends Component {
         toast.success(result.message);
       }
     } catch (e) {
-      console.log("error>>", e);
     }
     this.handleClose();
     await this.reloadData();

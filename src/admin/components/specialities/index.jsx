@@ -97,7 +97,6 @@ class Specialities extends Component {
                 toast.success(result.message)
             }
         } catch (e) {
-            console.log("error>>", e)
 
         }
         this.handleClose()
@@ -116,7 +115,6 @@ class Specialities extends Component {
                 toast.success(result.message)
             }
         } catch (e) {
-            console.log("error>>", e)
 
         }
         this.handleClose()

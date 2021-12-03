@@ -63,11 +63,9 @@ const menu = (
   ];
 
 const RevenuePage = (props) => {
-    console.log('props :>> ', props);
   const { RangePicker } = DatePicker;
 //   const { Panel } = Collapse;
   
-  console.log('called revenue :>> ');
 
   return (
     <>

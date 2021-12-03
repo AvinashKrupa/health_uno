@@ -587,7 +587,6 @@ class Profile extends Component {
         this.setState({ data: result.data });
       }
     } catch (e) {
-      console.log("error>>", e);
     }
     this.setState({ showMenu: false, show: "" });
   };
@@ -620,7 +619,6 @@ class Profile extends Component {
         this.setState({ data: profile.data });
       }
     } catch (e) {
-      console.log("error>>", e);
     }
   }
 
@@ -645,7 +643,6 @@ class Profile extends Component {
         });
       }
     } catch (e) {
-      console.log("error>>", e);
     }
   }
 
@@ -670,7 +667,6 @@ class Profile extends Component {
         });
       }
     } catch (e) {
-      console.log("error>>", e);
     }
   }
 
@@ -725,7 +721,6 @@ class Profile extends Component {
         this.setState({ data: result.data });
       }
     } catch (e) {
-      console.log("error>>", e);
     }
   }
 

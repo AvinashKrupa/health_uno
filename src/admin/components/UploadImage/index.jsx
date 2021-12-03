@@ -28,13 +28,10 @@ class UploadImage extends Component {
       bodyFormData.append('file', file);
     }
     bodyFormData.append('type', 'profile');
-    console.log('bodyFormData :>> ', bodyFormData);
     this.uploadImageWithData('fileUpload', bodyFormData)
       .then(response => {
-        console.log('response: ', response);
       })
       .catch(error => {
-        console.log('error: ', error);
       })
   }
   uploadImageWithData(endPoint, formData) {
