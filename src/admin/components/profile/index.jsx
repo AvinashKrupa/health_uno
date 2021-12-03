@@ -707,6 +707,32 @@ class Profile extends Component {
     return this.state.showMenu;
   }
 
+  updateUserProfile = async(file) => {
+    let params = {
+      dp: file,
+      user_id: this.state.user_id,
+      type: this.state.type,
+    };
+    try {
+      let result = await fetchApi({
+        url: "v1/user/updateProfile",
+        method: "POST",
+        body: params,
+      });
+
+      if (result) {
+        toast.success(result.message);
+        this.setState({ data: result.data });
+      }
+    } catch (e) {
+      console.log("error>>", e);
+    }
+  }
+
+  handleImage = (file) => {
+    this.updateUserProfile(file);
+  };
+
   renderPatientMoreFields = () => {
     return (
       <div className="row form-row">
@@ -779,7 +805,7 @@ class Profile extends Component {
                           src = {whiteBgIco}
                         />
                         }
-                        <UploadImage />
+                        <UploadImage getImage={this.handleImage} />
                         {/* <img className="profile_camera_icon" src={cameraIco} alt="camera-icon" /> */}
                       </div>
                       <div className="col ml-md-n2 profile-user-info">

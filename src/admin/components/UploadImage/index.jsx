@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 // import axios from 'axios';
 // import Constants from '../constants';
 import { Image } from 'react-bootstrap';
+import { fetchApiWithFileUpload } from "../../../_utils/http-utils";
 import cameraIco from '../../assets/images/camera.svg'
 import { Modal } from 'antd';
 import 'antd/dist/antd.css';
@@ -28,23 +29,24 @@ class UploadImage extends Component {
     }
     bodyFormData.append('type', 'profile');
     console.log('bodyFormData :>> ', bodyFormData);
-    // this.uploadImageWithData(API.FILEUPLOAD, bodyFormData)
-    //   .then(response => {
-    //     console.log('response: ', response);
-    //   })
-    //   .catch(error => {
-    //     console.log('error: ', error);
-    //   })
+    this.uploadImageWithData('fileUpload', bodyFormData)
+      .then(response => {
+        console.log('response: ', response);
+      })
+      .catch(error => {
+        console.log('error: ', error);
+      })
   }
   uploadImageWithData(endPoint, formData) {
     return new Promise(async (resolve, reject) => {
-      axios({
+        fetchApiWithFileUpload({
         method: 'post',
-        url: Constants.BASE_URL + endPoint, data: formData,
+        url: 'v1/' + endPoint, 
+        formData: formData,
         headers: { 'Content-Type': undefined, }
       })
         .then(response => {
-          this.props.getImage(response.data.data.url)
+          this.props.getImage(response.data.url)
           resolve(response.data);
         }).catch(err => {
           reject(err);

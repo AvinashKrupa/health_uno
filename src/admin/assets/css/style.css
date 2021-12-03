@@ -5775,8 +5775,12 @@ input#menu[type="checkbox"] {
 .ant-table{
   z-index: 2 !important;
 }
-.profile_camera_icon{
+.rc-btn-ghost {
+  border: none;
   position: absolute;
-  left: 50px;
-  top: 50px;
-}
+   left: 40px;
+   top: 50px;
+ }
+ .rc-btn-ghost:hover {
+   border: none;
+ }
