@@ -34,7 +34,7 @@ module.exports = {
     // global app config object
     config: JSON.stringify({
       // apiUrl: 'http://localhost:3005/',
-      apiUrl: "https://dev.healthuno.com:6002/",
+      apiUrl: "https://uat.healthuno.com:6002/",
       imageapiUrl: "",
       publicPath: "/",
     }),
