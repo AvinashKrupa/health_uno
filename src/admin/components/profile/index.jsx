@@ -25,11 +25,17 @@ import Input from "../../commons/Input";
 import UpdateSchedule from "../UpdateSchedule";
 import MultiSelect from "../MultiSelect/MultiSelect";
 import UploadImage from "../UploadImage";
+import Spinner from "../spinner/customSpinner"
 
 class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loadingQual: false,
+      loadingDept: false,
+      loadingSpec: false,
+      loadingLang: false,
+      loadingCountry: false,
       key: 1,
       show: "",
       data: null,
@@ -102,6 +108,7 @@ class Profile extends Component {
   }
 
   getDropdownData = async() => {
+    this.setState({loadingQual: true, loadingSpec: true, loadingDept: true, loadingLang: true, loadingCountry: true});
     const { data } = this.state;
     let countries = await fetchApi({
       url: "v1/country",
@@ -167,6 +174,11 @@ class Profile extends Component {
         state: { id: selectedState.id, name: selectedState.name },
         city:{ id: selectedCity.id, name: selectedCity.name },
       },
+      loadingQual: false,
+      loadingDept: false,
+      loadingSpec: false,
+      loadingCountry: false,
+      loadingLang: false,
     })
   }
 
@@ -1245,7 +1257,17 @@ class Profile extends Component {
                     </div>
                     {this.state.type === constants.USER_TYPE_DOCTOR && (
                       <div className="col-12 col-sm-6">
-                      
+                      {this.state.loadingLang && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              marginTop: "15%",
+                              marginLeft: "40%",
+                            }}
+                          >
+                            <Spinner type="Oval" showLoader={this.state.loadingLang} width={40} height={40} />
+                          </div>
+                        )}
                         <MultiSelect
                           className="languageRegistration"
                           label="Language"
@@ -1287,6 +1309,17 @@ class Profile extends Component {
                     </div>
 
                     <div className="col-12">
+                    {this.state.loadingCountry && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              marginTop: "7%",
+                              marginLeft: "40%",
+                            }}
+                          >
+                            <Spinner type="Oval" showLoader={this.state.loadingCountry} width={40} height={40} />
+                          </div>
+                        )}
                       <div className="form-group">
                         <label>Country</label>
                         <select
@@ -1369,11 +1402,22 @@ class Profile extends Component {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              {this.state.updatedModel && (
+            {this.state.updatedModel && (
                 <div className="modal-body">
                   <form>
                     <div className="row form-row">
                       <div className="col-12 col-sm-6">
+                        {this.state.loadingQual && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              marginTop: "15%",
+                              marginLeft: "40%",
+                            }}
+                          >
+                            <Spinner type="Oval" showLoader={this.state.loadingQual} width={40} height={40} />
+                          </div>
+                        )}
                         <div className="form-group">
                           <label>Qualification</label>
                           <select
@@ -1395,6 +1439,17 @@ class Profile extends Component {
                         </div>
                       </div>
                       <div className="col-12 col-sm-6">
+                        {this.state.loadingDept && (
+                          <div
+                          style={{
+                            position: "absolute",
+                            marginTop: "15%",
+                            marginLeft: "40%",
+                          }}
+                          >
+                            <Spinner type="Oval" showLoader={this.state.loadingDept} width={40} height={40} />
+                          </div>
+                        )}
                         <div className="form-group">
                           <label>Department</label>
                           <select
@@ -1444,6 +1499,17 @@ class Profile extends Component {
                         </div>
                       </div>
                       <div className="col-12 col-sm-12">
+                        {this.state.loadingSpec && (
+                          <div
+                              style={{
+                                position: "absolute",
+                                marginTop: "7%",
+                                marginLeft: "40%",
+                              }}
+                          >
+                            <Spinner type="Oval" showLoader={this.state.loadingSpec} width={40} height={40} />
+                          </div>
+                        )}
                         <div className="form-group">
                           <label>Specialities</label>
                           <select
