@@ -35,8 +35,8 @@ const Registration = () => {
                     display: "block",
                     margin: "0 auto",
                     position: "relative",
-                    height: "208px",
-                    width: "160px",
+                    height: "210px",
+                    width: "210px",
                   }}
                   src={image ? image : patientIcon}
                   alt="Icon"

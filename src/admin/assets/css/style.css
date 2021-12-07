@@ -5434,9 +5434,7 @@ input#menu[type="checkbox"] {
   margin-left: 18px;
 }
 .back-navigation {
-  margin-top: 32px !important;
   text-align: left !important;
-  background: white !important;
   width: 100%;
   padding-top: 10px;
   left: 0px;
@@ -5778,7 +5776,8 @@ input#menu[type="checkbox"] {
 .rc-btn-ghost {
   border: none;
   position: absolute;
-   left: 40px;
+   left: 25%;
+   right: 25%;
    top: 50px;
  }
  .rc-btn-ghost:hover {
@@ -5790,6 +5789,24 @@ input#menu[type="checkbox"] {
 
 .fa-camera {
   position: relative;
-  left: 125px;
-  bottom: 150px;
+  left: 60px;
+  top: 50px;
+}
+.camera-icon-custom {
+  position: relative;
+}
+.book-btn{
+  height: 50px !important
+}
+.patient-homepage-search {
+  height: 50px !important;
+  width: 650px !important;
+  border-radius: 8px !important;
+  border: 2px solid rgba(27, 27, 27, 0.3);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.420000284910202px;
+  text-align: left;
 }

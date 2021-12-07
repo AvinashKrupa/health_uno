@@ -812,7 +812,7 @@ class Profile extends Component {
                           src = {whiteBgIco}
                         />
                         }
-                        <UploadImage getImage={this.handleImage} />
+                        <UploadImage className="camera-icon-custom" getImage={this.handleImage} />
                         {/* <img className="profile_camera_icon" src={cameraIco} alt="camera-icon" /> */}
                       </div>
                       <div className="col ml-md-n2 profile-user-info">
@@ -1563,7 +1563,7 @@ class Profile extends Component {
                             <div className="form-group">
                               <Radio
                                   labelStyle={{paddingLeft: '15px'}}
-                                  inputRowStyle={{paddingLeft: '15px'}}
+                                  inputRowStyle={{paddingLeft: '15px', marginLeft: "5px"}}
                                   label="Are you Diabetic?"
                                   id="radioDiabetes"
                                   options={this.state.diabetics}
@@ -1596,7 +1596,7 @@ class Profile extends Component {
                         <div className="form-group">
                           <Radio
                               labelStyle={{paddingLeft: '15px'}}
-                              inputRowStyle={{paddingLeft: '15px'}}
+                              inputRowStyle={{paddingLeft: '15px', marginLeft: "5px"}}
                               label="Are you Hypertensive?"
                               id="radioHypertensive"
                               options={this.state.hypertensives}
@@ -1627,7 +1627,7 @@ class Profile extends Component {
                             <div className="form-group">
                               <Radio
                                   labelStyle={{paddingLeft: '15px'}}
-                                  inputRowStyle={{paddingLeft: '15px'}}
+                                  inputRowStyle={{paddingLeft: '15px', marginLeft: "5px"}}
                                   label="Any past surgery?"
                                   id="radioSurgery"
                                   options={this.state.surgerys}
@@ -1660,7 +1660,7 @@ class Profile extends Component {
                                 <div className="form-group">
                                   <Radio
                                       labelStyle={{paddingLeft: '15px'}}
-                                      inputRowStyle={{paddingLeft: '15px'}}
+                                      inputRowStyle={{paddingLeft: '15px', marginLeft: "5px"}}
                                       label="Any allergies to medications?"
                                       id="radioAllergies"
                                       options={this.state.allergies}

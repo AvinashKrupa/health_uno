@@ -7,31 +7,22 @@ import { Col, Form, Row } from "react-bootstrap";
 import Radio from "../../commons/Radio";
 import Checkbox from "../../commons/Checkbox";
 import ModalDialog from "../../commons/ModalDialog";
-// import { AuthContext } from "../../../context/AuthContextProvider";
 import {
   isEmailValid,
   isEmpty,
   isNumberOnly,
+  isLength10,
 } from "../../../_utils/Validators";
-// import { useToasts } from "react-toast-notifications";
-// import { API, get, post } from "../../../api/config/APIController";
 import CustomButton from "../../commons/Button";
 import { withRouter } from "react-router-dom";
-// import useUserStore from "../../store/userStore";
-// import { storeData } from "../../../storage/LocalStorage/LocalAsyncStorage";
-import Spinner from "../../components/spinner/index";
+import Spinner from "../../components/spinner/customSpinner";
 import moment from "moment";
-// import { getPushToken } from "../../../notification/utilities";
-// import TermsAndCondition from "../TermsAndConditions";
 import { capitalizeFirstLetter } from "../../../_utils/utilities";
 import toast from "react-hot-toast";
 import { fetchApi } from "../../../_utils/http-utils";
 
 const RegistrationComponent = ({ history, image }) => {
-  // Get state and language from server
-  // const { addToast } = useToasts();
-  // const setUserInfo = useUserStore((state) => state.setUserInfo);
-  //   const authContext = useContext(AuthContext);
+ 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [mobile, setMobile] = useState("");
@@ -77,7 +68,6 @@ const RegistrationComponent = ({ history, image }) => {
   const [isCovid, setIsCovid] = useState(false);
   const [otherMedical, setOtherMedical] = useState("");
   const [referalCode, setReferalCode] = useState("");
-  const [termsCondition, setTermsCondition] = useState(false);
   const [dataState, setDataState] = useState([]);
   const [dataCity, setDataCity] = useState([]);
   const [dataLanguage, setDataLanguage] = useState([]);
@@ -97,14 +87,7 @@ const RegistrationComponent = ({ history, image }) => {
   useEffect(() => {
     getState();
     getLanguage();
-    // if (history.action === "POP") {
-    //   history.replace(`/patient`);
-    //   return;
-    // }
-    // if (!mobile) {
-    //   history.push(`/patient`);
-    //   return;
-    // }
+  
     return () => {};
   }, []);
 
@@ -116,7 +99,6 @@ const RegistrationComponent = ({ history, image }) => {
   // Need state id to get city API call
   // so KeyValueGenerator option has value like {`${item.id}|${item.value}`}
   const setIdAndState = (value) => {
-    console.log("value :>> ", value);
     const stateInfo = value.split("|");
     getCity(stateInfo[0]);
     setState(stateInfo[1]);
@@ -192,7 +174,6 @@ const RegistrationComponent = ({ history, image }) => {
   function getLanguage() {
     fetchApi({ url: "v1/languages", method: "GET" })
       .then((response) => {
-        console.log("response :>> ", response);
         if (response.status === 200) {
           let data = response.data.map((info) => {
             return { value: info.name, id: info._id };
@@ -203,7 +184,6 @@ const RegistrationComponent = ({ history, image }) => {
         }
       })
       .catch((error) => {
-        console.log("error :>> ", error);
         toast.error(error?.data?.message, { appearance: "error" });
       });
   }
@@ -220,7 +200,6 @@ const RegistrationComponent = ({ history, image }) => {
           let data = response.data.map((info) => {
             return { value: info.name, id: info.id };
           });
-          console.log("data :>> ", data);
           setDataState(data);
         } else {
           toast.error(response.data.message, { appearance: "error" });
@@ -258,8 +237,6 @@ const RegistrationComponent = ({ history, image }) => {
   }
 
   function validation() {
-    console.log("isCovid:mobile ", isCovid,mobile);
-
     if (isEmpty(firstName)) {
       toast.error("Please enter first name", { appearance: "error" });
       return false;
@@ -271,6 +248,9 @@ const RegistrationComponent = ({ history, image }) => {
       return false;
     } else if (isNumberOnly(mobile)) {
       toast.error("Please enter mobile number", { appearance: "error" });
+      return false;
+    } else if (!isLength10(mobile)) {
+      toast.error("Please enter valid mobile number", { appearance: "error" });
       return false;
     } else if (isEmpty(email)) {
       toast.error("Please enter email id", { appearance: "error" });
@@ -365,16 +345,12 @@ const RegistrationComponent = ({ history, image }) => {
     ) {
       toast.error("Please select vaccine name ", { appearance: "error" });
       return false;
-    } else if (termsCondition === false) {
-      toast.error("Please accept terms and condition", { appearance: "error" });
-      return false;
     } else {
       return true;
     }
   }
 
   const getStateValue = (value) => {
-    console.log("value :>> ", value);
     if (value) {
       const selectedState = dataState.find((state) => state.value === value);
       return selectedState ? `${selectedState.id}|${selectedState.value}` : "";
@@ -491,30 +467,22 @@ const RegistrationComponent = ({ history, image }) => {
         country: country,
       },
     };
-    console.log("params :>> ", params);
-    
-    fetchApi({url:"v1/auth/registerPatient", method: "POST", body:params})
-    .then((response) => {
-      if (response.status === 200) {
-        const user = response.data["user"];
-        const additional_info = response.data.data["additional_info"];
 
-        if (user) {
-          storeData("userInfo", JSON.stringify(user));
-          setUserInfo(user);
+    fetchApi({ url: "v1/auth/registerPatient", method: "POST", body: params })
+      .then((response) => {
+        if (response.status === 200) {
+          const user = response.data["user"];
+          const additional_info = response.data["additional_info"];
+         
+          toast.success(response.message, { appearance: "success" });
+          history.push("/patient-list");
+        } else {
+          toast.error(response.data.message, { appearance: "error" });
         }
-        if (additional_info) {
-          storeData("additional_info", JSON.stringify(additional_info));
-        }
-        toast.error(response.data.message, { appearance: "success" });
-        history.push("/patient/home");
-      } else {
-        toast.error(response.data.message, { appearance: "error" });
-      }
-    })
-    .catch((error) => {
-      toast.error(error.response.data.message, { appearance: "error" });
-    });
+      })
+      .catch((error) => {
+        toast.error(error.error, { appearance: "error" });
+      });
   }
 
   const genderOptions = ["Male", "Female", "Other"];
@@ -558,7 +526,8 @@ const RegistrationComponent = ({ history, image }) => {
         <Row className="g-2">
           <Col md>
             <Input
-              type="number"
+              type="tel"
+              maxLength="10"
               id="mobile"
               label="Mobile Number"
               value={mobile}
@@ -578,9 +547,7 @@ const RegistrationComponent = ({ history, image }) => {
         </Row>
         <Row className="g-2">
           <Col md>
-            <br />
             <Form.Label>Date of birth</Form.Label>
-            <br />
             <Form.Control
               type="date"
               onChange={(e) => setBirthDate(e.target.value)}
@@ -651,7 +618,7 @@ const RegistrationComponent = ({ history, image }) => {
               placeholder="India"
               id="country"
               label="Country"
-              readonly="true"
+              readonly={true}
               value={country}
               onChange={setCountry}
             />
@@ -668,18 +635,17 @@ const RegistrationComponent = ({ history, image }) => {
                   handleSelect={setIdAndState}
                 />
               </Col>
-              <Col md style={{ position: "relative" }}>
+              <Col md>
                 {loader && (
                   <div
-                    style={{
-                      position: "absolute",
-                      zIndex: 6,
-                      top: "60px",
-                      left: "60px",
-                    }}
-                  >
-                    <Spinner showLoader={loader} width={40} height={40} />
-                  </div>
+                  style={{
+                    position: "absolute",
+                    marginTop: "15%",
+                    marginLeft: "40%",
+                  }}
+                >
+                  <Spinner type="Oval" showLoader={loader} width={40} height={40} />
+                </div>
                 )}
                 <KeyValueSelector
                   value={getCityValue(city)}
@@ -693,22 +659,18 @@ const RegistrationComponent = ({ history, image }) => {
             </Row>
           </Col>
         </Row>
-        
+
         <Row className="g-2">
           <Col md>
-            <Row>
-              <Radio
-                label="Are you Diabetic?"
-                id="radioDiabetes"
-                options={diabetics}
-                handleSelect={handleDiabetic}
-              />
-            </Row>
+            <Radio
+              label="Are you Diabetic?"
+              id="radioDiabetes"
+              options={diabetics}
+              handleSelect={handleDiabetic}
+            />
             <Row>
               {isDiabetic && (
                 <Col>
-                  <br />
-                  <br />{" "}
                   <Form.Control
                     type="date"
                     onKeyDown={(e) => e.preventDefault()}
@@ -723,19 +685,15 @@ const RegistrationComponent = ({ history, image }) => {
             </Row>
           </Col>
           <Col md>
-            <Row>
-              <Radio
-                label="Are you Hypertensive?"
-                id="radioHypertensive"
-                options={hypertensives}
-                handleSelect={handleHypertensive}
-              />
-            </Row>
+            <Radio
+              label="Are you Hypertensive?"
+              id="radioHypertensive"
+              options={hypertensives}
+              handleSelect={handleHypertensive}
+            />
             <Row>
               {isHypertensive && (
                 <Col>
-                  <br />
-                  <br />{" "}
                   <Form.Control
                     type="date"
                     onKeyDown={(e) => e.preventDefault()}
@@ -752,14 +710,12 @@ const RegistrationComponent = ({ history, image }) => {
         </Row>
         <Row className="g-2">
           <Col md>
-            <Row>
-              <Radio
-                label="Any past surgery?"
-                id="radioSurgery"
-                options={surgerys}
-                handleSelect={handleSurgerys}
-              />
-            </Row>
+            <Radio
+              label="Any past surgery?"
+              id="radioSurgery"
+              options={surgerys}
+              handleSelect={handleSurgerys}
+            />
             {isSurgery && (
               <Row>
                 <TextArea
@@ -774,14 +730,12 @@ const RegistrationComponent = ({ history, image }) => {
             )}
           </Col>
           <Col md>
-            <Row>
-              <Radio
-                label="Any allergies to medications?"
-                id="radioAllergies"
-                options={allergies}
-                handleSelect={handleAllergies}
-              />
-            </Row>
+            <Radio
+              label="Any allergies to medications?"
+              id="radioAllergies"
+              options={allergies}
+              handleSelect={handleAllergies}
+            />
             <Row>
               {isAllergie && (
                 <TextArea
@@ -798,14 +752,12 @@ const RegistrationComponent = ({ history, image }) => {
         </Row>
         <Row className="g-2">
           <Col md>
-            <Row>
-              <Radio
-                label="Have you been diagnosed with Covid?"
-                id="diagCovid"
-                options={covids}
-                handleSelect={handleCovids}
-              />
-            </Row>
+            <Radio
+              label="Have you been diagnosed with Covid?"
+              id="diagCovid"
+              options={covids}
+              handleSelect={handleCovids}
+            />
             <Row>
               {isCovid && (
                 <Col md>
@@ -821,18 +773,15 @@ const RegistrationComponent = ({ history, image }) => {
             </Row>
           </Col>
           <Col md>
-            <Row>
-              <Radio
-                label="Have you been vaccinated against Covid?"
-                id="vaccinated"
-                options={vaccinated}
-                handleSelect={handleVaccinated}
-              />
-            </Row>
+            <Radio
+              label="Have you been vaccinated against Covid?"
+              id="vaccinated"
+              options={vaccinated}
+              handleSelect={handleVaccinated}
+            />
             <Row>
               {isVaccinated && (
                 <Col md style={{ paddingTop: "32px" }}>
-                  <br />{" "}
                   <Form.Control
                     type="date"
                     onKeyDown={(e) => e.preventDefault()}
@@ -869,6 +818,7 @@ const RegistrationComponent = ({ history, image }) => {
               onChange={setOtherMedical}
               rows={1}
               cols={20}
+              noPadding="true"
             ></TextArea>
           </Col>
           <Col md>
@@ -881,33 +831,10 @@ const RegistrationComponent = ({ history, image }) => {
             />
           </Col>
         </Row>
-        <Row className="g-2">
-          <Col md>
-            <div style={{ display: "flex", flexDirection: "row" }}>
-              <Checkbox
-                id="term"
-                checked={termsCondition}
-                handleSelect={setTermsCondition}
-              />
-              <span>
-                I accept{" "}
-                <a
-                  style={{ color: "blue", lineHeight: "65px" }}
-                  onClick={() => setModalShow(true)}
-                >
-                  <span style={{ textDecoration: "underline" }}>
-                    Terms and Conditions
-                  </span>
-                </a>
-              </span>
-            </div>
-          </Col>
-          <Col md></Col>
-        </Row>
-
-        <Row>
+        <Row style={{marginBottom:"10px"}}>
           <CustomButton
-            text={"Continue"}
+            text={"Submit"}
+           
             className="primary registration-btn"
             onClick={() => {
               if (validation()) {
@@ -916,17 +843,6 @@ const RegistrationComponent = ({ history, image }) => {
             }}
           ></CustomButton>
         </Row>
-        <ModalDialog
-          modalClassName={"terms-content"}
-          isConfirm={true}
-          show={modalShow}
-          title={"Terms and conditions"}
-          closeDialog={() => {
-            setModalShow(false);
-          }}
-        >
-          {/* <TermsAndCondition /> */}
-        </ModalDialog>
       </div>
     </div>
   );

@@ -10,3 +10,11 @@ export const isEmailValid = (value) => {
     const emailRegex = /\S+@\S+\.\S+/;
     return emailRegex.test(value);
 }
+export const isLength10 = (value) => {
+    if(value.length === 10) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}

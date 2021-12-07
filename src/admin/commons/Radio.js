@@ -5,10 +5,8 @@ const Radio = (props) => {
   return (
     <Form.Group>
       <br />
-      <Row>
         <Form.Label style={!!props.labelStyle ? props.labelStyle : {}}>{props.label}</Form.Label>
-      </Row>
-      <Row className="g-2 radio-gap" style={!!props.inputRowStyle ? props.inputRowStyle : {}}>
+      <Row className="radio-gap" style={!!props.inputRowStyle ? props.inputRowStyle : {marginLeft:"5px"}}>
         {props.options && props.options.length && props.options.map((item) => {
           return (
             <Col md key={item.id}>
@@ -20,7 +18,7 @@ const Radio = (props) => {
               checked={item.checked}
               onChange={(e) => props.handleSelect(e.target.id)}
             ></input>
-            <label  className="form-check-label" for={props.id}>
+            <label  className="form-check-label" htmlFor={props.id}>
               {item.value}
             </label>
           </Col>
