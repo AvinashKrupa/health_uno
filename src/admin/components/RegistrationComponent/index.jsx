@@ -34,7 +34,7 @@ const RegistrationComponent = ({ history, image }) => {
   //   const authContext = useContext(AuthContext);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [mobile, setMobile] = useState();
+  const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const currentDate = new Date();
@@ -97,10 +97,10 @@ const RegistrationComponent = ({ history, image }) => {
   useEffect(() => {
     getState();
     getLanguage();
-    if (history.action === "POP") {
-      history.replace(`/patient`);
-      return;
-    }
+    // if (history.action === "POP") {
+    //   history.replace(`/patient`);
+    //   return;
+    // }
     // if (!mobile) {
     //   history.push(`/patient`);
     //   return;
@@ -116,6 +116,7 @@ const RegistrationComponent = ({ history, image }) => {
   // Need state id to get city API call
   // so KeyValueGenerator option has value like {`${item.id}|${item.value}`}
   const setIdAndState = (value) => {
+    console.log("value :>> ", value);
     const stateInfo = value.split("|");
     getCity(stateInfo[0]);
     setState(stateInfo[1]);
@@ -236,7 +237,7 @@ const RegistrationComponent = ({ history, image }) => {
     fetchApi({
       url: "v1/city",
       method: "POST",
-      body: { countryId: 101 },
+      body: { countryId: 101, stateId: id },
     })
       .then((response) => {
         if (response.status === 200) {
@@ -257,17 +258,18 @@ const RegistrationComponent = ({ history, image }) => {
   }
 
   function validation() {
-    console.log("isCovid: ", isCovid);
+    console.log("isCovid:mobile ", isCovid,mobile);
+
     if (isEmpty(firstName)) {
       toast.error("Please enter first name", { appearance: "error" });
       return false;
     } else if (isEmpty(lastName)) {
       toast.error("Please enter last name", { appearance: "error" });
       return false;
-    } else if (isEmpty()) {
+    } else if (isEmpty(mobile)) {
       toast.error("Please enter mobile number", { appearance: "error" });
       return false;
-    } else if (isNumberOnly()) {
+    } else if (isNumberOnly(mobile)) {
       toast.error("Please enter mobile number", { appearance: "error" });
       return false;
     } else if (isEmpty(email)) {
@@ -372,6 +374,7 @@ const RegistrationComponent = ({ history, image }) => {
   }
 
   const getStateValue = (value) => {
+    console.log("value :>> ", value);
     if (value) {
       const selectedState = dataState.find((state) => state.value === value);
       return selectedState ? `${selectedState.id}|${selectedState.value}` : "";
@@ -407,10 +410,10 @@ const RegistrationComponent = ({ history, image }) => {
     let params = {
       first_name: firstName,
       last_name: lastName,
-      mobile_number: authContext.phone,
+      mobile_number: mobile,
       country_code: "+91",
       device_type: "web",
-      device_token: foundPushToken,
+      // device_token: foundPushToken,
       type: "1",
       dob: birthDate,
       gender: gender,
@@ -488,29 +491,30 @@ const RegistrationComponent = ({ history, image }) => {
         country: country,
       },
     };
+    console.log("params :>> ", params);
+    
+    fetchApi({url:"v1/auth/registerPatient", method: "POST", body:params})
+    .then((response) => {
+      if (response.status === 200) {
+        const user = response.data["user"];
+        const additional_info = response.data.data["additional_info"];
 
-    // post(API.REGISTERPATIENT, params, true)
-    // .then((response) => {
-    //   if (response.status === 200) {
-    //     const user = response.data.data["user"];
-    //     const additional_info = response.data.data["additional_info"];
-
-    //     if (user) {
-    //       storeData("userInfo", JSON.stringify(user));
-    //       setUserInfo(user);
-    //     }
-    //     if (additional_info) {
-    //       storeData("additional_info", JSON.stringify(additional_info));
-    //     }
-    //     addToast(response.data.message, { appearance: "success" });
-    //     history.push("/patient/home");
-    //   } else {
-    //     addToast(response.data.message, { appearance: "error" });
-    //   }
-    // })
-    // .catch((error) => {
-    //   addToast(error.response.data.message, { appearance: "error" });
-    // });
+        if (user) {
+          storeData("userInfo", JSON.stringify(user));
+          setUserInfo(user);
+        }
+        if (additional_info) {
+          storeData("additional_info", JSON.stringify(additional_info));
+        }
+        toast.error(response.data.message, { appearance: "success" });
+        history.push("/patient/home");
+      } else {
+        toast.error(response.data.message, { appearance: "error" });
+      }
+    })
+    .catch((error) => {
+      toast.error(error.response.data.message, { appearance: "error" });
+    });
   }
 
   const genderOptions = ["Male", "Female", "Other"];
@@ -557,7 +561,6 @@ const RegistrationComponent = ({ history, image }) => {
               type="number"
               id="mobile"
               label="Mobile Number"
-              readonly="true"
               value={mobile}
               onChange={setMobile}
             />
@@ -690,19 +693,7 @@ const RegistrationComponent = ({ history, image }) => {
             </Row>
           </Col>
         </Row>
-        {/* <Row className="g-2">
-          <Col md>
-            <KeyValueSelector
-              value={getLanguageValue(language[0])}
-              label="Language"
-              defaultValue="Select language"
-              id="Language"
-              options={dataLanguage}
-              handleSelect={setLanguageValue}
-            />
-          </Col>
-          <Col md></Col>
-        </Row> */}
+        
         <Row className="g-2">
           <Col md>
             <Row>

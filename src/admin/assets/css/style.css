@@ -5784,3 +5784,12 @@ input#menu[type="checkbox"] {
  .rc-btn-ghost:hover {
    border: none;
  }
+ .form-control, .form-select, .dropdown-toggle {
+  height: 50px !important;
+}
+
+.fa-camera {
+  position: relative;
+  left: 125px;
+  bottom: 150px;
+}
