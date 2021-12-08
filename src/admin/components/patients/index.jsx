@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Table,ExportTableButton } from "ant-table-extensions";
+import { Table, ExportTableButton } from "ant-table-extensions";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import SidebarNav from "../sidebar";
@@ -18,6 +18,7 @@ import {
   sorterDate,
   sorterNumber,
   sorterText,
+  renderButton,
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
 
@@ -77,6 +78,9 @@ class Patients extends Component {
   handleDropdownClick(record) {
     let isShown = this.state.showMenu[record._id];
     this.setState({ showMenu: { [record._id]: !isShown } });
+  }
+  handleBookAppointment(record){
+    this.props.history.push("/patient/topConsultants")
   }
 
   showDropDownMenu(record) {
@@ -162,14 +166,22 @@ class Patients extends Component {
       },
       {
         title: "Actions",
-        render: (text, record) =>
-          renderDropDown(
-            "Change Status",
-            patientStatus.filter((item) => item !== record.status),
-            (elem, index) => this.handleItemClick(record, elem),
-            () => this.handleDropdownClick(record),
-            this.showDropDownMenu(record)
-          ),
+        render: (text, record) => {
+          return (
+            <>
+              <div>
+                {renderDropDown(
+                  "Change Status",
+                  patientStatus.filter((item) => item !== record.status),
+                  (elem, index) => this.handleItemClick(record, elem),
+                  () => this.handleDropdownClick(record),
+                  this.showDropDownMenu(record)
+                )}
+                {renderButton(record,()=> this.handleBookAppointment())}
+              </div>
+            </>
+          );
+        },
       },
     ];
     const fields = {
@@ -263,8 +275,17 @@ class Patients extends Component {
                           Add
                         </a>
                       </div> */}
-                      <button type="primary" className="btn btn-primary float-right" onClick={()=>this.props.history.push("/patient-registration")}> Add Patient</button>
-                     
+                      <button
+                        type="primary"
+                        className="btn btn-primary float-right"
+                        onClick={() =>
+                          this.props.history.push("/patient-registration")
+                        }
+                      >
+                        {" "}
+                        Add Patient
+                      </button>
+
                       <Table
                         className="table-striped"
                         style={{ overflowX: "auto" }}

@@ -5388,8 +5388,7 @@ input#menu[type="checkbox"] {
   margin-left: 20px;
 }
 
-.patient-booking-detail {
-}
+
 
 .form-group {
 }
@@ -5441,6 +5440,7 @@ input#menu[type="checkbox"] {
   height: 50px;
   z-index: 1;
   display: inherit !important;
+  margin-bottom: 20px;
 }
 .slot-evening,
 .slot-day {
@@ -5809,4 +5809,13 @@ input#menu[type="checkbox"] {
   line-height: 20px;
   letter-spacing: -0.420000284910202px;
   text-align: left;
+}
+
+.textarea-field {
+  height: 150px !important;
+  border-radius: 8px;
+}
+.textarea-label, .form-label {
+  font-weight: 500;
+  font-size: 20px;
 }

@@ -47,6 +47,10 @@ import CkEditor from "./components/CkEditor";
 import RevenuePage from "./components/Revenue";
 import CouponScreen from "./components/coupon";
 import Registration from "./components/Registration";
+import TopConsultants from "./components/TopConsultants"
+import DoctorDetails from "./components/doctorDetails";
+import PatientSlotBooking from "./components/PatientSlotBooking";
+import PatientBookingSummary from "./components/PatientBookingSummary";
 
 const AppUniversal = function (props) {
   return (
@@ -81,7 +85,11 @@ const AppUniversal = function (props) {
           />
           <PrivateRoute path="/doctor-list" exact component={Doctors} />
           <PrivateRoute path="/patient-list" exact component={Patients} />
+          <PrivateRoute path="/patient/topConsultants" exact component={TopConsultants} />
           <PrivateRoute path="/patient-registration" exact component={Registration} />
+          <PrivateRoute exact path='/patient/doctorDetails/:doctor_id' component={DoctorDetails}/>
+          <PrivateRoute exact path='/patient/slotBooking/:doctor_id' component={PatientSlotBooking}/>
+          <PrivateRoute exact path='/patient/bookingSummary/:doctor_id' component={PatientBookingSummary}/>
 
           <PrivateRoute path="/chat" exact component={Chat} />
           <PrivateRoute path="/reviews" exact component={Reviews} />
