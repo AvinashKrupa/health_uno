@@ -46,6 +46,7 @@ import PrivateRoute from "./HOC/privateRoute";
 import CkEditor from "./components/CkEditor";
 import RevenuePage from "./components/Revenue";
 import CouponScreen from "./components/coupon";
+import Registration from "./components/Registration";
 
 const AppUniversal = function (props) {
   return (
@@ -80,6 +81,8 @@ const AppUniversal = function (props) {
           />
           <PrivateRoute path="/doctor-list" exact component={Doctors} />
           <PrivateRoute path="/patient-list" exact component={Patients} />
+          <PrivateRoute path="/patient-registration" exact component={Registration} />
+
           <PrivateRoute path="/chat" exact component={Chat} />
           <PrivateRoute path="/reviews" exact component={Reviews} />
           <PrivateRoute
