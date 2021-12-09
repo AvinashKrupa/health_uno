@@ -147,3 +147,11 @@
     left: 112px;
   }
 }
+@media only screen and (max-width: 1550px) and (min-width: 1280px) {
+  .doctor-card-doctor-details {
+    margin-bottom: 10%;
+  }
+  .doctor-card-fee-value {
+    width: 100%;
+  }
+}
