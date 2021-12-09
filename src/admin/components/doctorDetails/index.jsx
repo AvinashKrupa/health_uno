@@ -85,7 +85,7 @@ const DoctorDetails = (props) => {
                         window.screen.availWidth > 768 &&
                         window.screen.availWidth < 1300
                           ? "12"
-                          : "8"
+                          : "12"
                       }
                       className="doctor-detail-card-main-container"
                     >
@@ -215,7 +215,7 @@ const DoctorDetails = (props) => {
                           </Row>
                           <Row>
                             <span
-                              className="doctor_details_h5"
+                              className="doctor_details_h5 width_75"
                               style={{
                                 fontSize: "14px",
                                 marginBottom: "143px",

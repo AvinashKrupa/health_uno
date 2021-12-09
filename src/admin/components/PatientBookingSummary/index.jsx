@@ -17,8 +17,8 @@ import discount from "../../assets/images/discount.svg";
 import SidebarNav from "../sidebar";
 import { fetchApi } from "../../../_utils/http-utils";
 import toast from "react-hot-toast";
-import "./PatientBookingSummary.scss"
-
+import Selector from "../../commons/Select";
+import "./PatientBookingSummary.scss";
 
 const PatientBookingSummary = (props) => {
   useEffect(() => {
@@ -26,7 +26,7 @@ const PatientBookingSummary = (props) => {
     return () => {};
   }, [props.match.params.doctor_id]);
 
-//   const { addToast } = useToasts();
+  //   const { addToast } = useToasts();
   const [showLoader, setShowLoader] = useState(false);
   const [showCouponLoader, setShowCouponLoader] = useState(false);
   const date = patientSlotBookingStore((state) => state.date);
@@ -36,8 +36,12 @@ const PatientBookingSummary = (props) => {
   const [complaints, setComplaints] = useState("");
   const [purpose, setPurpose] = useState("");
   const [couponCode, setCouponCode] = useState("");
+  const [payment, setPayment] = useState("");
+
   let transactionID = "";
   const slot_id = patientSlotBookingStore((state) => state.slot_id);
+
+  const paymentOption = ["Offline", "Online"];
 
   useEffect(() => {
     if (!startTime) {
@@ -51,14 +55,19 @@ const PatientBookingSummary = (props) => {
     //   doctor_id: props.match.params.doctor_id,
     //   include_similar: true,
     // })
-    fetchApi({ url: "v1/doctor/getDoctorDetails", method: "POST", body: {
-          doctor_id: props.match.params.doctor_id,
-          include_similar: true }})
+    fetchApi({
+      url: "v1/doctor/getDoctorDetails",
+      method: "POST",
+      body: {
+        doctor_id: props.match.params.doctor_id,
+        include_similar: true,
+      },
+    })
       .then((response) => {
         if (response.status === 200) {
           setDoctorDetails(response.data);
         } else {
-            toast.error(response.data.message, { appearance: "error" });
+          toast.error(response.data.message, { appearance: "error" });
         }
       })
       .catch((error) => {
@@ -69,9 +78,13 @@ const PatientBookingSummary = (props) => {
   function applyCoupon() {
     setShowCouponLoader(true);
     // post(API.APPLY_COUPON, { code: couponCode, fee: doctorDetails.fee })
-    fetchApi({ url: "v1/coupon/checkDiscount", method: "POST", body: { code: couponCode, fee: doctorDetails.fee }})
+    fetchApi({
+      url: "v1/coupon/checkDiscount",
+      method: "POST",
+      body: { code: couponCode, fee: doctorDetails.fee },
+    })
       .then((response) => {
-          console.log('response :>> ', response);
+        console.log("response :>> ", response);
         if (response.status === 200) {
           setCouponDetails(response.data);
           setShowCouponLoader(false);
@@ -98,16 +111,22 @@ const PatientBookingSummary = (props) => {
 
   function validation() {
     if (isEmpty(purpose)) {
-        toast.error("Please enter the purpose", { appearance: "error" });
+      toast.error("Please enter the purpose", { appearance: "error" });
       return false;
     } else if (isEmpty(slot_id)) {
-      toast.error("Please go back and select the time", { appearance: "error" });
+      toast.error("Please go back and select the time", {
+        appearance: "error",
+      });
       return false;
     } else if (isEmpty(date)) {
-      toast.error("Please go back and select the date", { appearance: "error" });
+      toast.error("Please go back and select the date", {
+        appearance: "error",
+      });
       return false;
     } else if (isEmpty(startTime)) {
-      toast.error("Please go back and select the time", { appearance: "error" });
+      toast.error("Please go back and select the time", {
+        appearance: "error",
+      });
       return false;
     } else {
       return true;
@@ -116,7 +135,7 @@ const PatientBookingSummary = (props) => {
 
   function bookSlots() {
     const isValid = validation();
-    console.log('isValid :>> ', isValid);
+    console.log("isValid :>> ", isValid);
     if (isValid) {
       let params = {
         reason: purpose,
@@ -128,10 +147,14 @@ const PatientBookingSummary = (props) => {
         code: couponCode,
       };
       setShowLoader(true);
-    //   post(API.BOOKAPPOINTMENT, params)
-    fetchApi({ url: "v1/patient/bookAppointment", method: "POST", body: params })
+      //   post(API.BOOKAPPOINTMENT, params)
+      fetchApi({
+        url: "v1/patient/bookAppointment",
+        method: "POST",
+        body: params,
+      })
         .then((response) => {
-            console.log('response :>> ', response);
+          console.log("response :>> ", response);
           if (response.status === 200) {
             transactionID = `${response.data._id}`;
             if (response.data.razorpay_order_id) {
@@ -152,9 +175,9 @@ const PatientBookingSummary = (props) => {
           }
         })
         .catch((error) => {
-            console.log('error :>> ', error);
+          console.log("error :>> ", error);
           setShowLoader(false);
-        //   toast.error(error.response.data.message, { appearance: "error" });
+          //   toast.error(error.response.data.message, { appearance: "error" });
         });
     }
   }
@@ -182,7 +205,8 @@ const PatientBookingSummary = (props) => {
     const userInfo1 = JSON.parse(getData("userInfo"));
     const options = {
       description: "Video Consultation",
-      image:"https://healthuno-dev-public.s3.ap-south-1.amazonaws.com/images/logo/patient.png",
+      image:
+        "https://healthuno-dev-public.s3.ap-south-1.amazonaws.com/images/logo/patient.png",
       currency: "INR",
       key: "rzp_test_B0gfA1BIUTnr5L", // Your api key
       amount: `${doctorDetails.fee}00`,
@@ -208,11 +232,15 @@ const PatientBookingSummary = (props) => {
           razorpay_signature: response.razorpay_signature,
           transaction_id: transactionID,
         };
-        
+
         // post(API.CONFIRMPAYENT, data)
-        fetchApi({ url: "v1/transaction/confirmPayment", method: "POST", body: data })
+        fetchApi({
+          url: "v1/transaction/confirmPayment",
+          method: "POST",
+          body: data,
+        })
           .then((result) => {
-              console.log('result :>> ', result);
+            console.log("result :>> ", result);
             if (result.status === 200) {
               setShowLoader(false);
               toast.success("Slot is successfully booked", {
@@ -246,6 +274,7 @@ const PatientBookingSummary = (props) => {
   return (
     <>
       <SidebarNav />
+     
       <div className="page-wrapper">
         <div className="content container-fluid">
           <Row>
@@ -433,7 +462,7 @@ const PatientBookingSummary = (props) => {
                           </Container>
                         </Col>
                       </Row>
-                      <Col lg="5" md>
+                      <div className="payment-section" >
                         <div className="slot-appointment-container">
                           <div
                             style={{
@@ -572,7 +601,31 @@ const PatientBookingSummary = (props) => {
                             )}
                           </div>
                         </div>
-                      </Col>
+                        <div className="slot-appointment-container">
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <span className="coupon-summary">
+                              Payment Method
+                            </span>
+                          </div>
+                          <div className="coupon-detail-container">
+                            <Col md>
+                              <Selector
+                                label="Select Payment Method"
+                                defaultValue="Select Payment"
+                                id="payement"
+                                options={paymentOption}
+                                handleSelect={setPayment}
+                              />
+                            </Col>
+                          </div>
+                        </div>
+                      </div>
+
                       {/*    <div className='slot-appointment-detail'>
                                                     <div>Date : {date}</div>
                                                     <div>Time : {startTime}</div>

@@ -10,7 +10,7 @@ import "./ColorCard.scss"
 const ColorCards = (props) => {
   const totalConsultation = props.total_consultations < 10 ? '10': props.total_consultations;
   return (
-    <Row>
+    <Row className="width-fill-available">
         <Col lg="4" md='6' sm='6' xs='12'>
             <div className='circle-card-icon'>
                 <InputGroup>
