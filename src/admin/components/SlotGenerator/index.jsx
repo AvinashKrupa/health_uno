@@ -22,7 +22,7 @@ const SlotGenerator = (props) => {
               <button
                 style={{ backgroundColor: getColor(slot) }}
                 className={`slot-timings-button ${
-                  props.selectedSlots.indexOf(slot.slot_id) > -1 ? "active" : ""
+                  props.selectedSlots.indexOf(slot.slot_id) > -1 ? "active-slot" : ""
                 }`}
                 onClick={(e) => {
                   userType === 2

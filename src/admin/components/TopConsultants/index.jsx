@@ -82,7 +82,6 @@ const TopConsultants = (props) => {
       body: params,
     })
       .then((response) => {
-        console.log("response :>> ", response);
         if (response.status === 200) {
           setTotalConsultants(response.data.total);
           if (isPagination) {

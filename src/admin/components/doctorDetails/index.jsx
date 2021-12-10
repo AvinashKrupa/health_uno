@@ -33,7 +33,6 @@ const DoctorDetails = (props) => {
       body: { doctor_id: props.match.params.doctor_id, include_similar: true },
     })
     .then(response => {
-        console.log('response :>> ', response);
         if (response.status === 200) {
         setDoctorDetails(response.data);
         } else {

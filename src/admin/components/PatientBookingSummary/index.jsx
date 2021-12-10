@@ -84,7 +84,6 @@ const PatientBookingSummary = (props) => {
       body: { code: couponCode, fee: doctorDetails.fee },
     })
       .then((response) => {
-        console.log("response :>> ", response);
         if (response.status === 200) {
           setCouponDetails(response.data);
           setShowCouponLoader(false);
@@ -135,7 +134,6 @@ const PatientBookingSummary = (props) => {
 
   function bookSlots() {
     const isValid = validation();
-    console.log("isValid :>> ", isValid);
     if (isValid) {
       let params = {
         reason: purpose,
@@ -154,7 +152,6 @@ const PatientBookingSummary = (props) => {
         body: params,
       })
         .then((response) => {
-          console.log("response :>> ", response);
           if (response.status === 200) {
             transactionID = `${response.data._id}`;
             if (response.data.razorpay_order_id) {
@@ -175,7 +172,6 @@ const PatientBookingSummary = (props) => {
           }
         })
         .catch((error) => {
-          console.log("error :>> ", error);
           setShowLoader(false);
           //   toast.error(error.response.data.message, { appearance: "error" });
         });
@@ -240,7 +236,6 @@ const PatientBookingSummary = (props) => {
           body: data,
         })
           .then((result) => {
-            console.log("result :>> ", result);
             if (result.status === 200) {
               setShowLoader(false);
               toast.success("Slot is successfully booked", {
@@ -312,7 +307,7 @@ const PatientBookingSummary = (props) => {
                             window.screen.availWidth > 768 &&
                             window.screen.availWidth < 1300
                               ? "3"
-                              : "2"
+                              : "3"
                           }
                           md="12"
                         >
@@ -365,14 +360,14 @@ const PatientBookingSummary = (props) => {
                             </Row>
                           </Col>
                         </Col>
-                        <Col lg="8" md="12" style={{ marginLeft: "20px" }}>
+                        <Col lg="7" md="12" style={{ marginLeft: "20px" }}>
                           <Row>
                             <Col
                               lg={
                                 window.screen.availWidth > 768 &&
                                 window.screen.availWidth < 1300
                                   ? "12"
-                                  : "10"
+                                  : "12"
                               }
                               md="10"
                             >
@@ -399,7 +394,7 @@ const PatientBookingSummary = (props) => {
                       </Row>
 
                       <Row className="patient-booking-detail">
-                        <Col lg="3" style={{ paddingTop: "5px" }}>
+                        <Col lg="4" style={{ paddingTop: "5px" }}>
                           <Container>
                             <Input
                               type="text"
@@ -416,7 +411,7 @@ const PatientBookingSummary = (props) => {
                             window.screen.availWidth > 768 &&
                             window.screen.availWidth < 1300
                               ? "4"
-                              : "3"
+                              : "4"
                           }
                         >
                           <TextArea
@@ -434,7 +429,7 @@ const PatientBookingSummary = (props) => {
                             window.screen.availWidth > 768 &&
                             window.screen.availWidth < 1300
                               ? "4"
-                              : "3"
+                              : "4"
                           }
                         >
                           <Container className="slot-appointment-container">
@@ -463,7 +458,7 @@ const PatientBookingSummary = (props) => {
                         </Col>
                       </Row>
                       <div className="payment-section" >
-                        <div className="slot-appointment-container">
+                        <div className="slot-appointment-container" >
                           <div
                             style={{
                               display: "flex",
