@@ -41,7 +41,7 @@ const PatientBookingSummary = (props) => {
   let transactionID = "";
   const slot_id = patientSlotBookingStore((state) => state.slot_id);
 
-  const paymentOption = ["Offline", "Online"];
+  const paymentOption = ["cash", "online"];
 
   useEffect(() => {
     if (!startTime) {
@@ -138,11 +138,13 @@ const PatientBookingSummary = (props) => {
       let params = {
         reason: purpose,
         doctor_id: props.match.params.doctor_id,
+        user_id:"61a0741175335b002016ab89",
         complaints: complaints,
         slot_id: slot_id,
         slot: startTime,
         date: moment(date).format("YYYY-MM-DD"),
         code: couponCode,
+        payment_mode:payment
       };
       setShowLoader(true);
       //   post(API.BOOKAPPOINTMENT, params)
@@ -152,31 +154,28 @@ const PatientBookingSummary = (props) => {
         body: params,
       })
         .then((response) => {
-          if (response.status === 200) {
-            transactionID = `${response.data._id}`;
-            if (response.data.razorpay_order_id) {
-              processRazorPayment(
-                response.data.razorpay_order_id,
-                transactionID
-              );
-            } else {
-              setShowLoader(false);
-              toast.success("Slot is successfully booked", {
-                appearance: "success",
-              });
-              props.history.push("/patient-list");
-            }
-          } else {
-            setShowLoader(false);
-            toast.error(response.data.message, { appearance: "error" });
-          }
-        })
-        .catch((error) => {
-          setShowLoader(false);
-          //   toast.error(error.response.data.message, { appearance: "error" });
-        });
-    }
+          console.log('response :>> ', response);
+
+        //   if (response.status === 200) {
+        //     transactionID = `${response.data._id}`;
+        //       setShowLoader(false);
+        //       toast.success("Slot is successfully booked", {
+        //         appearance: "success",
+        //       });
+        //       props.history.push("/patient-list");
+            
+        //   } else {
+        //     setShowLoader(false);
+        //     toast.error(response.data.message, { appearance: "error" });
+        //   }
+        // })
+        // .catch((error) => {
+        //   setShowLoader(false);
+        //   //   toast.error(error.response.data.message, { appearance: "error" });
+        // });
+    })
   }
+}
 
   function loadScript(src) {
     return new Promise((resolve) => {
