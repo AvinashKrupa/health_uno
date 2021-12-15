@@ -51,6 +51,7 @@ class Profile extends Component {
       selectedDepartment: "",
       selectedQualification: "",
       selectedSpecialities: "",
+      profileDescription: "",
       cities: [],
       languages: [],
       height: "",
@@ -104,6 +105,8 @@ class Profile extends Component {
       vaccineName: "",
       covidDetails: "",
       selectedLanguage: [],
+      experience: "",
+      fees: "",
     };
   }
 
@@ -189,6 +192,9 @@ class Profile extends Component {
       department: department.data,
       specialities: specialities.data,
       qualification: qualification.data,
+      profileDescription: data.additional_info.desc,
+      fees: data.additional_info.qualif.fee,
+      experience: data.additional_info.qualif.exp,
       languages: languages.data,
       selectedLanguage: selectedLanguage,
       countryStateCity: {
@@ -500,6 +506,7 @@ class Profile extends Component {
       selectedDepartment,
       selectedSpecialities,
       selectedLanguage,
+      profileDescription,
     } = this.state;
     e.preventDefault();
     let data = this.state.updatedModel;
@@ -610,12 +617,16 @@ class Profile extends Component {
           type: this.state.type,
           language: selectedLanguage,
           address: data.additional_info.address,
+          desc: profileDescription,
           qualif: {
             ...data.additional_info.qualif,
+            exp: this.state.experience,
+            fee: this.state.fees,
             //   address: data.additional_info.address,
           },
         };
       }
+      console.log("requestBody", requestBody, "console.", profileDescription);
       let result = await fetchApi({
         url: "v1/user/updateProfile",
         method: "POST",
@@ -970,6 +981,14 @@ class Profile extends Component {
                               )}
                             </p>
                           </div>
+                          <div className="row">
+                            <p className="col-sm-2 text-muted text-sm-right mb-0">
+                              Profile Description
+                            </p>
+                            <p className="col-sm-10 mb-0">
+                              {this.state.data.additional_info.desc}
+                            </p>
+                          </div>
                           {this.state.type === constants.USER_TYPE_PATIENT && (
                             <>
                               <div className="row">
@@ -1227,7 +1246,7 @@ class Profile extends Component {
         <Modal show={this.state.show === "1"} onHide={this.handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>
-              <h5 className="modal-title">Personal Details</h5>
+              <h5 className="modal-title">Personal Detailsaaa</h5>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -1460,6 +1479,23 @@ class Profile extends Component {
                       </div>
                     </div>
                   </div>
+
+                  <div className="form-group">
+                    <label htmlFor="profile_description">
+                      Profile Description
+                    </label>
+                    <textarea
+                      className="form-control"
+                      id="profile_description"
+                      rows="5"
+                      style={{ minHeight: 80 }}
+                      onChange={(e) =>
+                        this.setState({ profileDescription: e.target.value })
+                      }
+                      value={this.state.profileDescription}
+                    />
+                  </div>
+
                   <div className="patient-more-fields">
                     {this.state.type === constants.USER_TYPE_PATIENT &&
                       this.renderPatientMoreFields()}
@@ -1567,9 +1603,11 @@ class Profile extends Component {
                             <input
                               type="number"
                               className="form-control"
-                              onChange={(e) => this.handleChange(e)}
+                              onChange={(e) => {
+                                this.setState({ experience: e.target.value });
+                              }}
                               name="additional_info.qualif.exp"
-                              value={this.state.data.additional_info.qualif.exp}
+                              value={this.state.experience}
                             />
                           </div>
                         </div>
@@ -1580,10 +1618,10 @@ class Profile extends Component {
                           <input
                             type="text"
                             name="additional_info.qualif.fee"
-                            onChange={(e) => this.handleChange(e)}
-                            value={
-                              this.state.updatedModel.additional_info.qualif.fee
-                            }
+                            onChange={(e) => {
+                              this.setState({ fees: e.target.value });
+                            }}
+                            value={this.state.fees}
                             className="form-control"
                           />
                         </div>
