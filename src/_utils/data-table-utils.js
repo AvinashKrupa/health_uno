@@ -409,7 +409,7 @@ export const renderTagStatus = (status) => {
   );
 };
 
-export const renderButton = (text,onButtonClick) => {
+export const renderButton = (onButtonClick) => {
   return(
     <button
         type="button"

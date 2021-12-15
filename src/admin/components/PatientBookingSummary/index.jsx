@@ -127,6 +127,11 @@ const PatientBookingSummary = (props) => {
         appearance: "error",
       });
       return false;
+    } else if (isEmpty(payment)) {
+      toast.error("Please select payment method", {
+        appearance: "error",
+      });
+      return false;
     } else {
       return true;
     }
@@ -134,48 +139,35 @@ const PatientBookingSummary = (props) => {
 
   function bookSlots() {
     const isValid = validation();
+    const Patient_ID = localStorage.getItem('SELECTED_PATIENT_ID')
     if (isValid) {
       let params = {
         reason: purpose,
         doctor_id: props.match.params.doctor_id,
-        user_id:"61a0741175335b002016ab89",
+        patient_id: Patient_ID,
         complaints: complaints,
         slot_id: slot_id,
         slot: startTime,
         date: moment(date).format("YYYY-MM-DD"),
         code: couponCode,
-        payment_mode:payment
+        payment_mode: payment,
       };
       setShowLoader(true);
       //   post(API.BOOKAPPOINTMENT, params)
       fetchApi({
-        url: "v1/patient/bookAppointment",
+        url: "v1/admin/bookAppointment",
         method: "POST",
         body: params,
-      })
-        .then((response) => {
-          console.log('response :>> ', response);
-
-        //   if (response.status === 200) {
-        //     transactionID = `${response.data._id}`;
-        //       setShowLoader(false);
-        //       toast.success("Slot is successfully booked", {
-        //         appearance: "success",
-        //       });
-        //       props.history.push("/patient-list");
-            
-        //   } else {
-        //     setShowLoader(false);
-        //     toast.error(response.data.message, { appearance: "error" });
-        //   }
-        // })
-        // .catch((error) => {
-        //   setShowLoader(false);
-        //   //   toast.error(error.response.data.message, { appearance: "error" });
-        // });
-    })
+      }).then((response) => {
+        if (response.status === 200) {
+          toast.success(response.message)
+          setTimeout(() => {
+            props.history.push("/patient-list");
+          }, 1000);
+        }
+      });
+    }
   }
-}
 
   function loadScript(src) {
     return new Promise((resolve) => {
@@ -268,7 +260,7 @@ const PatientBookingSummary = (props) => {
   return (
     <>
       <SidebarNav />
-     
+
       <div className="page-wrapper">
         <div className="content container-fluid">
           <Row>
@@ -456,8 +448,8 @@ const PatientBookingSummary = (props) => {
                           </Container>
                         </Col>
                       </Row>
-                      <div className="payment-section" >
-                        <div className="slot-appointment-container" >
+                      <div className="payment-section">
+                        <div className="slot-appointment-container">
                           <div
                             style={{
                               display: "flex",

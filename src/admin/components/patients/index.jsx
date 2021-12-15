@@ -80,6 +80,7 @@ class Patients extends Component {
     this.setState({ showMenu: { [record._id]: !isShown } });
   }
   handleBookAppointment(record){
+    localStorage.setItem('SELECTED_PATIENT_ID', record._id)
     this.props.history.push("/patient/topConsultants")
   }
 
@@ -177,7 +178,7 @@ class Patients extends Component {
                   () => this.handleDropdownClick(record),
                   this.showDropDownMenu(record)
                 )}
-                {renderButton(record,()=> this.handleBookAppointment())}
+                {renderButton(()=> this.handleBookAppointment(record))}
               </div>
             </>
           );
