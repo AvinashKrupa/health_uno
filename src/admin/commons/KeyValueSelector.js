@@ -7,7 +7,7 @@ const KeyValueSelector = (props) => {
       <br />
       <Form.Label>{props.label}</Form.Label>
       <div>
-      <select style = {{width: "100%"}} className="form-select" id={props.id} value={props.value} onChange={(e) =>  props.handleSelect(e.target.value)}>
+      <select style = {{width: "100%"}} className="form-control" id={props.id} value={props.value} onChange={(e) =>  props.handleSelect(e.target.value)}>
         <option value={`|${props.defaultValue}`} >{props.defaultValue}</option>
         {props.options.map((item) => (
           <option value={`${item.id}|${item.value}`}>{item.value}</option>
