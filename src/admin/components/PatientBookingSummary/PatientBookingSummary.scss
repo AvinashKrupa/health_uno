@@ -1,0 +1,22 @@
+.patient-booking-detail {
+    .textarea-label, .form-label {
+        font-weight: 500;
+        font-size: 20px;
+    }
+    .form-group {
+       br {
+           display: none;
+       }
+    }
+  }
+  .payment-section{
+      display: flex;
+    //   max-width: 1440px;
+      width: 100%;
+      justify-content: space-between;
+      margin-top: 20px;
+  }
+  .slot-appointment-container{
+    //   margin-top: 20px;
+      width: 47%;
+  }

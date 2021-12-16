@@ -1,0 +1,49 @@
+.slot-timings-title {
+    margin-right: 77px;
+    width: 80px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.3058592677116394px;
+    padding-top: 10px;
+  }
+  
+  .slot-timings-button {
+    height: 50px;
+    width: 160px;
+    margin: 6px 10px;
+    border-radius: 12px;
+    margin-right: 24px;
+    background: rgba(255, 255, 255, 1);
+    border: 2px solid rgba(27, 27, 27, 0.5);
+  }
+  .slot-timings-button-text {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 22px;
+    letter-spacing: 0.3058592677116394px;
+    color: rgba(27, 27, 27, 0.5);
+  }
+  
+  .slot-timings-button:hover {
+    background: rgba(40, 163, 218, 1);
+    .slot-timings-button-text {
+      color: white;
+    }
+}
+
+.time-select {
+    display: flex;
+    padding-right: 60px
+}
+
+.slot-evening {
+    margin-top: 54px;
+}
+.active-slot {
+    background: rgba(40, 163, 218, 1) !important ;
+    .days-button-text {
+      font-weight: 500;
+      letter-spacing: -0.6138745546340942px;
+      color: white;
+    }
+}

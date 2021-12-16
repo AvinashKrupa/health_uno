@@ -30,14 +30,11 @@ class UploadImage extends Component {
     bodyFormData.append('type', 'profile');
     this.uploadImageWithData("https://dev.healthuno.com:6002/v1/fileUpload", bodyFormData)
       .then(response => {
-        console.log('response: ', response);
       })
       .catch(error => {
-        console.log('error: ', error);
       })
   }
   uploadImageWithData(endPoint, formData) {
-    console.log('endPoint :>> ', endPoint);
     return new Promise(async (resolve, reject) => {
       axios({
         method: 'post',
@@ -46,11 +43,9 @@ class UploadImage extends Component {
         headers: { 'Content-Type': undefined, }
       })
         .then(response => {
-          console.log('response :>> ', response);
           this.props.getImage(response.data.data.url)
           resolve(response.data);
         }).catch(err => {
-          console.log('err :>> ', err);
           reject(err);
         });
     });
@@ -71,7 +66,6 @@ class UploadImage extends Component {
         resetPreviewAfterSelectImage={true}
         accept="image/gif,image/jpeg,image/png,image/bmp,image/x-png,image/pjpeg"
       >
-        {console.log('uploadCamera :>> ', uploadCamera)}
           <Image src={uploadCamera} className={this.props?.className ? this.props?.className : 'fa-camera '} >
               </Image>
               </CropViewer>

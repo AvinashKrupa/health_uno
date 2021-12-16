@@ -408,3 +408,15 @@ export const renderTagStatus = (status) => {
     </Tag>
   );
 };
+
+export const renderButton = (onButtonClick) => {
+  return(
+    <button
+        type="button"
+        onClick={() => onButtonClick()}
+        className="btn btn-primary book-btn"
+      >
+        Book Appointment
+      </button>
+  )
+}

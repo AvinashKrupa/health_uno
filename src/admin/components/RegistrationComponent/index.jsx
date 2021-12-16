@@ -831,7 +831,7 @@ const RegistrationComponent = ({ history, image }) => {
             />
           </Col>
         </Row>
-        <Row style={{marginBottom:"10px"}}>
+        <Row style={{margin:"20px 0px"}}>
           <CustomButton
             text={"Submit"}
            
