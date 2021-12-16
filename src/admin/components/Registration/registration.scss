@@ -1,0 +1,95 @@
+.registration-container {
+
+    .row {
+      .container {
+        // margin-top: 22px;
+      }
+    }
+  
+  
+  
+      h4 {
+        margin-top: 33px;
+      }
+  
+      .file{
+        position: relative;
+        bottom: 50px;
+        left: 56px;
+      }
+  
+  
+      .form-check-label {
+        padding-left: 5px;
+      }
+  
+      .registration-btn{
+        margin: auto;
+        margin-top: 50px;
+        width: 335px;
+        margin-bottom: 54px;
+        height: 50px;
+      }
+      .fa-camera {
+        position: relative;
+        left: 125px;
+        bottom: 150px;
+      }
+  
+      img {
+        padding-top: 54px;
+      }
+  
+    .terms-text{
+      font-family: Montserrat;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 65px;
+      letter-spacing: 0.30034899711608887px;
+      text-align: left;
+      cursor: pointer;
+  
+      .blue-text{
+        color: #28A3DA;
+        text-decoration-line: underline;
+      }
+    }
+    }
+  
+  
+  .textArea {
+    margin-top: 7px;
+  }
+  
+  .heading {
+    // margin-top: 43px;
+    margin-left: 33px;
+    a {
+      color: #1B1B1B;
+      text-decoration: none;
+    }
+  
+    .fa-arrow-left {
+      font-size: 17px;
+      width: 24px;
+  
+    }
+    span {
+      font-size: 24px;
+    }
+  }
+  
+  .rc-btn-ghost {
+    border: none !important;
+    position: absolute !important;
+  }
+  
+  .text-center {
+    margin-top: 20px;
+  }
+  
+  .radio-gap {
+    max-width: 140px;
+  }
+  

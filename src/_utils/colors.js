@@ -8,6 +8,21 @@ export default function getColor(info) {
     }
   }
 
+export function getColorForAppointmentStatus(status) {
+  if (status === 'scheduled') {
+    return Colors.primaryColor;
+  } else if (status === 'ongoing') {
+    return Colors.orange;
+  } else if (status === 'cancelled') {
+    return Colors.red;
+  } else if (status === 'completed') {
+    return Colors.green;
+  } else {
+    return Colors.gray;
+  }
+}
+
+
   const Colors = {
     primaryColor: '#28A3DA',
     lightPrimaryColor: 'rgba(40,163,218, 0.2)',
