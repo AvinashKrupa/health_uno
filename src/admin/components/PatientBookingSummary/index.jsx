@@ -90,7 +90,6 @@ const PatientBookingSummary = (props) => {
           setShowCouponLoader(false);
           toast.success(response.message, { appearance: "success" });
         } else {
-          console.log('goes to else also');
           toast.error(response.message, { appearance: "error" });
           setShowCouponLoader(false);
         }
