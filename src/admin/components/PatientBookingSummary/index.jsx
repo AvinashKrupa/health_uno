@@ -90,12 +90,14 @@ const PatientBookingSummary = (props) => {
           setShowCouponLoader(false);
           toast.success(response.message, { appearance: "success" });
         } else {
+          console.log('goes to else also');
           toast.error(response.message, { appearance: "error" });
           setShowCouponLoader(false);
         }
       })
       .catch((error) => {
-        toast.error(error.message, { appearance: "error" });
+        console.log('error :>> ', error);
+        // toast.error(error.message, { appearance: "error" });
         setShowCouponLoader(false);
       });
   }
@@ -115,6 +117,11 @@ const PatientBookingSummary = (props) => {
       return false;
     } else if (isEmpty(slot_id)) {
       toast.error("Please go back and select the time", {
+        appearance: "error",
+      });
+      return false;
+    } else if (isEmpty(complaints)) {
+      toast.error("Please enter the complaints", {
         appearance: "error",
       });
       return false;
@@ -166,7 +173,11 @@ const PatientBookingSummary = (props) => {
             props.history.push("/patient-list");
           }, 1000);
         }
-      });
+      }).catch((error) => {
+        console.log('error :>> ', error);
+        // toast.error(error.message, { appearance: "error" });
+        setShowLoader(false);
+      });;
     }
   }
 
