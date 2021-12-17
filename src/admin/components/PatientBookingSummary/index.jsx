@@ -37,7 +37,7 @@ const PatientBookingSummary = (props) => {
   const [purpose, setPurpose] = useState("");
   const [couponCode, setCouponCode] = useState("");
   const [payment, setPayment] = useState("");
-
+  const Patient_ID = localStorage.getItem('SELECTED_PATIENT_ID')
   let transactionID = "";
   const slot_id = patientSlotBookingStore((state) => state.slot_id);
 
@@ -75,26 +75,28 @@ const PatientBookingSummary = (props) => {
       });
   }
 
-  function applyCoupon() {
+  function applyCoupon(e) {
+    e.preventDefault();
     setShowCouponLoader(true);
     // post(API.APPLY_COUPON, { code: couponCode, fee: doctorDetails.fee })
     fetchApi({
       url: "v1/coupon/checkDiscount",
       method: "POST",
-      body: { code: couponCode, fee: doctorDetails.fee },
+      body: { code: couponCode, fee: doctorDetails.fee, patient_id: Patient_ID },
     })
       .then((response) => {
         if (response.status === 200) {
-          setCouponDetails(response.data);
+          setCouponDetails(response);
           setShowCouponLoader(false);
-          addToast(response.data.message, { appearance: "success" });
+          toast.success(response.message, { appearance: "success" });
         } else {
-          addToast(response.data.message, { appearance: "error" });
+          toast.error(response.message, { appearance: "error" });
           setShowCouponLoader(false);
         }
       })
       .catch((error) => {
-        addToast(error.response.data.message, { appearance: "error" });
+        console.log('error :>> ', error);
+        // toast.error(error.message, { appearance: "error" });
         setShowCouponLoader(false);
       });
   }
@@ -114,6 +116,11 @@ const PatientBookingSummary = (props) => {
       return false;
     } else if (isEmpty(slot_id)) {
       toast.error("Please go back and select the time", {
+        appearance: "error",
+      });
+      return false;
+    } else if (isEmpty(complaints)) {
+      toast.error("Please enter the complaints", {
         appearance: "error",
       });
       return false;
@@ -139,7 +146,7 @@ const PatientBookingSummary = (props) => {
 
   function bookSlots() {
     const isValid = validation();
-    const Patient_ID = localStorage.getItem('SELECTED_PATIENT_ID')
+    
     if (isValid) {
       let params = {
         reason: purpose,
@@ -165,7 +172,11 @@ const PatientBookingSummary = (props) => {
             props.history.push("/patient-list");
           }, 1000);
         }
-      });
+      }).catch((error) => {
+        console.log('error :>> ', error);
+        // toast.error(error.message, { appearance: "error" });
+        setShowLoader(false);
+      });;
     }
   }
 
@@ -517,7 +528,7 @@ const PatientBookingSummary = (props) => {
                                           type="submit"
                                           className={"login-btn"}
                                           disabled
-                                          onClick={() => applyCoupon()}
+                                          onClick={(e) => applyCoupon(e)}
                                           importantStyle={{
                                             backgroundColor: "#e2e9e9",
                                           }}
@@ -528,7 +539,7 @@ const PatientBookingSummary = (props) => {
                                         <CustomButton
                                           type="submit"
                                           className={"login-btn"}
-                                          onClick={() => applyCoupon()}
+                                          onClick={(e) => applyCoupon(e)}
                                           text={"Apply"}
                                         ></CustomButton>
                                       )}
