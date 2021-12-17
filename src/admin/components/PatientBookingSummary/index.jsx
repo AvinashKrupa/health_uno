@@ -75,7 +75,8 @@ const PatientBookingSummary = (props) => {
       });
   }
 
-  function applyCoupon() {
+  function applyCoupon(e) {
+    e.preventDefault();
     setShowCouponLoader(true);
     // post(API.APPLY_COUPON, { code: couponCode, fee: doctorDetails.fee })
     fetchApi({
@@ -85,16 +86,16 @@ const PatientBookingSummary = (props) => {
     })
       .then((response) => {
         if (response.status === 200) {
-          setCouponDetails(response.data);
+          setCouponDetails(response);
           setShowCouponLoader(false);
-          addToast(response.data.message, { appearance: "success" });
+          toast.success(response.message, { appearance: "success" });
         } else {
-          addToast(response.data.message, { appearance: "error" });
+          toast.error(response.message, { appearance: "error" });
           setShowCouponLoader(false);
         }
       })
       .catch((error) => {
-        addToast(error.response.data.message, { appearance: "error" });
+        toast.error(error.message, { appearance: "error" });
         setShowCouponLoader(false);
       });
   }
@@ -517,7 +518,7 @@ const PatientBookingSummary = (props) => {
                                           type="submit"
                                           className={"login-btn"}
                                           disabled
-                                          onClick={() => applyCoupon()}
+                                          onClick={(e) => applyCoupon(e)}
                                           importantStyle={{
                                             backgroundColor: "#e2e9e9",
                                           }}
@@ -528,7 +529,7 @@ const PatientBookingSummary = (props) => {
                                         <CustomButton
                                           type="submit"
                                           className={"login-btn"}
-                                          onClick={() => applyCoupon()}
+                                          onClick={(e) => applyCoupon(e)}
                                           text={"Apply"}
                                         ></CustomButton>
                                       )}

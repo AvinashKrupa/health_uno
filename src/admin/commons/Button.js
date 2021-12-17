@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "react-bootstrap";
-import Spinner from "../components/spinner";
+import Spinner from "../components/spinner/customSpinner";
 
 const CustomButton = ({text, disabled, onClick, className, type, importantStyle, showLoader}) => {
     return (
