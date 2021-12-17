@@ -37,7 +37,7 @@ const PatientBookingSummary = (props) => {
   const [purpose, setPurpose] = useState("");
   const [couponCode, setCouponCode] = useState("");
   const [payment, setPayment] = useState("");
-
+  const Patient_ID = localStorage.getItem('SELECTED_PATIENT_ID')
   let transactionID = "";
   const slot_id = patientSlotBookingStore((state) => state.slot_id);
 
@@ -82,7 +82,7 @@ const PatientBookingSummary = (props) => {
     fetchApi({
       url: "v1/coupon/checkDiscount",
       method: "POST",
-      body: { code: couponCode, fee: doctorDetails.fee },
+      body: { code: couponCode, fee: doctorDetails.fee, patient_id: Patient_ID },
     })
       .then((response) => {
         if (response.status === 200) {
@@ -146,7 +146,7 @@ const PatientBookingSummary = (props) => {
 
   function bookSlots() {
     const isValid = validation();
-    const Patient_ID = localStorage.getItem('SELECTED_PATIENT_ID')
+    
     if (isValid) {
       let params = {
         reason: purpose,
