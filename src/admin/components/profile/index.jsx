@@ -15,6 +15,7 @@ import whiteBgIco from "../../assets/images/white_background.png";
 import moment from "moment";
 import {
   getTextClassForStatus,
+  renderButton,
   renderDropDown,
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
@@ -348,6 +349,12 @@ class Profile extends Component {
     });
   }
 
+  handleBookAppointment = (record) => {
+    console.log('record :>> ', record);
+    localStorage.setItem('SELECTED_PATIENT_ID', record._id)
+    this.props.history.push("/patient/topConsultants")
+  }
+
   handleDiabetic = (id) => {
     this.setState({
       isDiabetic: id === "yes",
@@ -626,7 +633,6 @@ class Profile extends Component {
           },
         };
       }
-      console.log("requestBody", requestBody, "console.", profileDescription);
       let result = await fetchApi({
         url: "v1/user/updateProfile",
         method: "POST",
@@ -889,6 +895,7 @@ class Profile extends Component {
                           () => this.handleDropdownClick(),
                           this.showDropDownMenu()
                         )}
+                        {renderButton(()=> this.handleBookAppointment(this.state.data.additional_info))}
                       </div>
                     </div>
                   </div>
