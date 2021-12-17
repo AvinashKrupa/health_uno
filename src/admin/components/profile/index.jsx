@@ -193,8 +193,8 @@ class Profile extends Component {
       specialities: specialities.data,
       qualification: qualification.data,
       profileDescription: data.additional_info.desc,
-      fees: data.additional_info.qualif.fee,
-      experience: data.additional_info.qualif.exp,
+      fees: data.additional_info && data.additional_info.qualif && data.additional_info.qualif.fee,
+      experience: data.additional_info && data.additional_info.qualif && data.additional_info.qualif.exp,
       languages: languages.data,
       selectedLanguage: selectedLanguage,
       countryStateCity: {
@@ -780,7 +780,8 @@ class Profile extends Component {
           <div className="form-group">
             <label>Height</label>
             <input
-              type="text"
+              type="number"
+              step=".01"
               className="form-control"
               name="additional_info.height"
               onChange={this.handleChange}
@@ -792,7 +793,7 @@ class Profile extends Component {
           <div className="form-group">
             <label>Weight</label>
             <input
-              type="text"
+              type="number"
               className="form-control"
               name="additional_info.weight"
               onChange={this.handleChange}
@@ -981,14 +982,14 @@ class Profile extends Component {
                               )}
                             </p>
                           </div>
-                          <div className="row">
+                          {this.state.type === constants.USER_TYPE_DOCTOR && <div className="row">
                             <p className="col-sm-2 text-muted text-sm-right mb-0">
                               Profile Description
                             </p>
                             <p className="col-sm-10 mb-0">
                               {this.state.data.additional_info.desc}
                             </p>
-                          </div>
+                          </div>}
                           {this.state.type === constants.USER_TYPE_PATIENT && (
                             <>
                               <div className="row">
@@ -1246,7 +1247,7 @@ class Profile extends Component {
         <Modal show={this.state.show === "1"} onHide={this.handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>
-              <h5 className="modal-title">Personal Detailsaaa</h5>
+              <h5 className="modal-title">Personal Details</h5>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -1480,7 +1481,7 @@ class Profile extends Component {
                     </div>
                   </div>
 
-                  <div className="form-group">
+                  {this.state.type === constants.USER_TYPE_DOCTOR && <div className="form-group">
                     <label htmlFor="profile_description">
                       Profile Description
                     </label>
@@ -1494,7 +1495,7 @@ class Profile extends Component {
                       }
                       value={this.state.profileDescription}
                     />
-                  </div>
+                  </div>}
 
                   <div className="patient-more-fields">
                     {this.state.type === constants.USER_TYPE_PATIENT &&
