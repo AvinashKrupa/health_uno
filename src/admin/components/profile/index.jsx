@@ -1933,7 +1933,7 @@ class Profile extends Component {
                         </Col>
                       </div>
                       {/*<div className="col-12 col-sm-6">*/}
-                      <div className="form-group">
+                      <div style={{marginLeft: "3%"}} className="form-group">
                         <Col md className="no-padding">
                           <div className="form-group">
                             <TextArea

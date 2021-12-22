@@ -32,11 +32,16 @@ const TopConsultants = (props) => {
   const [searchClear, setSearchClear] = useState(false);
   const [page, setPage] = useState(1);
   const [totalConsultants, setTotalConsultants] = useState(0);
+  const [windowWidth, setWindowWidth] = useState();
   useEffect(() => {
     const searchInput = document.getElementById("top-const-search");
     searchInput.focus();
     getTopConsultants();
   }, [searchText]);
+
+  window.addEventListener('resize', function(event){
+    setWindowWidth(window.innerWidth);
+  })
 
   useEffect(() => {
     // document.querySelectorAll('[role="navigation"]').forEach(function (el){
@@ -200,8 +205,8 @@ const TopConsultants = (props) => {
                             key={doctor._id}
                             container
                             item
-                            lg={4}
-                            md={6}
+                            lg={windowWidth < 1550 ? 6 : 4}
+                            md={windowWidth < 1150 && windowWidth > 992 ? 7 : 6}
                             sm={7}
                             xs={12}
                             spacing={1}
@@ -228,7 +233,6 @@ const TopConsultants = (props) => {
                   )}
                 </div>
               </Col>
-              <Col lg="1" sm="1" xs="1" />
             </Row>
           </div>
         </div>
