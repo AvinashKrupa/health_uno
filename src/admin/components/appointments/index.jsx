@@ -14,6 +14,7 @@ import {
   renderDate,
   renderDropDown,
   renderName,
+  renderNameForAppointment,
   renderTagStatus,
   renderText,
   sorterDate,
@@ -26,16 +27,13 @@ const statusArray = [
   "pending",
   "scheduled",
   "cancelled",
-  "rejected",
+  "reserved",
   "ongoing",
   "completed",
   "reschedule",
 ];
 
-const statusHasNoOption = [
-  "pending",
-  "completed",
-]
+const statusHasNoOption = ["pending", "completed"];
 
 class Appointments extends Component {
   constructor(props) {
@@ -115,8 +113,7 @@ class Appointments extends Component {
           toast.success(result.message);
           this.setState({ data: data });
         }
-      } catch (e) {
-      }
+      } catch (e) {}
     } else {
       const { history } = this.props;
       history.push(`/slotBooking/${record.doctor._id}/${record._id}`);
@@ -173,15 +170,15 @@ class Appointments extends Component {
       case "scheduled":
         optionData = [
           "cancelled",
-          "rejected",
+          // "reserved",
           "completed",
           "reschedule",
         ];
         break;
       case "cancelled":
-        optionData = ["rejected"];
+        optionData = [""];
         break;
-      case "rejected":
+      case "reserved":
         optionData = ["cancelled"];
         break;
       case "ongoing":
@@ -190,7 +187,7 @@ class Appointments extends Component {
       case "reschedule":
         optionData = [
           "cancelled",
-          "rejected",
+          // "reserved",
           "completed",
           "reschedule",
         ];
@@ -215,7 +212,13 @@ class Appointments extends Component {
       },
       {
         title: "Patient",
-        render: (text, record) => renderName(record.patient),
+        render: (text, record) => renderNameForAppointment(
+          record.patient,
+          "",
+          "",
+          false,
+          "patient"
+        ),
         sorter: (a, b) =>
           sorterText(
             a.patient.user_id.first_name,
@@ -232,7 +235,13 @@ class Appointments extends Component {
       },
       {
         title: "Doctor",
-        render: (text, record) => renderName(record.doctor, "Dr"),
+        render: (text, record) => renderNameForAppointment(
+          record.doctor,
+          "Dr",
+          "",
+          false,
+          "doctor"
+        ),
         sorter: (a, b) => sorterText(a.doctor.first_name, b.doctor.first_name),
         ...getColumnSearchProps(
           this,
@@ -273,12 +282,12 @@ class Appointments extends Component {
       {
         title: "Created by",
         dataIndex: "created_by",
-        render: (text, record) => renderName(record.created_by),
+        render: (text, record) => <span>{record.created_by.first_name + ' ' + record.created_by.first_name}</span>,
       },
       {
         title: "Updated by",
         dataIndex: "updated_by",
-        render: (text, record) => renderName(record.updated_by),
+        render: (text, record) => <span>{record.updated_by.first_name + ' ' + record.updated_by.first_name}</span>,
       },
       {
         title: "Status",
@@ -290,16 +299,17 @@ class Appointments extends Component {
       },
       {
         title: "Actions",
-        align: 'center',
+        align: "center",
         render: (text, record) =>
-        statusHasNoOption.includes(record.status) ? renderTagStatus(record.status) :
-          renderDropDown(
-            "Change Status",
-            this.handleChangeOption(record.status),
-            (elem, index) => this.handleItemClick(record, elem),
-            () => this.handleDropdownClick(record),
-            this.showDropDownMenu(record)
-          ),
+          statusHasNoOption.includes(record.status)
+            ? renderTagStatus(record.status)
+            : renderDropDown(
+                "Change Status",
+                this.handleChangeOption(record.status),
+                (elem, index) => this.handleItemClick(record, elem),
+                () => this.handleDropdownClick(record),
+                this.showDropDownMenu(record)
+              ),
       },
     ];
     const fields = {
