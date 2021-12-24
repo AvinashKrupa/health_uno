@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Table,ExportTableButton } from "ant-table-extensions";
+import { Table, ExportTableButton } from "ant-table-extensions";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import SidebarNav from "../sidebar";
@@ -18,6 +18,7 @@ import {
   sorterDate,
   sorterNumber,
   sorterText,
+  renderButton,
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
 
@@ -37,10 +38,7 @@ class Patients extends Component {
   }
 
   async componentDidMount() {
-    let patients = await fetchApi({ url: "v1/patients", method: "GET" });
-    let patientsData = patients.data;
-    this.setState({ data: patientsData });
-    this.setState({exportingData:patientsData})
+    this.fetchPatientsList()
   }
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -50,6 +48,13 @@ class Patients extends Component {
       searchedColumn: dataIndex,
     });
   };
+
+  fetchPatientsList = async() => {
+    let patients = await fetchApi({ url: "v1/patients", method: "GET" });
+        let patientsData = patients.data;
+        this.setState({ data: patientsData });
+        this.setState({ exportingData: patientsData });
+  }
 
   handleReset = (clearFilters) => {
     clearFilters();
@@ -70,15 +75,18 @@ class Patients extends Component {
       if (result) {
         toast.success(result.message);
         this.setState({ data: data });
+        this.fetchPatientsList()
       }
-    } catch (e) {
-      console.log("error>>", e);
-    }
+    } catch (e) {}
   }
 
   handleDropdownClick(record) {
     let isShown = this.state.showMenu[record._id];
     this.setState({ showMenu: { [record._id]: !isShown } });
+  }
+  handleBookAppointment(record){
+    localStorage.setItem('SELECTED_PATIENT_ID', record._id)
+    this.props.history.push("/patient/topConsultants")
   }
 
   showDropDownMenu(record) {
@@ -86,15 +94,14 @@ class Patients extends Component {
   }
 
   handleDataChange = (pagination, filters, sorter, extra) => {
-    console.log("exported data ",extra.currentDataSource)
     this.setState({
       total: extra.currentDataSource.length,
-      exportingData:extra.currentDataSource
+      exportingData: extra.currentDataSource,
     });
   };
 
   render() {
-    const { data,exportingData } = this.state;
+    const { data, exportingData } = this.state;
 
     const columns = [
       {
@@ -165,14 +172,22 @@ class Patients extends Component {
       },
       {
         title: "Actions",
-        render: (text, record) =>
-          renderDropDown(
-            "Change Status",
-            patientStatus.filter((item) => item !== record.status),
-            (elem, index) => this.handleItemClick(record, elem),
-            () => this.handleDropdownClick(record),
-            this.showDropDownMenu(record)
-          ),
+        render: (text, record) => {
+          return (
+            <>
+              <div>
+                {renderDropDown(
+                  "Change Status",
+                  patientStatus.filter((item) => item !== record.status),
+                  (elem, index) => this.handleItemClick(record, elem),
+                  () => this.handleDropdownClick(record),
+                  this.showDropDownMenu(record)
+                )}
+                {renderButton(()=> this.handleBookAppointment(record))}
+              </div>
+            </>
+          );
+        },
       },
     ];
     const fields = {
@@ -200,17 +215,17 @@ class Patients extends Component {
           return record?.user_id.mobile_number;
         },
       },
-     
+
       createdAt: {
         header: "Created At",
         formatter: (_fieldValue, record) => {
-          return moment(record?.created_at).format('DD/MM/YYYY');
+          return moment(record?.created_at).format("DD/MM/YYYY");
         },
       },
       updatedAt: {
         header: "Updated At",
         formatter: (_fieldValue, record) => {
-          return  moment(record?.updated_at).format('DD/MM/YYYY');
+          return moment(record?.updated_at).format("DD/MM/YYYY");
         },
       },
       status: {
@@ -219,7 +234,6 @@ class Patients extends Component {
           return record?.status;
         },
       },
-
     };
 
     return (
@@ -253,11 +267,31 @@ class Patients extends Component {
                         dataSource={exportingData}
                         columns={columns}
                         btnProps={{ type: "primary" }}
-                        fileName= "patients-data"
+                        fileName="patients-data"
                         fields={fields}
                       >
                         Export
                       </ExportTableButton>
+                      {/* <div className="col-sm-5 col">
+                        <a
+                          href="#0"
+                          className="btn btn-primary float-right mt-2"
+                          // onClick={() => this.handleShow("edit")}
+                        >
+                          Add
+                        </a>
+                      </div> */}
+                      <button
+                        type="primary"
+                        className="btn btn-primary float-right"
+                        onClick={() =>
+                          this.props.history.push("/patient-registration")
+                        }
+                      >
+                        {" "}
+                        Add Patient
+                      </button>
+
                       <Table
                         className="table-striped"
                         style={{ overflowX: "auto" }}

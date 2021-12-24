@@ -3,6 +3,7 @@ import { Table } from "antd";
 import {
   renderAppointment,
   renderName,
+  renderNameForAppointment,
   renderText,
 } from "../../../../_utils/data-table-utils";
 
@@ -12,7 +13,13 @@ class TableAppointmentList extends Component {
       {
         title: "Doctor Name",
         dataIndex: "Name",
-        render: (text, record) => renderName(record.doctor, "Dr"),
+        render: (text, record) => renderNameForAppointment(
+          record.doctor,
+          "Dr",
+          "",
+          false,
+          "doctor"
+        ),
       },
       {
         title: "Consulting type",
@@ -22,7 +29,13 @@ class TableAppointmentList extends Component {
       {
         title: "Patient Name",
         dataIndex: "PatientName",
-        render: (text, record) => renderName(record.patient),
+        render: (text, record) => renderNameForAppointment(
+          record.patient,
+          "",
+          "",
+          false,
+          "patient"
+        ),
       },
       {
         title: "Appointment Time",

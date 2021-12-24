@@ -57,7 +57,8 @@ class Specialities extends Component {
             show: show
         });
     }
-    handleRecordUpdate = async (record) => {
+    handleRecordUpdate = async (e, record) => {
+        e.preventDefault();
         let result
         if (record && record._id) {
             let data = new FormData()
@@ -96,7 +97,6 @@ class Specialities extends Component {
                 toast.success(result.message)
             }
         } catch (e) {
-            console.log("error>>", e)
 
         }
         this.handleClose()
@@ -115,7 +115,6 @@ class Specialities extends Component {
                 toast.success(result.message)
             }
         } catch (e) {
-            console.log("error>>", e)
 
         }
         this.handleClose()
@@ -243,7 +242,7 @@ class Specialities extends Component {
                                     </div>
 
                                 </div>
-                                <button type="submit" onClick={() => this.handleRecordUpdate(this.state.show.record)}
+                                <button type="submit" onClick={(e) => this.handleRecordUpdate(e, this.state.show.record)}
                                         className="btn btn-primary btn-block">Save Changes
                                 </button>
                             </form>

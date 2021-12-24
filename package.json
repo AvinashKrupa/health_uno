@@ -26,6 +26,7 @@
     "@testing-library/user-event": "^7.1.2",
     "ant-table-extensions": "^1.1.7",
     "antd": "^4.6.1",
+    "axios": "^0.24.0",
     "babel-loader": "^8.1.0",
     "bootstrap": "^4.5.0",
     "bootstrap-daterangepicker": "^3.1.0",
@@ -67,6 +68,7 @@
     "react-dropzone-uploader": "^2.11.0",
     "react-hot-toast": "^2.1.1",
     "react-image-lightbox": "^5.1.1",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-loader-spinner": "^4.0.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
@@ -74,6 +76,8 @@
     "react-slick": "^0.27.1",
     "react-sticky-box": "^0.9.3",
     "react-tag-input": "^6.4.3",
+    "react-toast-notifications": "^2.5.1",
+    "sass": "^1.44.0",
     "sass-loader": "^10.0.2",
     "simple-react-lightbox": "^3.2.3-3",
     "slick-carousel": "^1.8.1",
@@ -84,7 +88,8 @@
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
-    "xml-loader": "^1.2.1"
+    "xml-loader": "^1.2.1",
+    "zustand": "^3.6.7"
   },
   "scripts": {
     "start": "webpack-dev-server --mode development --inline --progress",
@@ -108,6 +113,7 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.15.0"
+    "@babel/plugin-transform-runtime": "^7.15.0",
+    "dotenv-webpack": "^7.0.3"
   }
 }

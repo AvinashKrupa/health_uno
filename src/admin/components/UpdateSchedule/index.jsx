@@ -154,22 +154,29 @@ const UpdateSchedule = ({ data }) => {
           sat: selectedDays[6].isChecked,
         },
         shift: {
-          shift1: {
+          ...(isDayShift ? {shift1: {
             start: moment(
               `${moment().format("DD-MMM-YYYY")} ${dayShiftFrom}`
             ).format("HH:mm"),
             end: moment(
               `${moment().format("DD-MMM-YYYY")} ${dayShiftTo}`
             ).format("HH:mm"),
-          },
-          shift2: {
+          }}: {
+            shift1: {
+              start: '',
+              end: '',
+          }}),
+           ...(isEveningShift ? {shift2: {
             start: moment(
               `${moment().format("DD-MMM-YYYY")} ${eveningShiftFrom}`
             ).format("HH:mm"),
             end: moment(
               `${moment().format("DD-MMM-YYYY")} ${eveningShiftTo}`
             ).format("HH:mm"),
-          },
+          }}: {shift2: {
+            start: '',
+            end: '',
+          }})
         },
       },
       user_id: data.user._id,
@@ -205,7 +212,6 @@ const UpdateSchedule = ({ data }) => {
       body: params,
     })
       .then((response) => {
-        console.log("response :>> ", response);
         if (response.status === 200) {
           if (response.data.shift1) {
             let data = response.data.shift1.map((info) => {
@@ -215,7 +221,6 @@ const UpdateSchedule = ({ data }) => {
               return info;
             });
             const group = getGroupWiseDate(data);
-            console.log("group :>> ", group);
             setDataMorningShift(group);
           }
           if (response.data.shift2) {
@@ -313,10 +318,6 @@ const UpdateSchedule = ({ data }) => {
   };
 
   const renderUpdateByDate = () => {
-    console.log(
-      "Object.entries(dataMorningShift) :>> ",
-      Object.entries(dataMorningShift)
-    );
     return (
       <>
         <Row>
@@ -420,7 +421,6 @@ const UpdateSchedule = ({ data }) => {
                 className="shift-timings-input"
                 value={dayShiftFrom}
                 onChange={(e) => {
-                  console.log("amit e.target.value :", e.target.value);
                   setDayShiftFrom(e.target.value);
                 }}
               />

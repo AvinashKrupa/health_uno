@@ -58,6 +58,43 @@ const createProfileLink = (record) => {
           : constants.USER_TYPE_DOCTOR)
     : "/profile";
 };
+
+export const renderNameForAppointment = (record, prefix, suffix, includeImage = false, type) => {
+  return (
+    <h2 className="table-avatar">
+      {includeImage && (
+        <Link to={createProfileLinkForAppointment(record,type)} className="avatar avatar-sm mr-2">
+          <img alt="" src={record.user_id.dp} />
+        </Link>
+      )}
+      <Link to={createProfileLinkForAppointment(record,type)}>
+        <a>{`${prefix ? prefix + " " : ""}${getFullName(record)}${
+          suffix ? " " + suffix : ""
+        }`}</a>
+      </Link>
+    </h2>
+  );
+};
+
+const createProfileLinkForAppointment = (record,type) => {
+  let url = ''
+  if(type === "patient"){
+    url =record
+    ? "/profile/" +
+        record?.user_id?._id +
+        "/1"
+    : "/profile"
+  }
+  else if(type === 'doctor'){
+   url =  record
+    ? "/profile/" +
+        record?.user_id +
+        "/2"
+    : "/profile";
+  }
+  return url
+};
+
 export const renderChips = (items) => {
   return items.map((item) => {
     return <div>{item.title}</div>;
@@ -408,3 +445,15 @@ export const renderTagStatus = (status) => {
     </Tag>
   );
 };
+
+export const renderButton = (onButtonClick) => {
+  return(
+    <button
+        type="button"
+        onClick={() => onButtonClick()}
+        className="btn btn-primary book-btn"
+      >
+        Book Appointment
+      </button>
+  )
+}

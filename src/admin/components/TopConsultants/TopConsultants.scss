@@ -1,0 +1,97 @@
+.top-consultants-container, .doctor-back-navigation {
+    .doctor-card-container {
+        margin-left: 10px !important;
+        margin-bottom: 15px;
+    }
+
+    .top-consultants-card-container {
+        margin-top: 51px;
+    }
+}
+
+.back-navigation {
+    outline: none;
+    border: none;
+    background: none;
+    text-align: left;
+    span {
+        font-size: 24px;
+    }
+
+    a {
+        color: #1B1B1B;
+        text-decoration: none;
+        .fa-arrow-left {
+            font-size: 17px;
+            width: 24px;
+        }
+    }
+}
+.load-data{
+    overflow: inherit !important;
+}
+
+.react-datepicker__navigation--previous {
+    top: 3px !important;
+}
+.react-datepicker__navigation-icon {
+    top: 7px !important;
+}
+
+.react-datepicker-popper[data-placement^=bottom] .react-datepicker__triangle::after {
+    left: 30px!important;
+}
+.react-datepicker-popper[data-placement^=bottom] .react-datepicker__triangle::before {
+    left: 30px!important;
+}
+
+
+@media only screen and (max-width: 768px) {
+    .react-datepicker-popper[data-placement^=bottom] .react-datepicker__triangle::after {
+        left: 10px!important;
+    }
+    .react-datepicker-popper[data-placement^=bottom] .react-datepicker__triangle::before {
+        left: 10px!important;
+    }
+    .slot-timings-button {
+        height: 80px!important;
+    }
+    .patient-slot-booking {
+        margin-top: 50px;
+    }
+    .days-button {
+        min-height: 55px;
+    }
+
+
+}
+.search-container {
+    .fa-search {
+      font-size: 22px;
+      margin: auto;
+      position: relative;
+            z-index: 6;
+            left: 19px
+    }
+    input {
+      width: 650px !important;
+        margin-left: -20px !important;
+        padding-left: 50px;
+    }
+
+    .input-group {
+      flex-wrap: unset !important;
+    }
+
+    .btn-primary {
+      background-color: unset !important;
+      border-color: unset !important;
+    }
+
+  }
+  @media only screen and (max-width: 1550px) and (min-width: 1280px) {
+    .doctor-card-container {
+        height: 95% !important;
+    }
+    
+}

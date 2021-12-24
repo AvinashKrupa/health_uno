@@ -53,7 +53,6 @@ class Sliders extends Component {
   }
 
   handleClose = () => {
-    console.log("edit is closed");
     this.setState({
       show: { id: null, record: null },
       edited: false,
@@ -62,9 +61,7 @@ class Sliders extends Component {
 
   handleShow = (id, record) => {
     if (id == "edit") {
-      console.log("hadnle show  is called");
       let showRecord = { ...record };
-      console.log("show record is ", showRecord.title);
       showRecord["selectedUserType"] = showRecord.user_type || "1";
       showRecord["selectedType"] = showRecord.type || sliderTypes[0];
       this.setState({
@@ -73,9 +70,7 @@ class Sliders extends Component {
         edited: true,
       });
     } else {
-      console.log("hadnle show  is called");
       let showRecord = { ...record };
-      console.log("show record is ", showRecord.title);
       showRecord["selectedUserType"] = showRecord.user_type || "1";
       showRecord["selectedType"] = showRecord.type || sliderTypes[0];
       this.setState({
@@ -117,11 +112,11 @@ class Sliders extends Component {
   //           resolve({ width: image.width, height: image.height });
   //         };
   //       });
-  //       console.log("dimensions are ", dimensions);
+  //       //console.log("dimensions are ", dimensions);
   //       resolve(dimensions);
   //     };
   //   });
-  //   console.log("dimensions are in outer promise ", dim);
+  //   //console.log("dimensions are in outer promise ", dim);
   //   if (type === "web") {
   //     if (dim.width !== 1200 || dim.height !== 320) {
   //       toast.error(
@@ -155,7 +150,6 @@ class Sliders extends Component {
     if (valid) {
       let show = this.state.show;
       const fileName = targetFile.name;
-      console.log("file name  after promise is ", fileName);
       if (type === "web") {
         show.record["webfile"] = targetFile;
         show.record["device_type_web"] = "web";
@@ -163,7 +157,6 @@ class Sliders extends Component {
         show.record["mobilefile"] = targetFile;
         show.record["device_type_mobile"] = "mobile";
       }
-      console.log("show value is ", show);
       this.setState({
         show: show,
       });
@@ -176,15 +169,11 @@ class Sliders extends Component {
 
   checkFields() {
     if (this.state.edited) {
-      console.log(" this.show.show ", this.state.show);
-      console.log("his.state.edited if ", this.state.edited);
-      console.log("state ttiel value is ", this.state.edited);
       if (this.state.title === "") {
         toast.error("Please enter Title ");
         return false;
       }
     } else {
-      console.log("his.state.edited in else ", this.state.edited);
       if (
         this.state.title === "" ||
         this.fileInput.value === "" ||
@@ -260,7 +249,6 @@ class Sliders extends Component {
         toast.success(result.message);
       }
     } catch (e) {
-      console.log("error>>", e);
     }
     this.handleClose();
     await this.reloadData();
@@ -277,7 +265,6 @@ class Sliders extends Component {
         toast.success(result.message);
       }
     } catch (e) {
-      console.log("error>>", e);
     }
     this.handleClose();
     await this.reloadData();
