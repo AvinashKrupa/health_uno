@@ -5,7 +5,7 @@ const Selector = (props) => {
   return (
     <Form.Group>
       <br />
-      <Form.Label>{props.label}</Form.Label>
+      {props.label ? <Form.Label>{props.label}</Form.Label> : null}
       <div>
       <select className="form-control" style = {{width: "100%"}} id={props.id} value={props.value} onChange={(e) => props.handleSelect(e.target.value)}>
         <option defaultValue={props.defaultValue}>{props.defaultValue}</option>
