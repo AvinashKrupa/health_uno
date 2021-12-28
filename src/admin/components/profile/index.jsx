@@ -37,6 +37,11 @@ class Profile extends Component {
       loadingSpec: false,
       loadingLang: false,
       loadingCountry: false,
+      diabeticValueSelected: false,
+      hypertensiveValueSelected: false,
+      vaccineDateSelected: false,
+      doseSelected: false,
+      vaccineNameSelected: false,
       key: 1,
       show: "",
       data: null,
@@ -349,6 +354,61 @@ class Profile extends Component {
     });
   }
 
+  isVaccinatedDone = () => {
+    if(this.state.isVaccinated) {
+      if(this.state.doseSelected && this.state.vaccineDateSelected && this.state.vaccineNameSelected) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+
+  else {
+    return true;
+  }
+  }
+
+  isDiabeticDone =() => {
+    if(this.state.isDiabetic) {
+      if(this.state.diabeticValueSelected) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }else {
+      return true;
+    }
+  }
+
+  isHypertensiveDone = () => {
+    if(this.state.isHypertensive) {
+      if(this.state.hypertensiveValueSelected) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }else {
+      return true;
+    }
+  }
+
+  saveDisabled = () => {
+    if(this.state.isDiabetic || this.state.isVaccinated || this.state.isHypertensive) {
+    if ((this.isDiabeticDone() && this.isHypertensiveDone() && this.isVaccinatedDone())) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+    else {
+      return false;
+    }
+  }
+
   handleBookAppointment = (record) => {
     console.log('record :>> ', record);
     localStorage.setItem('SELECTED_PATIENT_ID', record._id)
@@ -543,13 +603,20 @@ class Profile extends Component {
         data.additional_info.qualif["dept_id"]["title"] = DepartmentData.title;
         data.additional_info.qualif["dept_id"]["_id"] = DepartmentData._id;
       }
-      if (selectedSpecialities !== data.additional_info.qualif.specl[0]._id) {
+      if (selectedSpecialities !== data.additional_info && data.additional_info.qualif && data.additional_info.qualif.specl[0] && data.additional_info.qualif.specl[0]._id) {
         const SpecialitiesData = this.state.specialities.find(
           (specl) => specl._id === selectedSpecialities
         );
         data.additional_info.qualif["specl"][0]["title"] =
           SpecialitiesData.title;
         data.additional_info.qualif["specl"][0]["_id"] = SpecialitiesData._id;
+      }else if(selectedSpecialities && data.additional_info && data.additional_info.qualif && data.additional_info.qualif.specl.length===0){
+        const SpecialitiesData = this.state.specialities.find(
+          (specl) => specl._id === selectedSpecialities
+        );
+        data.additional_info.qualif["specl"]["title"] =
+          SpecialitiesData.title;
+        data.additional_info.qualif["specl"]["_id"] = SpecialitiesData._id;
       }
     }
     if (this.state.type === constants.USER_TYPE_PATIENT) {
@@ -1132,14 +1199,14 @@ class Profile extends Component {
                                     Are you Diabetic?
                                   </p>
                                   <p className="col-sm-10 mb-0">
-                                    {`${
-                                      this.state.isDiabetic ? "yes" : "no"
+                                  {this.state.isDiabetic ? `${
+                                      this.state.isDiabetic ? "YES," : "no"
                                     } since ${
                                       this.state.isDiabetic &&
                                       moment(this.state.diabeticValue)?.format(
                                         "DD-MM-YYYY"
                                       )
-                                    }`}
+                                    }` : "NO"}
                                   </p>
                                 </div>
                                 <div className="row">
@@ -1147,14 +1214,15 @@ class Profile extends Component {
                                     Are you Hypertensive?
                                   </p>
                                   <p className="col-sm-10 mb-0">
-                                    {`${
-                                      this.state.isHypertensive ? "yes" : "no"
-                                    } since ${
+                                  {this.state.isHypertensive ? `${
+                                      this.state.isHypertensive ? "" : ""
+                                    }
+                                     YES, since ${
                                       this.state.isHypertensive &&
                                       moment(
                                         this.state.hypertensiveValue
                                       )?.format("DD-MM-YYYY")
-                                    }`}
+                                    }` : "NO" }
                                   </p>
                                 </div>
                                 <div className="row">
@@ -1162,11 +1230,11 @@ class Profile extends Component {
                                     Any past surgery?
                                   </p>
                                   <p className="col-sm-10 mb-0">
-                                    {`${this.state.isSurgery ? "yes" : "no"}, ${
+                                  {this.state.isSurgery ? `${this.state.isSurgery ? "YES" : "no"}, ${
                                       this.state.isSurgery
                                         ? this.state.surgeryValue
                                         : ""
-                                    }`}
+                                    }` : "NO"}
                                   </p>
                                 </div>
                                 <div className="row">
@@ -1174,9 +1242,9 @@ class Profile extends Component {
                                     Any allergies to medications?
                                   </p>
                                   <p className="col-sm-10 mb-0">
-                                    {`${
-                                      this.state.isAllergie ? "yes" : "no"
-                                    }, ${
+                                  {`${
+                                      this.state.isAllergie ? "YES" : "NO"
+                                    } ${
                                       this.state.isAllergie
                                         ? this.state.allergieValue
                                         : ""
@@ -1188,7 +1256,7 @@ class Profile extends Component {
                                     Have you been diagnosed with Covid?
                                   </p>
                                   <p className="col-sm-10 mb-0">
-                                    {`${this.state.isCovid ? "yes" : "no"}, ${
+                                  {`${this.state.isCovid ? "YES" : "NO"} ${
                                       this.state.isCovid
                                         ? this.state.covidDetails
                                         : ""
@@ -1200,8 +1268,8 @@ class Profile extends Component {
                                     Have you been vaccinated against Covid?
                                   </p>
                                   <p className="col-sm-10 mb-0">
-                                    {`${
-                                      this.state.isVaccinated ? "yes" : "no"
+                                  {this.state.isVaccinated ? `${
+                                      this.state.isVaccinated ? "YES," : "no"
                                     } since ${
                                       this.state.isVaccinated &&
                                       moment(this.state.vaccineDate)?.format(
@@ -1209,7 +1277,7 @@ class Profile extends Component {
                                       )
                                     } with ${this.state.dose} dose of ${
                                       this.state.vaccineName
-                                    }`}
+                                    }` : "NO"}
                                   </p>
                                 </div>
                                 <div className="row">
@@ -1727,6 +1795,7 @@ class Profile extends Component {
                                   onChange={(e) =>
                                     this.setState({
                                       diabeticValue: e.target.value,
+                                      diabeticValueSelected: true,
                                     })
                                   }
                                 />
@@ -1765,6 +1834,7 @@ class Profile extends Component {
                                 onChange={(e) =>
                                   this.setState({
                                     hypertensiveValue: e.target.value,
+                                    hypertensiveValueSelected: true,
                                   })
                                 }
                               />
@@ -1898,10 +1968,11 @@ class Profile extends Component {
                                   onChange={(e) =>
                                     this.setState({
                                       vaccineDate: e.target.value,
+                                      vaccineDateSelected: true,
                                     })
                                   }
                                 />
-                                <div className="p-15" />
+                                <div className="p-10" />
                                 <Selector
                                   defaultValue="Choose dose type"
                                   id="dose"
@@ -1910,11 +1981,11 @@ class Profile extends Component {
                                   handleSelect={(item) =>
                                     this.setState({
                                       dose: item,
+                                      doseSelected: true,
                                     })
                                   }
                                   value={this.state.dose}
                                 />
-                                <div className="p-15" />
                                 <Selector
                                   defaultValue="Choose vaccine name"
                                   id="v-name"
@@ -1923,6 +1994,7 @@ class Profile extends Component {
                                   handleSelect={(item) => {
                                     this.setState({
                                       vaccineName: item,
+                                      vaccineNameSelected: true,
                                     });
                                   }}
                                   value={this.state.vaccineName}
@@ -1933,7 +2005,7 @@ class Profile extends Component {
                         </Col>
                       </div>
                       {/*<div className="col-12 col-sm-6">*/}
-                      <div style={{marginLeft: "3%"}} className="form-group">
+                      <div style={{marginLeft: "3%", width: '100%'}} className="form-group">
                         <Col md className="no-padding">
                           <div className="form-group">
                             <TextArea
@@ -1959,6 +2031,7 @@ class Profile extends Component {
                     </div>
                     <button
                       type="submit"
+                      disabled={this.saveDisabled()}
                       onClick={this.updateProfile}
                       className="btn btn-primary btn-block"
                     >
