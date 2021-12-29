@@ -1769,7 +1769,7 @@ class Profile extends Component {
                           {/*<Col md>*/}
                           <div className="form-group">
                             <Radio
-                              labelStyle={{ paddingLeft: "15px" }}
+                              labelStyle={{ paddingLeft: "15px", fontSize: "16px" }}
                               inputRowStyle={{
                                 paddingLeft: "15px",
                                 marginLeft: "5px",
@@ -1808,7 +1808,7 @@ class Profile extends Component {
                       <div className="col-12 col-sm-6">
                         <div className="form-group">
                           <Radio
-                            labelStyle={{ paddingLeft: "15px" }}
+                            labelStyle={{ paddingLeft: "15px", fontSize: "16px" }}
                             inputRowStyle={{
                               paddingLeft: "15px",
                               marginLeft: "5px",
@@ -1847,7 +1847,7 @@ class Profile extends Component {
                           <Col md className="no-padding">
                             <div className="form-group">
                               <Radio
-                                labelStyle={{ paddingLeft: "15px" }}
+                                labelStyle={{ paddingLeft: "15px", fontSize: "16px" }}
                                 inputRowStyle={{
                                   paddingLeft: "15px",
                                   marginLeft: "5px",
@@ -1883,7 +1883,7 @@ class Profile extends Component {
                           <Col md className="no-padding">
                             <div className="form-group">
                               <Radio
-                                labelStyle={{ paddingLeft: "15px" }}
+                                labelStyle={{ paddingLeft: "15px", fontSize: "16px" }}
                                 inputRowStyle={{
                                   paddingLeft: "15px",
                                   marginLeft: "5px",
@@ -1923,6 +1923,7 @@ class Profile extends Component {
                               id="diagCovid"
                               options={this.state.covids}
                               handleSelect={this.handleCovids}
+                              labelStyle={{fontSize: "16px" }}
                             />
                           </div>
                         </Col>
@@ -1932,6 +1933,8 @@ class Profile extends Component {
                               <Col md className="no-padding">
                                 <Input
                                   type="text"
+                                  labelStyle={{ fontSize: "16px" }}
+                                  inputStyle={{paddingLeft: "15px"}}
                                   placeholder="Enter additional details"
                                   label="Provide additional details of Covid illness"
                                   value={this.state.covidDetails}
@@ -1948,6 +1951,7 @@ class Profile extends Component {
                         <Col md>
                           <div className="form-group">
                             <Radio
+                              labelStyle={{ fontSize: "16px" }}
                               label="Have you been vaccinated against Covid?"
                               id="vaccinated"
                               options={this.state.vaccinated}
@@ -2009,6 +2013,7 @@ class Profile extends Component {
                         <Col md className="no-padding">
                           <div className="form-group">
                             <TextArea
+                              labelStyle={{ fontSize: "16px" }}
                               noPadding
                               label="Other medical conditions"
                               id={"other-condition"}
