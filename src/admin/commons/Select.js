@@ -7,8 +7,8 @@ const Selector = (props) => {
       <br />
       {props.label ? <Form.Label>{props.label}</Form.Label> : null}
       <div>
-      <select className="form-control" style = {{width: "100%"}} id={props.id} value={props.value} onChange={(e) => props.handleSelect(e.target.value)}>
-        <option defaultValue={props.defaultValue}>{props.defaultValue}</option>
+      <select required={props.required || false} placeholder={props.placeholder} className="form-control" style = {{width: "100%"}} id={props.id} value={props.value} onChange={(e) => props.handleSelect(e.target.value)}>
+        <option >{props.defaultValue}</option>
         {props.options.map((item) => (
           <option value={item}>{item}</option>
         ))}
