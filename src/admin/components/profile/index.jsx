@@ -628,9 +628,11 @@ class Profile extends Component {
           const SpecialitiesData = this.state.specialities.find(
             (specl) => specl._id === selectedSpecialities
           );
-          data.additional_info.qualif["specl"]["title"] =
-            SpecialitiesData.title;
-          data.additional_info.qualif["specl"]["_id"] = SpecialitiesData._id;
+          const speclData = {
+            title : SpecialitiesData.title,
+            _id : SpecialitiesData._id
+          }
+          data.additional_info.qualif.specl.push(speclData);
         }
       }
       if (this.state.type === constants.USER_TYPE_PATIENT) {
@@ -1001,7 +1003,7 @@ class Profile extends Component {
                           () => this.handleDropdownClick(),
                           this.showDropDownMenu()
                         )}
-                        {renderButton(() =>
+                        {this.state.type == constants.USER_TYPE_PATIENT && renderButton(() =>
                           this.handleBookAppointment(
                             this.state.data.additional_info
                           )

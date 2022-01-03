@@ -137,6 +137,7 @@ const SlotBooking = (props) => {
   async function getSlots() {
     let params = {
       doctor_id: props.match.params.doctor_id,
+      look_ahead:true,
       date: currentDate,
     };
 
