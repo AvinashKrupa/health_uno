@@ -371,6 +371,9 @@ class Profile extends Component {
     this.setState({
       isDiabetic: id === "yes",
     });
+    if (id === "no") {
+      this.setState({ diabeticValue: "" });
+    }
     const newDiabetic = this.state.diabetics.map((item) => {
       return Object.assign({}, item, { checked: item.id === id });
     });
@@ -383,7 +386,9 @@ class Profile extends Component {
     this.setState({
       isHypertensive: id === "yes",
     });
-
+    if (id === "no") {
+      this.setState({ hypertensiveValue: "" });
+    }
     const newHypertensives = this.state.hypertensives.map((item) => {
       return Object.assign({}, item, { checked: item.id === id });
     });
@@ -396,7 +401,9 @@ class Profile extends Component {
     this.setState({
       isSurgery: id === "yes",
     });
-
+    if (id === "no") {
+      this.setState({ surgeryValue: "" });
+    }
     const newSurgerys = this.state.hypertensives.map((item) => {
       return Object.assign({}, item, { checked: item.id === id });
     });
@@ -409,7 +416,9 @@ class Profile extends Component {
     this.setState({
       isAllergie: id === "yes",
     });
-
+    if (id === "no") {
+      this.setState({ allergieValue: "" });
+    }
     const newAllergies = this.state.allergies.map((item) => {
       return Object.assign({}, item, { checked: item.id === id });
     });
@@ -422,6 +431,9 @@ class Profile extends Component {
     this.setState({
       isCovid: id === "yes",
     });
+    if (id === "no") {
+      this.setState({ covidDetails: "" });
+    }
 
     const newCovids = this.state.covids.map((item) => {
       return Object.assign({}, item, { checked: item.id === id });
@@ -436,6 +448,10 @@ class Profile extends Component {
     this.setState({
       isVaccinated: id === "yes",
     });
+    if (id === "no") {
+      this.setState({ vaccineDate: "",dose:"",vaccineName:"" });
+    }
+    
 
     const newVaccinatedList = this.state.vaccinated.map((item) => {
       return Object.assign({}, item, { checked: item.id === id });
@@ -533,19 +549,19 @@ class Profile extends Component {
       }
     }
     if (this.state.isSurgery) {
-      if (isEmpty(this.state.surgeryValue)) {
+      if (isEmpty(this.state.surgeryValue.trim())) {
         toast.error("Please Mention about surgery");
         return false;
       }
     }
     if (this.state.isAllergie) {
-      if (isEmpty(this.state.allergieValue)) {
+      if (isEmpty(this.state.allergieValue.trim())) {
         toast.error("Please Mention about allergies");
         return false;
       }
     }
     if (this.state.isCovid) {
-      if (isEmpty(this.state.covidDetails)) {
+      if (isEmpty(this.state.covidDetails.trim())) {
         toast.error("Please Mention about covidDetails");
         return false;
       }
@@ -1894,7 +1910,6 @@ class Profile extends Component {
                                 <br />
                                 <br />{" "}
                                 <Form.Control
-                                  required
                                   type="date"
                                   value={this.state.diabeticValue}
                                   min={moment(new Date())
@@ -2074,7 +2089,6 @@ class Profile extends Component {
                                 <Form.Control
                                   type="date"
                                   value={this.state.vaccineDate}
-                                  onKeyDown={(e) => e.preventDefault()}
                                   min={moment(new Date())
                                     .subtract(50, "years")
                                     .format("YYYY-MM-DD")}
@@ -2085,7 +2099,6 @@ class Profile extends Component {
                                       vaccineDateSelected: true,
                                     });
                                   }}
-                                  required
                                 />
                                 <div className="p-10" />
                                 <Selector
