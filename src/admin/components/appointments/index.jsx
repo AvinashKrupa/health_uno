@@ -290,6 +290,11 @@ class Appointments extends Component {
         render: (text, record) => <span>{record.updated_by.first_name + ' ' + record.updated_by.first_name}</span>,
       },
       {
+        title: "Appointment Status",
+        dataIndex: "appointment_status",
+        render: (text, record) => <span>{record.adtnl_status}</span>,
+      },
+      {
         title: "Status",
         dataIndex: "status",
         key: "status",

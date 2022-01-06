@@ -673,7 +673,6 @@ const RegistrationComponent = ({ history, image }) => {
                 <Col>
                   <Form.Control
                     type="date"
-                    onKeyDown={(e) => e.preventDefault()}
                     min={moment(new Date())
                       .subtract(50, "years")
                       .format("YYYY-MM-DD")}
@@ -696,7 +695,6 @@ const RegistrationComponent = ({ history, image }) => {
                 <Col>
                   <Form.Control
                     type="date"
-                    onKeyDown={(e) => e.preventDefault()}
                     min={moment(new Date())
                       .subtract(50, "years")
                       .format("YYYY-MM-DD")}
@@ -784,7 +782,6 @@ const RegistrationComponent = ({ history, image }) => {
                 <Col md style={{ paddingTop: "32px" }}>
                   <Form.Control
                     type="date"
-                    onKeyDown={(e) => e.preventDefault()}
                     min={moment(new Date())
                       .subtract(50, "years")
                       .format("YYYY-MM-DD")}

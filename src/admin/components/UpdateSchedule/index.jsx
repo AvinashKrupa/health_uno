@@ -203,6 +203,7 @@ const UpdateSchedule = ({ data }) => {
   function getSlots() {
     let params = {
       doctor_id: data.additional_info._id,
+      look_ahead:true,
       date: currentDate,
     };
 

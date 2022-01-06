@@ -5818,3 +5818,7 @@ input#menu[type="checkbox"] {
 .textarea-label, .form-label {
   font-size: 20px;
 }
+
+.p-10 {
+  padding: 10px !important;
+}

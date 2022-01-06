@@ -45,7 +45,12 @@ class Chat extends Component {
           }),
         };
       });
-      this.setState({ conversations: conversations, user_id: user_id });
+      const sortedConversation = conversations.sort(function compare(a, b) {
+        var dateA = new Date(a.last_message.created_at);
+        var dateB = new Date(b.last_message.created_at);
+        return dateB - dateA;
+      })
+      this.setState({ conversations: sortedConversation, user_id: user_id });
     } catch (e) {
     }
   }
@@ -80,15 +85,25 @@ class Chat extends Component {
       existingConversationList[ConversationIndex] = conversationList
       existingConversationList[ConversationIndex].recipient = conversationList.participants.find((obj) => {
         return obj._id !== user_id;
-      }),
-      this.setState({ conversations: existingConversationList });
+      })
+      const sortedConversation = existingConversationList.sort(function compare(a, b) {
+        var dateA = new Date(a.last_message.created_at);
+        var dateB = new Date(b.last_message.created_at);
+        return dateB - dateA;
+      })
+      this.setState({ conversations: sortedConversation });
     }else{
       const newConversation = conversationList;
       newConversation.recipient = conversationList.participants.find((obj) => {
         return obj._id !== user_id;
       }),
       existingConversationList.push(newConversation)
-      this.setState({ conversations: existingConversationList });
+      const sortedConversation = existingConversationList.sort(function compare(a, b) {
+        var dateA = new Date(a.last_message.created_at);
+        var dateB = new Date(b.last_message.created_at);
+        return dateB - dateA;
+      })
+      this.setState({ conversations: sortedConversation });
     }
 
   }
