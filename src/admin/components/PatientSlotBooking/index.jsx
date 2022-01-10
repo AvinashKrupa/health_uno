@@ -109,7 +109,6 @@ const PatientSlotBooking = (props) => {
     // post(API.GETAVAILABLESLOT, params)
     fetchApi({ url: "v1/slot/getAvailableSlots", method: "POST", body: params })
       .then(response => {
-          console.log('response :>> ', response);
         if (response.status === 200) {
           if (response.data.shift1) {
             let data = response.data.shift1.map(info => {

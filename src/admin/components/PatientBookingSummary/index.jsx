@@ -95,7 +95,6 @@ const PatientBookingSummary = (props) => {
         }
       })
       .catch((error) => {
-        console.log('error :>> ', error);
         // toast.error(error.message, { appearance: "error" });
         setShowCouponLoader(false);
       });
@@ -174,7 +173,6 @@ const PatientBookingSummary = (props) => {
           }, 1000);
         }
       }).catch((error) => {
-        console.log('error :>> ', error);
         // toast.error(error.message, { appearance: "error" });
         setShowLoader(false);
       });;
