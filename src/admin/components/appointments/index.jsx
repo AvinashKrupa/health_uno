@@ -176,7 +176,7 @@ class Appointments extends Component {
         ];
         break;
       case "cancelled":
-        optionData = [""];
+        optionData = statusArray;
         break;
       case "reserved":
         optionData = ["cancelled"];
