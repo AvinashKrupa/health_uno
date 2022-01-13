@@ -457,3 +457,86 @@ export const renderButton = (onButtonClick) => {
       </button>
   )
 }
+
+export const getUpdatedColumnSearchProps = (
+  context,
+  dataIndex,
+  handleSearch,
+  handleReset,
+  recordValueToCompare
+) => ({
+  filterDropdown: ({
+    setSelectedKeys,
+    selectedKeys,
+    confirm,
+    clearFilters,
+  }) => (
+    <div style={{ padding: 8 }}>
+      <Input
+        ref={(node) => {
+          context.searchInput = node;
+        }}
+        placeholder={`Search ${dataIndex}`}
+        value={selectedKeys[0]}
+        onChange={(e) =>
+          setSelectedKeys(e.target.value ? [e.target.value] : [])
+        }
+        onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+        style={{ marginBottom: 8, display: "block" }}
+      />
+      <Space>
+        <Button
+          type="primary"
+          onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          size="small"
+          style={{ width: 90 }}
+        >
+          Search
+        </Button>
+        <Button
+          onClick={() => handleReset(clearFilters, dataIndex)}
+          size="small"
+          style={{ width: 90 }}
+        >
+          Reset
+        </Button>
+      </Space>
+    </div>
+  ),
+  onFilterDropdownVisibleChange: (visible) => {
+    if (visible) {
+      setTimeout(() => context.searchInput.select(), 100);
+    }
+  },
+});
+
+export const getUpdatedColumnDropDownSearchProps = (
+  context,
+  items,
+  dataIndex,
+  handleSearch,
+  handleReset,
+  recordValueToCompare
+) => ({
+  filterDropdown: ({
+    setSelectedKeys,
+    selectedKeys,
+    confirm,
+    clearFilters,
+  }) => (
+    <div style={{ padding: 8 }}>
+      <Select
+        style={{ width: 120 }}
+        onChange={(value) => {
+          setSelectedKeys(value ? (value === "All" ? [] : [value]) : []);
+          handleSearch(selectedKeys, confirm, dataIndex);
+        }}
+      >
+        <Select.Option value="All">All</Select.Option>
+        {items.map((item) => {
+          return <Select.Option value={item}> {item} </Select.Option>;
+        })}
+      </Select>
+    </div>
+  ),
+});
