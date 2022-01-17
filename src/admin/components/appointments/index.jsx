@@ -22,6 +22,7 @@ import {
   sorterText,
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
+import { Col, Row, Button } from "react-bootstrap";
 
 const statusArray = [
   "pending",
@@ -33,7 +34,7 @@ const statusArray = [
   "reschedule",
 ];
 
-const statusHasNoOption = ["pending", 'cancelled', "completed"];
+const statusHasNoOption = ["pending", "cancelled", "completed"];
 
 class Appointments extends Component {
   constructor(props) {
@@ -52,10 +53,12 @@ class Appointments extends Component {
       searchedColumn: "",
       page: 1,
       filtered: false,
-      filters:{
-        patient_name:'',
-        doc_name: '',
-        status: []
+      fromDate: '',
+      toDate: '',
+      filters: {
+        patient_name: "",
+        doc_name: "",
+        status: [],
       },
       appointmentStats: {
         pending: 0,
@@ -69,7 +72,7 @@ class Appointments extends Component {
 
   async fetchAppointment(params = {}) {
     const body = {
-      ...params
+      ...params,
     };
     let appointments = await fetchApi({
       url: "v2/appointments",
@@ -81,7 +84,7 @@ class Appointments extends Component {
     this.setState({
       data: apnts,
       total: appointments.data.total,
-      loading:false,
+      loading: false,
       exportingData: apnts,
       appointmentStats: appointmentStats,
       pagination: {
@@ -158,68 +161,121 @@ class Appointments extends Component {
   }
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
-    this.setState({
-          filters: {
-            ...this.state.filters,
-            ...(dataIndex == "Doctor" && {doc_name: selectedKeys[0]}),
-            ...(dataIndex == "Patient" && {patient_name: selectedKeys[0]}),
-          },
-        }, () => {
-          const obj = {
-            page: 1,
-            limit: this.state.pagination.limit,
-            filter: {
-              ...this.state.filters,
-            },
-          };
-          this.fetchAppointment(obj);
-        });
+    this.setState(
+      {
+        filters: {
+          ...this.state.filters,
+          ...(dataIndex == "Doctor" && { doc_name: selectedKeys[0] }),
+          ...(dataIndex == "Patient" && { patient_name: selectedKeys[0] }),
+        },
+      },
+      () => {
+        confirm();
+        // const obj = {
+        //   page: 1,
+        //   limit: this.state.pagination.limit,
+        //   filter: {
+        //     ...this.state.filters,
+        //   },
+        // };
+        // this.fetchAppointment(obj);
+      }
+    );
   };
-
 
   handleDataChange = (pagination, currentfilters, sorter, extra) => {
-
-    this.setState({
-      pagination: { page: pagination.current, limit: pagination.pageSize },
-      loading:true,
-      filters: {
-        ...this.state.filters, 
-        ...(currentfilters.hasOwnProperty('status') && currentfilters.status==null ? {status: []} : currentfilters.status && currentfilters.status.length> 0 && {status: currentfilters.status})
-      }
-    }, () =>{
-      const obj = {
-        sort_key: sorter.field,
-        sort_order: sorter.order,
-        page: pagination.current,
-        limit: pagination.pageSize,
-        filter:{
+    this.setState(
+      {
+        pagination: { page: pagination.current, limit: pagination.pageSize },
+        loading: true,
+        filters: {
           ...this.state.filters,
+          ...(currentfilters.hasOwnProperty("status") &&
+          currentfilters.status == null
+            ? { status: [] }
+            : currentfilters.status &&
+              currentfilters.status.length > 0 && {
+                status: currentfilters.status,
+              }),
         },
-      };
-      this.fetchAppointment(obj);
-    });
-    
+      },
+      () => {
+        const obj = {
+          sort_key: sorter.field,
+          sort_order: sorter.order,
+          page: pagination.current,
+          limit: pagination.pageSize,
+          filter: {
+            ...this.state.filters,
+          },
+        };
+        this.fetchAppointment(obj);
+      }
+    );
   };
   handleReset = (clearFilters, dataIndex) => {
-    clearFilters();
-    this.setState({ searchText: "" });
-    this.setState({
-      filters: {
-        ...this.state.filters,
-        ...(dataIndex == "Doctor" && {doc_name: ''}),
-        ...(dataIndex == "Patient" && {patient_name: ''}),
-      },
-    }, () => {
-      const { pagination } = this.state;
-      const obj ={
-        ...pagination,
-        filter: {
+    this.setState(
+      {
+        searchText: "",
+        filters: {
           ...this.state.filters,
+          ...(dataIndex == "Doctor" && { doc_name: "" }),
+          ...(dataIndex == "Patient" && { patient_name: "" }),
+        },
+      },
+      () => {
+        const { pagination } = this.state;
+        const obj = {
+          ...pagination,
+          filter: {
+            ...this.state.filters,
+          },
+        };
+        this.fetchAppointment(obj);
+        clearFilters();
+      }
+    );
+  };
+
+  handleDateChange = (event) => {
+    const{ value, name } = event.target;
+    this.setState({
+      [name]: value
+    })
+  }
+
+  handleDateFilter = () => {
+    const { fromDate, toDate} = this.state;
+    this.setState({
+      filters : {
+        ...this.state.filters,
+        time : {
+          start: fromDate,
+          end: toDate
+        }
+      }
+    }, () => {
+      const filterValue = this.state.filters;
+      if(this.state.fromDate=='' && this.state.toDate==''){
+        delete filterValue.time
+      }
+      const obj = {
+        filter: {
+          ...filterValue
         },
       }
-      this.fetchAppointment(obj);
+      this.fetchAppointment(obj)
     })
-  };
+  }
+
+  handleDateClear = () => {
+    this.setState({
+      fromDate: '',
+      toDate: ''
+    }, () => {
+      this.handleDateFilter();
+    })
+  }
 
   getCompletionPercent(currentVal) {
     let val = this.state.appointmentStats[currentVal];
@@ -227,7 +283,6 @@ class Appointments extends Component {
   }
 
   handleChangeOption = (status) => {
-   
     let optionData;
     switch (status) {
       case "scheduled":
@@ -261,11 +316,11 @@ class Appointments extends Component {
   };
 
   render() {
-    const { data, exportingData } = this.state;
+    const { data, exportingData, fromDate, toDate } = this.state;
     const columns = [
       {
         title: "Appointment Time",
-        dataIndex: 'time.utc_time',
+        dataIndex: "time.utc_time",
         render: (text, record) =>
           renderAppointment(record.time.utc_time, record.time.slot),
         sorter: true,
@@ -301,7 +356,7 @@ class Appointments extends Component {
         title: "Reason",
         render: (text, record) => renderText(record.reason),
         sorter: true,
-        dataIndex: 'reason'
+        dataIndex: "reason",
       },
       {
         title: "Consulting type",
@@ -562,22 +617,40 @@ class Appointments extends Component {
                 <div className="card">
                   <div className="card-body">
                     <div>
-                      <ExportTableButton
-                        dataSource={exportingData}
-                        columns={columns}
-                        btnProps={{ type: "primary" }}
-                        fileName="appointments-data"
-                        fields={fields}
-                      >
-                        Export
-                      </ExportTableButton>
+                    <Row>
+                        <Col>
+                          <ExportTableButton
+                            dataSource={exportingData}
+                            columns={columns}
+                            btnProps={{ type: "primary" }}
+                            fileName="appointments-data"
+                            fields={fields}
+                          >
+                            Export
+                          </ExportTableButton>
+                        </Col>
+                        <Col>
+                          <Row>
+                            <Col>
+                              <span>From</span><input type="date" name="fromDate" value={fromDate} onChange={this.handleDateChange} className="form-control" />
+                            </Col>
+                            <Col>
+                              <span>To</span><input type="date" name="toDate" value={toDate} onChange={this.handleDateChange} className="form-control" />
+                            </Col>
+                            <Col>
+                              <Button disabled={!fromDate || !toDate} onClick={this.handleDateFilter} style={{marginTop: "12%"}}>Apply Filter</Button>
+                              <Button variant="secondary" onClick={() => this.handleDateClear()} style={{marginTop: "12%"}}>Clear Filter</Button>
+                            </Col>
+                          </Row>
+                        </Col>
+                      </Row>
                       <Table
                         className="table-striped"
                         scroll={{ x: 1300 }}
                         columns={columns}
                         rowKey={(record) => record._id}
                         dataSource={data}
-                        pagination={{      
+                        pagination={{
                           position: ["topRight", "bottomRight"],
                           total:
                             this.state.total >= 0

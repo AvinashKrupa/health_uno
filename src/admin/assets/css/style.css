@@ -5822,3 +5822,9 @@ input#menu[type="checkbox"] {
 .p-10 {
   padding: 10px !important;
 }
+
+.filter_appointment{
+  display: flex;
+  justify-content: flex-end;
+  width: 500px;
+}
