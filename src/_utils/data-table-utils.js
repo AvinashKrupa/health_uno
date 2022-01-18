@@ -329,13 +329,13 @@ export const getColumnSearchProps = (
         onChange={(e) =>
           setSelectedKeys(e.target.value ? [e.target.value] : [])
         }
-        onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+        onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex, "name")}
         style={{ marginBottom: 8, display: "block" }}
       />
       <Space>
         <Button
           type="primary"
-          onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          onClick={() => handleSearch(selectedKeys, confirm, dataIndex, "name")}
           size="small"
           style={{ width: 90 }}
         >
@@ -386,7 +386,7 @@ export const getColumnDropDownSearchProps = (
         style={{ width: 120 }}
         onChange={(value) => {
           setSelectedKeys(value ? (value === "All" ? [] : [value]) : []);
-          handleSearch(selectedKeys, confirm, dataIndex);
+          handleSearch(value ? (value === "All" ? [] : [value]) : [], confirm, dataIndex, "dept_name");
         }}
       >
         <Select.Option value="All">All</Select.Option>
