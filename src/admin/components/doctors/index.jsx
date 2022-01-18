@@ -35,24 +35,49 @@ class Doctors extends Component {
       exportingData: [],
       showMenu: {},
       searchText: "",
+      searchDept: "",
+      searchStatus: "",
       departments:[],
       searchedColumn: "",
+      pagination: {
+        page: 1,
+        limit: 10,
+      },
+      loading: false,
+      page: 1,
     };
   }
 
+  async fetchDoctors(params = {}) {
+    const body = {
+      ...params
+    };
+    let doctors = await fetchApi({
+      url: "v2/doctors",
+      method: "POST",
+      body: body,
+    });
+    let doctorsData = doctors.data.docs;
+    this.setState({ data: doctorsData,
+      exportingData: doctorsData,
+      loading: false,
+      total: doctors.data.total,
+      pagination: {
+        page: doctors.data.page,
+        limit: doctors.data.limit,
+        total: doctors.data.total,
+      },
+     });
+  }
+
   async componentDidMount() {
-    let doctors = await fetchApi({ url: "v1/doctors", method: "GET" });
+    const { pagination } = this.state;
+    this.fetchDoctors(pagination);
     let deptData = await fetchApi({ url: "v1/departments", method: "GET" });
     let departments = deptData.data.map((ele)=>{
       return ele.title
     })
-    let doctorsData = doctors.data;
-    this.setState({ data: doctorsData,
-      exportingData: doctorsData,
-      departments:departments
-     });
-    // this.setState({ exportingData: doctorsData });
-    // this.setState({departments:departments})
+    this.setState({departments:departments})
   }
 
   async handleItemClick(record, dropdownItem) {
@@ -74,17 +99,41 @@ class Doctors extends Component {
     }
   }
  
-  handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-    this.setState({
-      searchText: selectedKeys[0],
-      searchedColumn: dataIndex,
-    });
+  handleSearch = (selectedKeys, confirm, dataIndex, fieldName) => {
+    // confirm();
+    if(fieldName === "name") {
+        this.setState({searchText: selectedKeys[0]})
+    }
+    else if(fieldName === "dept_name"){
+        this.setState({searchDept: selectedKeys})
+    }
+    const filter = {
+      ...({ name: fieldName == "name" ? selectedKeys[0] : this.state.searchText}),
+      ...( { dept_name: fieldName == "dept_name" ? selectedKeys : this.state.searchDept }),
+      ...({status: this.state.searchStatus})
+    }
+    const obj = {
+      page: 1,
+      limit: this.state.pagination.limit,
+      filter: {
+        ...filter,
+      },
+    };
+    this.fetchDoctors(obj);
   };
 
   handleReset = (clearFilters) => {
     clearFilters();
     this.setState({ searchText: "" });
+    const obj = {
+      page: 1,
+      limit: this.state.pagination.limit,
+      filter: {
+        dept_name: this.state.searchDept,
+        status: this.state.searchStatus,
+      }
+    }
+    this.fetchDoctors(obj);
   };
   handleDropdownClick(record) {
     let isShown = this.state.showMenu[record._id];
@@ -96,10 +145,16 @@ class Doctors extends Component {
   }
 
   handleDataChange = (pagination, filters, sorter, extra) => {
-    this.setState({
-      total: extra.currentDataSource.length,
-      exportingData:extra.currentDataSource
-    });
+    if(filters.status) { this.setState({searchStatus: filters.status}) }
+    else(this.setState({searchStatus: ""}))
+      const obj = {
+        sort_key: sorter.field,
+        sort_order: sorter.order,
+        page: pagination.current,
+        limit: pagination.pageSize,
+        filter: {name: this.state.searchText, dept_name: this.state.searchDept, status: filters.status}
+      };
+      this.fetchDoctors(obj);
   };
 
   render() {
@@ -109,6 +164,7 @@ class Doctors extends Component {
       {
         title: "Doctor Name",
         render: (text, record) => renderName(record, "Dr", "", true),
+        dataIndex: 'first_name',
         sorter: (a, b) => sorterText(a.first_name, b.first_name),
         ...getColumnSearchProps(
           this,
@@ -121,12 +177,14 @@ class Doctors extends Component {
       {
         title: "Med Reg No.",
         render: (text, record) => renderText(record.qualif.med_reg_num),
+        dataIndex: "qualif.med_reg_num",
         sorter: (a, b) =>
           sorterText(a.qualif.med_reg_num, b.qualif.med_reg_num),
       },
       {
         title: "Department",
         render: (text, record) => renderText(record.qualif.dept_id.title),
+        dataIndex: "qualif.dept_id.title",
         sorter: (a, b) =>
           sorterText(a.qualif.dept_id.title, b.qualif.dept_id.title),
         ...getColumnDropDownSearchProps(
@@ -141,16 +199,19 @@ class Doctors extends Component {
       {
         title: "Experience (Years)",
         render: (text, record) => renderText(record.qualif.exp),
+        dataIndex: "qualif.exp",
         sorter: (a, b) => sorterNumber(a.qualif.exp, b.qualif.exp),
       },
       {
         title: "Fees (Rupees)",
         render: (text, record) => renderText(record.qualif.fee),
+        dataIndex: "qualif.fee",
         sorter: (a, b) => sorterNumber(a.qualif.fee, b.qualif.fee),
       },
       {
         title: "Highest Qualification",
         render: (text, record) => renderText(record.qualif.highest_qual.name),
+        dataIndex: "qualif.highest_qual.name",
         sorter: (a, b) =>
           sorterText(a.qualif.highest_qual.name, b.qualif.highest_qual.name),
       },
@@ -204,24 +265,28 @@ class Doctors extends Component {
     const fields = {
       doctorname: {
         header: "Doctor Name",
+        dataIndex: 'first_name',
         formatter: (_fieldValue, record) => {
           return record?.first_name + " " + record?.last_name;
         },
       },
       med_reg_num: {
         header: "Med Reg No.",
+        dataIndex: "qualif.med_reg_num",
         formatter: (_fieldValue, record) => {
           return record?.qualif.med_reg_num;
         },
       },
       dept: {
         header: "Department",
+        dataIndex: "qualif.dept_id.title",
         formatter: (_fieldValue, record) => {
           return record?.qualif.dept_id.title;
         },
       },
       exp: {
         header: "Experience (Years)",
+        dataIndex: "qualif.exp",
         formatter: (_fieldValue, record) => {
           return record?.qualif.exp;
         },
@@ -229,12 +294,14 @@ class Doctors extends Component {
      
       fees: {
         header: "Fees (Rupees)",
+        dataIndex: "qualif.fee",
         formatter: (_fieldValue, record) => {
           return record?.qualif.fee;
         },
       },
       highest_qualify: {
         header: "Highest Qualification",
+        dataIndex: "qualif.highest_qual.name",
         formatter: (_fieldValue, record) => {
           return  record?.qualif.highest_qual.name;
         },
@@ -248,18 +315,21 @@ class Doctors extends Component {
       
       created_at: {
         header: "Created At",
+        dataIndex: "created_at",
         formatter: (_fieldValue, record) => {
           return moment(record?.created_at).format('DD/MM/YYYY');
         },
       },
       updated_at: {
         header: "Updated At",
+        dataIndex: "updated_at",
         formatter: (_fieldValue, record) => {
           return moment(record?.updated_at).format('DD/MM/YYYY');
         },
       },
       status: {
         header: "Account Status",
+        dataIndex: "status",
         formatter: (_fieldValue, record) => {
           return record?.status;
         },
@@ -309,6 +379,7 @@ class Doctors extends Component {
                         style={{ overflowX: "auto" }}
                         columns={columns}
                         onChange={this.handleDataChange}
+                        loading={this.state.loading}
                         // bordered
                         dataSource={data}
                         rowKey={(record) => record._id}
