@@ -118,14 +118,6 @@ class Doctors extends Component {
         ...filter,
       }
     }, () => confirm())
-    // const obj = {
-    //   page: 1,
-    //   limit: this.state.pagination.limit,
-    //   filter: {
-    //     ...filter,
-    //   },
-    // };
-    // this.fetchDoctors(obj);
   };
 
   handleReset = (clearFilters) => {
@@ -135,17 +127,6 @@ class Doctors extends Component {
       dept_name: this.state.searchDept,
       status: this.state.searchStatus,
     }}, () => clearFilters())
-    // clearFilters();
-    // this.setState({ searchText: "" });
-    // const obj = {
-    //   page: 1,
-    //   limit: this.state.pagination.limit,
-    //   filter: {
-    //     dept_name: this.state.searchDept,
-    //     status: this.state.searchStatus,
-    //   }
-    // }
-    // this.fetchDoctors(obj);
   };
   handleDropdownClick(record) {
     let isShown = this.state.showMenu[record._id];
