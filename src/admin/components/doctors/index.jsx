@@ -10,6 +10,7 @@ import {
 import { fetchApi } from "../../../_utils/http-utils";
 import {
   getColumnFilterProps,
+  getUpdatedColumnSearchProps,
   getColumnSearchProps,
   getColumnDropDownSearchProps,
   renderChips,
@@ -112,28 +113,20 @@ class Doctors extends Component {
       ...( { dept_name: fieldName == "dept_name" ? selectedKeys : this.state.searchDept }),
       ...({status: this.state.searchStatus})
     }
-    const obj = {
-      page: 1,
-      limit: this.state.pagination.limit,
-      filter: {
+    this.setState({
+      filters: {
         ...filter,
-      },
-    };
-    this.fetchDoctors(obj);
+      }
+    }, () => confirm())
   };
 
   handleReset = (clearFilters) => {
-    clearFilters();
-    this.setState({ searchText: "" });
-    const obj = {
-      page: 1,
-      limit: this.state.pagination.limit,
-      filter: {
-        dept_name: this.state.searchDept,
-        status: this.state.searchStatus,
-      }
-    }
-    this.fetchDoctors(obj);
+    this.setState({searchText:"",  page: 1,
+    limit: this.state.pagination.limit,
+    filter: {
+      dept_name: this.state.searchDept,
+      status: this.state.searchStatus,
+    }}, () => clearFilters())
   };
   handleDropdownClick(record) {
     let isShown = this.state.showMenu[record._id];
@@ -166,7 +159,7 @@ class Doctors extends Component {
         render: (text, record) => renderName(record, "Dr", "", true),
         dataIndex: 'first_name',
         sorter: (a, b) => sorterText(a.first_name, b.first_name),
-        ...getColumnSearchProps(
+        ...getUpdatedColumnSearchProps(
           this,
           "Doctor",
           this.handleSearch,
