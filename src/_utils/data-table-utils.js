@@ -481,13 +481,13 @@ export const getUpdatedColumnSearchProps = (
         onChange={(e) =>
           setSelectedKeys(e.target.value ? [e.target.value] : [])
         }
-        onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+        onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex, 'name')}
         style={{ marginBottom: 8, display: "block" }}
       />
       <Space>
         <Button
           type="primary"
-          onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          onClick={() => handleSearch(selectedKeys, confirm, dataIndex, 'name')}
           size="small"
           style={{ width: 90 }}
         >
