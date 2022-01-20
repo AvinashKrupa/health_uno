@@ -65,6 +65,10 @@ class TableAppointmentList extends Component {
   render() {
     const columns = [
       {
+        title: "Appointment ID",
+        dataIndex: "huno_id",
+      },
+      {
         title: "Doctor Name",
         dataIndex: "Name",
         render: (text, record) =>
