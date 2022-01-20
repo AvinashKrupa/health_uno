@@ -9,7 +9,7 @@ import {
 import { fetchApi } from "../../../_utils/http-utils";
 import {
   getColumnFilterProps,
-  getColumnSearchProps,
+  getUpdatedColumnSearchProps,
   renderAppointment,
   renderDate,
   renderDropDown,
@@ -22,6 +22,7 @@ import {
   sorterText,
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
+import { Col, Row, Button } from "react-bootstrap";
 
 const statusArray = [
   "pending",
@@ -33,18 +34,32 @@ const statusArray = [
   "reschedule",
 ];
 
-const statusHasNoOption = ["pending", "completed"];
+const statusHasNoOption = ["pending", "cancelled", "completed"];
 
 class Appointments extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      pagination: {
+        page: 1,
+        limit: 10,
+      },
+      loading: false,
       total: null,
       data: [],
       exportingData: [],
       showMenu: {},
       searchText: "",
       searchedColumn: "",
+      page: 1,
+      filtered: false,
+      fromDate: '',
+      toDate: '',
+      filters: {
+        patient_name: "",
+        doc_name: "",
+        status: [],
+      },
       appointmentStats: {
         pending: 0,
         completed: 0,
@@ -55,18 +70,34 @@ class Appointments extends Component {
     };
   }
 
-  async componentDidMount() {
+  async fetchAppointment(params = {}) {
+    const body = {
+      ...params,
+    };
     let appointments = await fetchApi({
-      url: "v1/appointments",
-      method: "GET",
+      url: "v2/appointments",
+      method: "POST",
+      body: body,
     });
-    let appointmentStats = this.getStats(appointments.data);
-    let apnts = appointments.data;
+    let appointmentStats = this.getStats(appointments.data.docs);
+    let apnts = appointments.data.docs;
     this.setState({
       data: apnts,
+      total: appointments.data.total,
+      loading: false,
       exportingData: apnts,
       appointmentStats: appointmentStats,
+      pagination: {
+        page: appointments.data.page,
+        limit: appointments.data.limit,
+        total: appointments.data.total,
+      },
     });
+  }
+
+  async componentDidMount() {
+    const { pagination } = this.state;
+    this.fetchAppointment(pagination);
   }
 
   componentDidUpdate() {
@@ -130,24 +161,121 @@ class Appointments extends Component {
   }
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
+    this.setState(
+      {
+        filters: {
+          ...this.state.filters,
+          ...(dataIndex == "Doctor" && { doc_name: selectedKeys[0] }),
+          ...(dataIndex == "Patient" && { patient_name: selectedKeys[0] }),
+        },
+      },
+      () => {
+        confirm();
+        // const obj = {
+        //   page: 1,
+        //   limit: this.state.pagination.limit,
+        //   filter: {
+        //     ...this.state.filters,
+        //   },
+        // };
+        // this.fetchAppointment(obj);
+      }
+    );
+  };
+
+  handleDataChange = (pagination, currentfilters, sorter, extra) => {
+    this.setState(
+      {
+        pagination: { page: pagination.current, limit: pagination.pageSize },
+        loading: true,
+        filters: {
+          ...this.state.filters,
+          ...(currentfilters.hasOwnProperty("status") &&
+          currentfilters.status == null
+            ? { status: [] }
+            : currentfilters.status &&
+              currentfilters.status.length > 0 && {
+                status: currentfilters.status,
+              }),
+        },
+      },
+      () => {
+        const obj = {
+          sort_key: sorter.field,
+          sort_order: sorter.order,
+          page: pagination.current,
+          limit: pagination.pageSize,
+          filter: {
+            ...this.state.filters,
+          },
+        };
+        this.fetchAppointment(obj);
+      }
+    );
+  };
+  handleReset = (clearFilters, dataIndex) => {
+    this.setState(
+      {
+        searchText: "",
+        filters: {
+          ...this.state.filters,
+          ...(dataIndex == "Doctor" && { doc_name: "" }),
+          ...(dataIndex == "Patient" && { patient_name: "" }),
+        },
+      },
+      () => {
+        const { pagination } = this.state;
+        const obj = {
+          ...pagination,
+          filter: {
+            ...this.state.filters,
+          },
+        };
+        this.fetchAppointment(obj);
+        clearFilters();
+      }
+    );
+  };
+
+  handleDateChange = (event) => {
+    const{ value, name } = event.target;
     this.setState({
-      searchText: selectedKeys[0],
-      searchedColumn: dataIndex,
-    });
-  };
-  handleDataChange = (pagination, filters, sorter, extra) => {
-    let appointmentStats = this.getStats(extra.currentDataSource);
+      [name]: value
+    })
+  }
+
+  handleDateFilter = () => {
+    const { fromDate, toDate} = this.state;
     this.setState({
-      appointmentStats: appointmentStats,
-      total: extra.currentDataSource.length,
-      exportingData: extra.currentDataSource,
-    });
-  };
-  handleReset = (clearFilters) => {
-    clearFilters();
-    this.setState({ searchText: "" });
-  };
+      filters : {
+        ...this.state.filters,
+        time : {
+          start: fromDate,
+          end: toDate
+        }
+      }
+    }, () => {
+      const filterValue = this.state.filters;
+      if(this.state.fromDate=='' && this.state.toDate==''){
+        delete filterValue.time
+      }
+      const obj = {
+        filter: {
+          ...filterValue
+        },
+      }
+      this.fetchAppointment(obj)
+    })
+  }
+
+  handleDateClear = () => {
+    this.setState({
+      fromDate: '',
+      toDate: ''
+    }, () => {
+      this.handleDateFilter();
+    })
+  }
 
   getCompletionPercent(currentVal) {
     let val = this.state.appointmentStats[currentVal];
@@ -155,16 +283,6 @@ class Appointments extends Component {
   }
 
   handleChangeOption = (status) => {
-    // const optionData = statusArray.filter((item) => item !== status);
-    // if (status === "scheduled") {
-    //   return optionData;
-    // } else {
-    //   const index = optionData.findIndex((option) => option === "reschedule");
-    //   if (index > -1) {
-    //     optionData.splice(index, 1);
-    //   }
-    //   return optionData;
-    // }
     let optionData;
     switch (status) {
       case "scheduled":
@@ -174,9 +292,6 @@ class Appointments extends Component {
           "completed",
           "reschedule",
         ];
-        break;
-      case "cancelled":
-        optionData = statusArray;
         break;
       case "reserved":
         optionData = ["cancelled"];
@@ -201,31 +316,22 @@ class Appointments extends Component {
   };
 
   render() {
-    const { data, exportingData } = this.state;
-
+    const { data, exportingData, fromDate, toDate } = this.state;
     const columns = [
       {
         title: "Appointment Time",
+        dataIndex: "time.utc_time",
         render: (text, record) =>
           renderAppointment(record.time.utc_time, record.time.slot),
-        sorter: (a, b) => sorterDate(a.time.utc_time, b.time.utc_time),
+        sorter: true,
       },
       {
         title: "Patient",
-        render: (text, record) => renderNameForAppointment(
-          record.patient,
-          "",
-          "",
-          false,
-          "patient"
-        ),
-        sorter: (a, b) =>
-          sorterText(
-            a.patient.user_id.first_name,
-            b.patient.user_id.first_name
-          ),
+        render: (text, record) =>
+          renderNameForAppointment(record.patient, "", "", false, "patient"),
+        sorter: true,
 
-        ...getColumnSearchProps(
+        ...getUpdatedColumnSearchProps(
           this,
           "Patient",
           this.handleSearch,
@@ -235,15 +341,10 @@ class Appointments extends Component {
       },
       {
         title: "Doctor",
-        render: (text, record) => renderNameForAppointment(
-          record.doctor,
-          "Dr",
-          "",
-          false,
-          "doctor"
-        ),
+        render: (text, record) =>
+          renderNameForAppointment(record.doctor, "Dr", "", false, "doctor"),
         sorter: (a, b) => sorterText(a.doctor.first_name, b.doctor.first_name),
-        ...getColumnSearchProps(
+        ...getUpdatedColumnSearchProps(
           this,
           "Doctor",
           this.handleSearch,
@@ -254,40 +355,52 @@ class Appointments extends Component {
       {
         title: "Reason",
         render: (text, record) => renderText(record.reason),
-        sorter: (a, b) => sorterText(a.reason, b.reason),
+        sorter: true,
+        dataIndex: "reason",
       },
       {
         title: "Consulting type",
         dataIndex: "consulting_type",
         render: (text) => renderText(text),
-        sorter: (a, b) => sorterText(a.consulting_type, b.consulting_type),
+        sorter: true,
       },
       {
         title: "Fees (Rupees)",
         render: (text, record) => renderText(record.fee),
-        sorter: (a, b) => sorterNumber(a.fee, b.fee),
+        dataIndex: "fee",
+        sorter: true,
       },
       {
         title: "Created At",
         dataIndex: "created_at",
         render: (text) => renderDate(text),
-        sorter: (a, b) => sorterDate(a.created_at, b.created_at),
+        sorter: true,
       },
       {
         title: "Updated At",
         dataIndex: "updated_at",
         render: (text) => renderDate(text),
-        sorter: (a, b) => sorterDate(a.updated_at, b.updated_at),
+        sorter: true,
       },
       {
         title: "Created by",
         dataIndex: "created_by",
-        render: (text, record) => <span>{record.created_by.first_name + ' ' + record.created_by.first_name}</span>,
+        render: (text, record) => (
+          <span>
+            {record.created_by.first_name + " " + record.created_by.first_name}
+          </span>
+        ),
       },
       {
         title: "Updated by",
         dataIndex: "updated_by",
-        render: (text, record) => <span>{record.updated_by.first_name + ' ' + record.updated_by.first_name}</span>,
+        render: (text, record) => (
+          <span>
+            {record.updated_by?.first_name +
+              " " +
+              record.updated_by?.first_name}
+          </span>
+        ),
       },
       {
         title: "Appointment Status",
@@ -299,7 +412,7 @@ class Appointments extends Component {
         dataIndex: "status",
         key: "status",
         render: (text) => renderText(text),
-        sorter: (a, b) => sorterText(a.status, b.status),
+        sorter: true,
         ...getColumnFilterProps(statusArray, "status"),
       },
       {
@@ -504,24 +617,39 @@ class Appointments extends Component {
                 <div className="card">
                   <div className="card-body">
                     <div>
-                      <ExportTableButton
-                        dataSource={exportingData}
-                        columns={columns}
-                        btnProps={{ type: "primary" }}
-                        fileName="appointments-data"
-                        fields={fields}
-                      >
-                        Export
-                      </ExportTableButton>
+                    <Row>
+                        <Col>
+                          <ExportTableButton
+                            dataSource={exportingData}
+                            columns={columns}
+                            btnProps={{ type: "primary" }}
+                            fileName="appointments-data"
+                            fields={fields}
+                          >
+                            Export
+                          </ExportTableButton>
+                        </Col>
+                        <Col>
+                          <Row>
+                            <Col>
+                              <span>From</span><input type="date" name="fromDate" value={fromDate} onChange={this.handleDateChange} className="form-control" />
+                            </Col>
+                            <Col>
+                              <span>To</span><input type="date" name="toDate" value={toDate} onChange={this.handleDateChange} className="form-control" />
+                            </Col>
+                            <Col>
+                              <Button disabled={!fromDate || !toDate} onClick={this.handleDateFilter} style={{marginTop: "12%"}}>Apply Filter</Button>
+                              <Button variant="secondary" onClick={() => this.handleDateClear()} style={{marginTop: "12%"}}>Clear Filter</Button>
+                            </Col>
+                          </Row>
+                        </Col>
+                      </Row>
                       <Table
                         className="table-striped"
-                        columns={columns}
                         scroll={{ x: 1300 }}
-                        // bordered
-                        onChange={this.handleDataChange}
-                        dataSource={data}
+                        columns={columns}
                         rowKey={(record) => record._id}
-                        showSizeChanger={true}
+                        dataSource={data}
                         pagination={{
                           position: ["topRight", "bottomRight"],
                           total:
@@ -534,6 +662,8 @@ class Appointments extends Component {
                           onShowSizeChange: onShowSizeChange,
                           itemRender: itemRender,
                         }}
+                        loading={this.state.loading}
+                        onChange={this.handleDataChange}
                       />
                     </div>
                   </div>
