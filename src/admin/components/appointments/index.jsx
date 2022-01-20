@@ -319,6 +319,11 @@ class Appointments extends Component {
     const { data, exportingData, fromDate, toDate } = this.state;
     const columns = [
       {
+        title: "Appointment ID",
+        dataIndex: "huno_id",
+        sorter: true,
+      },
+      {
         title: "Appointment Time",
         dataIndex: "time.utc_time",
         render: (text, record) =>
@@ -431,6 +436,12 @@ class Appointments extends Component {
       },
     ];
     const fields = {
+      appointment_id: {
+        header: "Appointment ID",
+        formatter: (_fieldValue, record) => {
+          return record?.huno_id;
+        },
+      },
       appointment_time: {
         header: "Appointment Time",
         formatter: (_fieldValue, record) => {
