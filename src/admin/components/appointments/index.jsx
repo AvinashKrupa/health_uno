@@ -23,6 +23,7 @@ import {
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
 import { Col, Row, Button } from "react-bootstrap";
+import CSVButton from "../CSVButton";
 
 const statusArray = [
   "pending",
@@ -53,8 +54,9 @@ class Appointments extends Component {
       searchedColumn: "",
       page: 1,
       filtered: false,
-      fromDate: '',
-      toDate: '',
+      dataFromList: [],
+      fromDate: "",
+      toDate: "",
       filters: {
         patient_name: "",
         doc_name: "",
@@ -238,44 +240,50 @@ class Appointments extends Component {
   };
 
   handleDateChange = (event) => {
-    const{ value, name } = event.target;
+    const { value, name } = event.target;
     this.setState({
-      [name]: value
-    })
-  }
+      [name]: value,
+    });
+  };
 
   handleDateFilter = () => {
-    const { fromDate, toDate} = this.state;
-    this.setState({
-      filters : {
-        ...this.state.filters,
-        time : {
-          start: fromDate,
-          end: toDate
-        }
-      }
-    }, () => {
-      const filterValue = this.state.filters;
-      if(this.state.fromDate=='' && this.state.toDate==''){
-        delete filterValue.time
-      }
-      const obj = {
-        filter: {
-          ...filterValue
+    const { fromDate, toDate } = this.state;
+    this.setState(
+      {
+        filters: {
+          ...this.state.filters,
+          time: {
+            start: fromDate,
+            end: toDate,
+          },
         },
+      },
+      () => {
+        const filterValue = this.state.filters;
+        if (this.state.fromDate == "" && this.state.toDate == "") {
+          delete filterValue.time;
+        }
+        const obj = {
+          filter: {
+            ...filterValue,
+          },
+        };
+        this.fetchAppointment(obj);
       }
-      this.fetchAppointment(obj)
-    })
-  }
+    );
+  };
 
   handleDateClear = () => {
-    this.setState({
-      fromDate: '',
-      toDate: ''
-    }, () => {
-      this.handleDateFilter();
-    })
-  }
+    this.setState(
+      {
+        fromDate: "",
+        toDate: "",
+      },
+      () => {
+        this.handleDateFilter();
+      }
+    );
+  };
 
   getCompletionPercent(currentVal) {
     let val = this.state.appointmentStats[currentVal];
@@ -315,8 +323,62 @@ class Appointments extends Component {
     return optionData;
   };
 
+  handleExportData = async (event, done) => {
+    const { pagination } = this.state;
+    const obj = {
+      pagination: {
+        ...pagination,
+        page: null,
+        limit: null,
+      },
+      filter: {
+        ...this.state.filters,
+      },
+    };
+    const body = {
+      ...obj,
+    };
+    let appointments = await fetchApi({
+      url: "v2/appointments",
+      method: "POST",
+      body: body,
+    });
+    if(appointments.status == 200){
+
+      if(appointments?.data?.docs?.length>0){
+        let finalData = []
+        appointments?.data?.docs.forEach(element => {
+          const dataObj = {
+            appointment_ID: element.huno_id || '',
+            appointment_time: `${element.time.utc_time}`|| '',
+            patient: `${element && element.patient && element.patient.first_name} ${element && element.patient && element.patient.last_name}`,
+            doctor: `Dr ${element && element.doctor && element.doctor.first_name} ${element && element.doctor && element.doctor.last_name}` || '',
+            reason: element.reason || '',
+            consulting_type: element.consulting_type || '',
+            fees: element.fee || '',
+            created_at: element.created_at || '',
+            updated_at: element.updated_at || '',
+            created_by: `${element && element.created_by && element.created_by.first_name} ${element && element.created_by && element.created_by.last_name}` || '',
+            updated_by: `${element && element.updated_by && element.updated_by.first_name} ${element && element.updated_by && element.updated_by.last_name}`|| '',
+            appointment_status: element.adtnl_status || '',
+            status: element.status || '',
+          }
+          finalData.push(dataObj);
+        });
+        this.setState(
+          {
+            dataFromList: finalData,
+          },
+          () => done(true)
+        );
+      }else{
+        done(false)
+      }
+    }
+  };
+
   render() {
-    const { data, exportingData, fromDate, toDate } = this.state;
+    const { data, exportingData, dataFromList, fromDate, toDate } = this.state;
     const columns = [
       {
         title: "Appointment ID",
@@ -503,6 +565,22 @@ class Appointments extends Component {
       },
     };
 
+    const headers = [
+      { label: "Appointment ID", key: "appointment_ID" },
+      { label: "Appointment Time", key: "appointment_time" },
+      { label: "Patient", key: "patient" },
+      { label: "Doctor", key: "doctor" },
+      { label: "Reason", key: "reason" },
+      { label: "Consulting type", key: "consulting_type" },
+      { label: "Fees (Rupees)", key: "fees" },
+      { label: "Created At", key: "created_at" },
+      { label: "Updated At", key: "updated_at" },
+      { label: "Created By", key: "created_by" },
+      { label: "Updated By", key: "updated_by" },
+      { label: "Appointment Status", key: "appointment_status" },
+      { label: "Status", key: "status" },
+    ];
+
     return (
       <>
         <SidebarNav />
@@ -628,29 +706,53 @@ class Appointments extends Component {
                 <div className="card">
                   <div className="card-body">
                     <div>
-                    <Row>
+                      <Row>
                         <Col>
-                          <ExportTableButton
-                            dataSource={exportingData}
-                            columns={columns}
-                            btnProps={{ type: "primary" }}
-                            fileName="appointments-data"
-                            fields={fields}
-                          >
-                            Export
-                          </ExportTableButton>
+                          <CSVButton
+                            headers={headers}
+                            filename="appointments.csv"
+                            dataFromList={dataFromList}
+                            asyncOnClick={true}
+                            handleExportData={this.handleExportData}
+                          />
                         </Col>
                         <Col>
                           <Row>
                             <Col>
-                              <span>From</span><input type="date" name="fromDate" value={fromDate} onChange={this.handleDateChange} className="form-control" />
+                              <span>From</span>
+                              <input
+                                type="date"
+                                name="fromDate"
+                                value={fromDate}
+                                onChange={this.handleDateChange}
+                                className="form-control"
+                              />
                             </Col>
                             <Col>
-                              <span>To</span><input type="date" name="toDate" value={toDate} onChange={this.handleDateChange} className="form-control" />
+                              <span>To</span>
+                              <input
+                                type="date"
+                                name="toDate"
+                                value={toDate}
+                                onChange={this.handleDateChange}
+                                className="form-control"
+                              />
                             </Col>
                             <Col>
-                              <Button disabled={!fromDate || !toDate} onClick={this.handleDateFilter} style={{marginTop: "12%"}}>Apply Filter</Button>
-                              <Button variant="secondary" onClick={() => this.handleDateClear()} style={{marginTop: "12%"}}>Clear Filter</Button>
+                              <Button
+                                disabled={!fromDate || !toDate}
+                                onClick={this.handleDateFilter}
+                                style={{ marginTop: "12%" }}
+                              >
+                                Apply Filter
+                              </Button>
+                              <Button
+                                variant="secondary"
+                                onClick={() => this.handleDateClear()}
+                                style={{ marginTop: "12%" }}
+                              >
+                                Clear Filter
+                              </Button>
                             </Col>
                           </Row>
                         </Col>
