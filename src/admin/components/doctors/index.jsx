@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Table, ExportTableButton } from "ant-table-extensions";
+import { CSVLink } from "react-csv";
+import { Button } from "react-bootstrap";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import SidebarNav from "../sidebar";
@@ -23,8 +25,6 @@ import {
   sorterText,
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
-import { setJwtToken } from "../../../_utils/localStorage/SessionManager";
-import CSVButton from "../CSVButton";
 
 const doctorStatus = ["pending", "active", "inactive"];
 
@@ -39,9 +39,12 @@ class Doctors extends Component {
       searchText: "",
       searchDept: "",
       searchStatus: "",
+      searchSpecialities: "",
       departments: [],
+      specialities: [],
       dataFromList: [],
       searchedColumn: "",
+      loadingCsv: false,
       pagination: {
         page: 1,
         limit: 10,
@@ -49,6 +52,7 @@ class Doctors extends Component {
       loading: false,
       page: 1,
     };
+    this.csvLinkEl = React.createRef();
   }
 
   async fetchDoctors(params = {}) {
@@ -77,11 +81,11 @@ class Doctors extends Component {
   async componentDidMount() {
     const { pagination } = this.state;
     this.fetchDoctors(pagination);
-    let deptData = await fetchApi({ url: "v1/departments", method: "GET" });
-    let departments = deptData.data.map((ele) => {
-      return ele.title;
+    let speclData = await fetchApi({ url: "v1/specialities", method: "GET" });
+    let specialities = speclData.data.map((ele) => {
+      return { name: ele.title, value: ele._id };
     });
-    this.setState({ departments: departments });
+    this.setState({ specialities: specialities });
   }
 
   async handleItemClick(record, dropdownItem) {
@@ -117,6 +121,7 @@ class Doctors extends Component {
         dept_name:
           fieldName == "dept_name" ? selectedKeys : this.state.searchDept,
       },
+      ...{ specialities: this.state.searchSpecialities },
       ...{ status: this.state.searchStatus },
     };
     this.setState(
@@ -138,6 +143,7 @@ class Doctors extends Component {
         filter: {
           dept_name: this.state.searchDept,
           status: this.state.searchStatus,
+          specialities: this.state.searchSpecialities,
         },
       },
       () => clearFilters()
@@ -155,7 +161,9 @@ class Doctors extends Component {
   handleDataChange = (pagination, filters, sorter, extra) => {
     if (filters.status) {
       this.setState({ searchStatus: filters.status });
-    } else this.setState({ searchStatus: "" });
+    } else if (filters.specialities) {
+      this.setState({ searchSpecialities: filters.specialities });
+    } else this.setState({ searchStatus: "", searchSpecialities: "" });
     const obj = {
       sort_key: sorter.field,
       sort_order: sorter.order,
@@ -165,6 +173,7 @@ class Doctors extends Component {
         name: this.state.searchText,
         dept_name: this.state.searchDept,
         status: filters.status,
+        specialities: filters.specialities,
       },
     };
     this.fetchDoctors(obj);
@@ -172,6 +181,9 @@ class Doctors extends Component {
 
   handleExportData = async (event, done) => {
     const { pagination, filters } = this.state;
+    this.setState({
+      loadingCsv: true,
+    });
     const obj = {
       pagination: {
         ...pagination,
@@ -191,41 +203,56 @@ class Doctors extends Component {
       body: body,
     });
     if (doctors.status == 200) {
-      if(doctors?.data?.docs?.length>0){
-        let finalData = []
-        doctors?.data?.docs.forEach(element => {
+      if (doctors?.data?.docs?.length > 0) {
+        let finalData = [];
+        doctors?.data?.docs.forEach((element) => {
           const dataObj = {
-            doctor_name: `${element?.first_name + " " + element?.last_name}` || '',
-            med_reg_num: `${element?.qualif.med_reg_num}`|| '',
-            department: `${element?.qualif?.dept_id?.title}` || '',
-            exp: element?.qualif.exp || '',
-            fees: element?.qualif.fee || '',
-            highest_qual: element?.qualif.highest_qual.name || '',
-            specl: element?.qualif.specl.map((item) => item.title) || '',
-            created_at: moment(element?.created_at).format("DD/MM/YYYY") || '',
-            updated_at: moment(element?.updated_at).format("DD/MM/YYYY") || '',
-            created_by: `${element && element.created_by && element.created_by.first_name} ${element && element.created_by && element.created_by.last_name}` || '',
-            updated_by: `${element && element.updated_by && element.updated_by.first_name} ${element && element.updated_by && element.updated_by.last_name}`|| '',
-            account_status: element.status || '',
-            // mobile: element.status || '',
-            // email: element.status || '',
-          }
+            doctor_name:
+              `${element?.first_name + " " + element?.last_name}` || "",
+            med_reg_num: `${element?.qualif.med_reg_num}` || "",
+            department: `${element?.qualif?.dept_id?.title}` || "",
+            exp: element?.qualif.exp || "",
+            fees: element?.qualif.fee || "",
+            highest_qual: element?.qualif.highest_qual.name || "",
+            specl: element?.qualif.specl.map((item) => item.title) || "",
+            created_at: moment(element?.created_at).format("DD/MM/YYYY") || "",
+            updated_at: moment(element?.updated_at).format("DD/MM/YYYY") || "",
+            created_by:
+              `${
+                element && element.created_by && element.created_by.first_name
+              } ${
+                element && element.created_by && element.created_by.last_name
+              }` || "",
+            updated_by:
+              `${
+                element && element.updated_by && element.updated_by.first_name
+              } ${
+                element && element.updated_by && element.updated_by.last_name
+              }` || "",
+            account_status: element.status || "",
+            mobile: `${element?.user_id?.country_code} ${element?.user_id?.mobile_number}` || '',
+            email: element?.user_id?.email || '',
+          };
           finalData.push(dataObj);
         });
         this.setState(
           {
             dataFromList: finalData,
+            loadingCsv: false,
           },
-          () => done(true)
+          () => {
+            setTimeout(() => {
+              this.csvLinkEl.current.link.click();
+            });
+          }
         );
-      }else{
-        done(false)
       }
     }
   };
 
   render() {
-    const { data, departments, dataFromList, exportingData } = this.state;
+    const { data, specialities, dataFromList, loadingCsv, exportingData } =
+      this.state;
 
     const columns = [
       {
@@ -239,28 +266,6 @@ class Doctors extends Component {
           this.handleSearch,
           this.handleReset,
           "first_name"
-        ),
-      },
-      {
-        title: "Med Reg No.",
-        render: (text, record) => renderText(record.qualif.med_reg_num),
-        dataIndex: "qualif.med_reg_num",
-        sorter: (a, b) =>
-          sorterText(a.qualif.med_reg_num, b.qualif.med_reg_num),
-      },
-      {
-        title: "Department",
-        render: (text, record) => renderText(record.qualif.dept_id.title),
-        dataIndex: "qualif.dept_id.title",
-        sorter: (a, b) =>
-          sorterText(a.qualif.dept_id.title, b.qualif.dept_id.title),
-        ...getColumnDropDownSearchProps(
-          this,
-          departments,
-          "Department",
-          this.handleSearch,
-          this.handleReset,
-          "qualif.dept_id.title"
         ),
       },
       {
@@ -285,6 +290,9 @@ class Doctors extends Component {
       {
         title: "Specialities",
         render: (text, record) => renderChips(record.qualif.specl),
+        dataIndex: "specialities",
+        sorter: (a, b) => sorterText(a.qualif.specl, b.qualif.specl),
+        ...getColumnFilterProps(specialities, "specialities"),
       },
       {
         title: "Created At",
@@ -375,6 +383,7 @@ class Doctors extends Component {
       },
       specialities: {
         header: "Specialities",
+        dataIndex: "specialities",
         formatter: (_fieldValue, record) => {
           return record?.qualif.specl.map((item) => item.title);
         },
@@ -447,13 +456,15 @@ class Doctors extends Component {
                 <div className="card">
                   <div className="card-body">
                     <div className="table-responsive">
-                      <CSVButton
-                            headers={headers}
-                            filename="appointments.csv"
-                            dataFromList={dataFromList}
-                            asyncOnClick={true}
-                            handleExportData={this.handleExportData}
-                          />
+                      <Button onClick={this.handleExportData}>
+                        {loadingCsv ? "Loading csv..." : "Export to CSV"}
+                      </Button>
+                      <CSVLink
+                        data={dataFromList}
+                        filename={"appointments.csv"}
+                        headers={headers}
+                        ref={this.csvLinkEl}
+                      ></CSVLink>
                       <Table
                         className="table-striped"
                         style={{ overflowX: "auto" }}

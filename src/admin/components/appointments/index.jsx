@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Table, ExportTableButton } from "ant-table-extensions";
+import { CSVLink } from "react-csv";
 import moment from "moment";
 import SidebarNav from "../sidebar";
 import {
@@ -46,6 +47,7 @@ class Appointments extends Component {
         limit: 10,
       },
       loading: false,
+      loadingCsv: false,
       total: null,
       data: [],
       exportingData: [],
@@ -70,6 +72,7 @@ class Appointments extends Component {
         cancelled: 0,
       },
     };
+    this.csvLinkEl = React.createRef();
   }
 
   async fetchAppointment(params = {}) {
@@ -325,6 +328,9 @@ class Appointments extends Component {
 
   handleExportData = async (event, done) => {
     const { pagination } = this.state;
+    this.setState({
+      loadingCsv: true,
+    });
     const obj = {
       pagination: {
         ...pagination,
@@ -343,42 +349,60 @@ class Appointments extends Component {
       method: "POST",
       body: body,
     });
-    if(appointments.status == 200){
-
-      if(appointments?.data?.docs?.length>0){
-        let finalData = []
-        appointments?.data?.docs.forEach(element => {
+    if (appointments.status == 200) {
+      if (appointments?.data?.docs?.length > 0) {
+        let finalData = [];
+        appointments?.data?.docs.forEach((element) => {
           const dataObj = {
-            appointment_ID: element.huno_id || '',
-            appointment_time: `${element.time.utc_time}`|| '',
-            patient: `${element && element.patient && element.patient.first_name} ${element && element.patient && element.patient.last_name}`,
-            doctor: `Dr ${element && element.doctor && element.doctor.first_name} ${element && element.doctor && element.doctor.last_name}` || '',
-            reason: element.reason || '',
-            consulting_type: element.consulting_type || '',
-            fees: element.fee || '',
-            created_at: element.created_at || '',
-            updated_at: element.updated_at || '',
-            created_by: `${element && element.created_by && element.created_by.first_name} ${element && element.created_by && element.created_by.last_name}` || '',
-            updated_by: `${element && element.updated_by && element.updated_by.first_name} ${element && element.updated_by && element.updated_by.last_name}`|| '',
-            appointment_status: element.adtnl_status || '',
-            status: element.status || '',
-          }
+            appointment_ID: element.huno_id || "",
+            appointment_time: `${element.time.utc_time}` || "",
+            patient: `${
+              element && element.patient && element.patient.first_name
+            } ${element && element.patient && element.patient.last_name}`,
+            doctor:
+              `Dr ${element && element.doctor && element.doctor.first_name} ${
+                element && element.doctor && element.doctor.last_name
+              }` || "",
+            reason: element.reason || "",
+            consulting_type: element.consulting_type || "",
+            fees: element.fee || "",
+            created_at: element.created_at || "",
+            updated_at: element.updated_at || "",
+            created_by:
+              `${
+                element && element.created_by && element.created_by.first_name
+              } ${
+                element && element.created_by && element.created_by.last_name
+              }` || "",
+            updated_by:
+              `${
+                element && element.updated_by && element.updated_by.first_name
+              } ${
+                element && element.updated_by && element.updated_by.last_name
+              }` || "",
+            appointment_status: element.adtnl_status || "",
+            status: element.status || "",
+          };
           finalData.push(dataObj);
         });
         this.setState(
           {
             dataFromList: finalData,
+            loadingCsv: false,
           },
-          () => done(true)
+          () => {
+            setTimeout(() => {
+              this.csvLinkEl.current.link.click();
+            });
+          }
         );
-      }else{
-        done(false)
       }
     }
   };
 
   render() {
-    const { data, exportingData, dataFromList, fromDate, toDate } = this.state;
+    const { data, exportingData, loadingCsv, dataFromList, fromDate, toDate } =
+      this.state;
     const columns = [
       {
         title: "Appointment ID",
@@ -708,13 +732,15 @@ class Appointments extends Component {
                     <div>
                       <Row>
                         <Col>
-                          <CSVButton
+                          <Button onClick={this.handleExportData}>
+                            {loadingCsv ? "Loading csv..." : "Export to CSV"}
+                          </Button>
+                          <CSVLink
+                            data={dataFromList}
+                            filename={"appointments.csv"}
                             headers={headers}
-                            filename="appointments.csv"
-                            dataFromList={dataFromList}
-                            asyncOnClick={true}
-                            handleExportData={this.handleExportData}
-                          />
+                            ref={this.csvLinkEl}
+                          ></CSVLink>
                         </Col>
                         <Col>
                           <Row>
