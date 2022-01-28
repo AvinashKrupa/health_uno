@@ -38,10 +38,7 @@ class Patients extends Component {
   }
 
   async componentDidMount() {
-    let patients = await fetchApi({ url: "v1/patients", method: "GET" });
-    let patientsData = patients.data;
-    this.setState({ data: patientsData });
-    this.setState({ exportingData: patientsData });
+    this.fetchPatientsList()
   }
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -51,6 +48,13 @@ class Patients extends Component {
       searchedColumn: dataIndex,
     });
   };
+
+  fetchPatientsList = async() => {
+    let patients = await fetchApi({ url: "v1/patients", method: "GET" });
+        let patientsData = patients.data;
+        this.setState({ data: patientsData });
+        this.setState({ exportingData: patientsData });
+  }
 
   handleReset = (clearFilters) => {
     clearFilters();
@@ -71,6 +75,7 @@ class Patients extends Component {
       if (result) {
         toast.success(result.message);
         this.setState({ data: data });
+        this.fetchPatientsList()
       }
     } catch (e) {}
   }

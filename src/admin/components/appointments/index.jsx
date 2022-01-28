@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Table, ExportTableButton } from "ant-table-extensions";
+import { CSVLink } from "react-csv";
 import moment from "moment";
 import SidebarNav from "../sidebar";
 import {
@@ -9,11 +10,12 @@ import {
 import { fetchApi } from "../../../_utils/http-utils";
 import {
   getColumnFilterProps,
-  getColumnSearchProps,
+  getUpdatedColumnSearchProps,
   renderAppointment,
   renderDate,
   renderDropDown,
   renderName,
+  renderNameForAppointment,
   renderTagStatus,
   renderText,
   sorterDate,
@@ -21,32 +23,47 @@ import {
   sorterText,
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
+import { Col, Row, Button } from "react-bootstrap";
+import CSVButton from "../CSVButton";
 
 const statusArray = [
   "pending",
   "scheduled",
   "cancelled",
-  "rejected",
+  "reserved",
   "ongoing",
   "completed",
   "reschedule",
 ];
 
-const statusHasNoOption = [
-  "pending",
-  "completed",
-]
+const statusHasNoOption = ["pending", "cancelled", "completed"];
 
 class Appointments extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      pagination: {
+        page: 1,
+        limit: 10,
+      },
+      loading: false,
+      loadingCsv: false,
       total: null,
       data: [],
       exportingData: [],
       showMenu: {},
       searchText: "",
       searchedColumn: "",
+      page: 1,
+      filtered: false,
+      dataFromList: [],
+      fromDate: "",
+      toDate: "",
+      filters: {
+        patient_name: "",
+        doc_name: "",
+        status: [],
+      },
       appointmentStats: {
         pending: 0,
         completed: 0,
@@ -55,20 +72,37 @@ class Appointments extends Component {
         cancelled: 0,
       },
     };
+    this.csvLinkEl = React.createRef();
+  }
+
+  async fetchAppointment(params = {}) {
+    const body = {
+      ...params,
+    };
+    let appointments = await fetchApi({
+      url: "v2/appointments",
+      method: "POST",
+      body: body,
+    });
+    let appointmentStats = this.getStats(appointments.data.docs);
+    let apnts = appointments.data.docs;
+    this.setState({
+      data: apnts,
+      total: appointments.data.total,
+      loading: false,
+      exportingData: apnts,
+      appointmentStats: appointmentStats,
+      pagination: {
+        page: appointments.data.page,
+        limit: appointments.data.limit,
+        total: appointments.data.total,
+      },
+    });
   }
 
   async componentDidMount() {
-    let appointments = await fetchApi({
-      url: "v1/appointments",
-      method: "GET",
-    });
-    let appointmentStats = this.getStats(appointments.data);
-    let apnts = appointments.data;
-    this.setState({
-      data: apnts,
-      exportingData: apnts,
-      appointmentStats: appointmentStats,
-    });
+    const { pagination } = this.state;
+    this.fetchAppointment(pagination);
   }
 
   componentDidUpdate() {
@@ -115,8 +149,7 @@ class Appointments extends Component {
           toast.success(result.message);
           this.setState({ data: data });
         }
-      } catch (e) {
-      }
+      } catch (e) {}
     } else {
       const { history } = this.props;
       history.push(`/slotBooking/${record.doctor._id}/${record._id}`);
@@ -133,23 +166,126 @@ class Appointments extends Component {
   }
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
+    this.setState(
+      {
+        filters: {
+          ...this.state.filters,
+          ...(dataIndex == "Doctor" && { doc_name: selectedKeys[0] }),
+          ...(dataIndex == "Patient" && { patient_name: selectedKeys[0] }),
+        },
+      },
+      () => {
+        confirm();
+        // const obj = {
+        //   page: 1,
+        //   limit: this.state.pagination.limit,
+        //   filter: {
+        //     ...this.state.filters,
+        //   },
+        // };
+        // this.fetchAppointment(obj);
+      }
+    );
+  };
+
+  handleDataChange = (pagination, currentfilters, sorter, extra) => {
+    this.setState(
+      {
+        pagination: { page: pagination.current, limit: pagination.pageSize },
+        loading: true,
+        filters: {
+          ...this.state.filters,
+          ...(currentfilters.hasOwnProperty("status") &&
+          currentfilters.status == null
+            ? { status: [] }
+            : currentfilters.status &&
+              currentfilters.status.length > 0 && {
+                status: currentfilters.status,
+              }),
+        },
+      },
+      () => {
+        const obj = {
+          sort_key: sorter.field,
+          sort_order: sorter.order,
+          page: pagination.current,
+          limit: pagination.pageSize,
+          filter: {
+            ...this.state.filters,
+          },
+        };
+        this.fetchAppointment(obj);
+      }
+    );
+  };
+  handleReset = (clearFilters, dataIndex) => {
+    this.setState(
+      {
+        searchText: "",
+        filters: {
+          ...this.state.filters,
+          ...(dataIndex == "Doctor" && { doc_name: "" }),
+          ...(dataIndex == "Patient" && { patient_name: "" }),
+        },
+      },
+      () => {
+        const { pagination } = this.state;
+        const obj = {
+          ...pagination,
+          filter: {
+            ...this.state.filters,
+          },
+        };
+        this.fetchAppointment(obj);
+        clearFilters();
+      }
+    );
+  };
+
+  handleDateChange = (event) => {
+    const { value, name } = event.target;
     this.setState({
-      searchText: selectedKeys[0],
-      searchedColumn: dataIndex,
+      [name]: value,
     });
   };
-  handleDataChange = (pagination, filters, sorter, extra) => {
-    let appointmentStats = this.getStats(extra.currentDataSource);
-    this.setState({
-      appointmentStats: appointmentStats,
-      total: extra.currentDataSource.length,
-      exportingData: extra.currentDataSource,
-    });
+
+  handleDateFilter = () => {
+    const { fromDate, toDate } = this.state;
+    this.setState(
+      {
+        filters: {
+          ...this.state.filters,
+          time: {
+            start: fromDate,
+            end: toDate,
+          },
+        },
+      },
+      () => {
+        const filterValue = this.state.filters;
+        if (this.state.fromDate == "" && this.state.toDate == "") {
+          delete filterValue.time;
+        }
+        const obj = {
+          filter: {
+            ...filterValue,
+          },
+        };
+        this.fetchAppointment(obj);
+      }
+    );
   };
-  handleReset = (clearFilters) => {
-    clearFilters();
-    this.setState({ searchText: "" });
+
+  handleDateClear = () => {
+    this.setState(
+      {
+        fromDate: "",
+        toDate: "",
+      },
+      () => {
+        this.handleDateFilter();
+      }
+    );
   };
 
   getCompletionPercent(currentVal) {
@@ -158,30 +294,17 @@ class Appointments extends Component {
   }
 
   handleChangeOption = (status) => {
-    // const optionData = statusArray.filter((item) => item !== status);
-    // if (status === "scheduled") {
-    //   return optionData;
-    // } else {
-    //   const index = optionData.findIndex((option) => option === "reschedule");
-    //   if (index > -1) {
-    //     optionData.splice(index, 1);
-    //   }
-    //   return optionData;
-    // }
     let optionData;
     switch (status) {
       case "scheduled":
         optionData = [
           "cancelled",
-          "rejected",
+          // "reserved",
           "completed",
           "reschedule",
         ];
         break;
-      case "cancelled":
-        optionData = ["rejected"];
-        break;
-      case "rejected":
+      case "reserved":
         optionData = ["cancelled"];
         break;
       case "ongoing":
@@ -190,7 +313,7 @@ class Appointments extends Component {
       case "reschedule":
         optionData = [
           "cancelled",
-          "rejected",
+          // "reserved",
           "completed",
           "reschedule",
         ];
@@ -203,26 +326,103 @@ class Appointments extends Component {
     return optionData;
   };
 
-  render() {
-    const { data, exportingData } = this.state;
+  handleExportData = async (event, done) => {
+    const { pagination } = this.state;
+    this.setState({
+      loadingCsv: true,
+    });
+    const obj = {
+      pagination: {
+        ...pagination,
+        page: null,
+        limit: null,
+      },
+      filter: {
+        ...this.state.filters,
+      },
+    };
+    const body = {
+      ...obj,
+    };
+    let appointments = await fetchApi({
+      url: "v2/appointments",
+      method: "POST",
+      body: body,
+    });
+    if (appointments.status == 200) {
+      if (appointments?.data?.docs?.length > 0) {
+        let finalData = [];
+        appointments?.data?.docs.forEach((element) => {
+          const dataObj = {
+            appointment_ID: element.huno_id || "",
+            appointment_time: `${element.time.utc_time}` || "",
+            patient: `${
+              element && element.patient && element.patient.first_name
+            } ${element && element.patient && element.patient.last_name}`,
+            doctor:
+              `Dr ${element && element.doctor && element.doctor.first_name} ${
+                element && element.doctor && element.doctor.last_name
+              }` || "",
+            reason: element.reason || "",
+            consulting_type: element.consulting_type || "",
+            fees: element.fee || "",
+            created_at: element.created_at || "",
+            updated_at: element.updated_at || "",
+            created_by:
+              `${
+                element && element.created_by && element.created_by.first_name
+              } ${
+                element && element.created_by && element.created_by.last_name
+              }` || "",
+            updated_by:
+              `${
+                element && element.updated_by && element.updated_by.first_name
+              } ${
+                element && element.updated_by && element.updated_by.last_name
+              }` || "",
+            appointment_status: element.adtnl_status || "",
+            status: element.status || "",
+          };
+          finalData.push(dataObj);
+        });
+        this.setState(
+          {
+            dataFromList: finalData,
+            loadingCsv: false,
+          },
+          () => {
+            setTimeout(() => {
+              this.csvLinkEl.current.link.click();
+            });
+          }
+        );
+      }
+    }
+  };
 
+  render() {
+    const { data, exportingData, loadingCsv, dataFromList, fromDate, toDate } =
+      this.state;
     const columns = [
       {
+        title: "Appointment ID",
+        dataIndex: "huno_id",
+        sorter: true,
+      },
+      {
         title: "Appointment Time",
+        dataIndex: "time.utc_time",
         render: (text, record) =>
           renderAppointment(record.time.utc_time, record.time.slot),
-        sorter: (a, b) => sorterDate(a.time.utc_time, b.time.utc_time),
+        sorter: true,
       },
       {
         title: "Patient",
-        render: (text, record) => renderName(record.patient),
-        sorter: (a, b) =>
-          sorterText(
-            a.patient.user_id.first_name,
-            b.patient.user_id.first_name
-          ),
+        render: (text, record) =>
+          renderNameForAppointment(record.patient, "", "", false, "patient"),
+        sorter: true,
 
-        ...getColumnSearchProps(
+        ...getUpdatedColumnSearchProps(
           this,
           "Patient",
           this.handleSearch,
@@ -232,9 +432,10 @@ class Appointments extends Component {
       },
       {
         title: "Doctor",
-        render: (text, record) => renderName(record.doctor, "Dr"),
+        render: (text, record) =>
+          renderNameForAppointment(record.doctor, "Dr", "", false, "doctor"),
         sorter: (a, b) => sorterText(a.doctor.first_name, b.doctor.first_name),
-        ...getColumnSearchProps(
+        ...getUpdatedColumnSearchProps(
           this,
           "Doctor",
           this.handleSearch,
@@ -245,64 +446,88 @@ class Appointments extends Component {
       {
         title: "Reason",
         render: (text, record) => renderText(record.reason),
-        sorter: (a, b) => sorterText(a.reason, b.reason),
+        sorter: true,
+        dataIndex: "reason",
       },
       {
         title: "Consulting type",
         dataIndex: "consulting_type",
         render: (text) => renderText(text),
-        sorter: (a, b) => sorterText(a.consulting_type, b.consulting_type),
+        sorter: true,
       },
       {
         title: "Fees (Rupees)",
         render: (text, record) => renderText(record.fee),
-        sorter: (a, b) => sorterNumber(a.fee, b.fee),
+        dataIndex: "fee",
+        sorter: true,
       },
       {
         title: "Created At",
         dataIndex: "created_at",
         render: (text) => renderDate(text),
-        sorter: (a, b) => sorterDate(a.created_at, b.created_at),
+        sorter: true,
       },
       {
         title: "Updated At",
         dataIndex: "updated_at",
         render: (text) => renderDate(text),
-        sorter: (a, b) => sorterDate(a.updated_at, b.updated_at),
+        sorter: true,
       },
       {
         title: "Created by",
         dataIndex: "created_by",
-        render: (text, record) => renderName(record.created_by),
+        render: (text, record) => (
+          <span>
+            {record.created_by.first_name + " " + record.created_by.first_name}
+          </span>
+        ),
       },
       {
         title: "Updated by",
         dataIndex: "updated_by",
-        render: (text, record) => renderName(record.updated_by),
+        render: (text, record) => (
+          <span>
+            {record.updated_by?.first_name +
+              " " +
+              record.updated_by?.first_name}
+          </span>
+        ),
+      },
+      {
+        title: "Appointment Status",
+        dataIndex: "appointment_status",
+        render: (text, record) => <span>{record.adtnl_status}</span>,
       },
       {
         title: "Status",
         dataIndex: "status",
         key: "status",
         render: (text) => renderText(text),
-        sorter: (a, b) => sorterText(a.status, b.status),
+        sorter: true,
         ...getColumnFilterProps(statusArray, "status"),
       },
       {
         title: "Actions",
-        align: 'center',
+        align: "center",
         render: (text, record) =>
-        statusHasNoOption.includes(record.status) ? renderTagStatus(record.status) :
-          renderDropDown(
-            "Change Status",
-            this.handleChangeOption(record.status),
-            (elem, index) => this.handleItemClick(record, elem),
-            () => this.handleDropdownClick(record),
-            this.showDropDownMenu(record)
-          ),
+          statusHasNoOption.includes(record.status)
+            ? renderTagStatus(record.status)
+            : renderDropDown(
+                "Change Status",
+                this.handleChangeOption(record.status),
+                (elem, index) => this.handleItemClick(record, elem),
+                () => this.handleDropdownClick(record),
+                this.showDropDownMenu(record)
+              ),
       },
     ];
     const fields = {
+      appointment_id: {
+        header: "Appointment ID",
+        formatter: (_fieldValue, record) => {
+          return record?.huno_id;
+        },
+      },
       appointment_time: {
         header: "Appointment Time",
         formatter: (_fieldValue, record) => {
@@ -363,6 +588,22 @@ class Appointments extends Component {
         },
       },
     };
+
+    const headers = [
+      { label: "Appointment ID", key: "appointment_ID" },
+      { label: "Appointment Time", key: "appointment_time" },
+      { label: "Patient", key: "patient" },
+      { label: "Doctor", key: "doctor" },
+      { label: "Reason", key: "reason" },
+      { label: "Consulting type", key: "consulting_type" },
+      { label: "Fees (Rupees)", key: "fees" },
+      { label: "Created At", key: "created_at" },
+      { label: "Updated At", key: "updated_at" },
+      { label: "Created By", key: "created_by" },
+      { label: "Updated By", key: "updated_by" },
+      { label: "Appointment Status", key: "appointment_status" },
+      { label: "Status", key: "status" },
+    ];
 
     return (
       <>
@@ -489,24 +730,65 @@ class Appointments extends Component {
                 <div className="card">
                   <div className="card-body">
                     <div>
-                      <ExportTableButton
-                        dataSource={exportingData}
-                        columns={columns}
-                        btnProps={{ type: "primary" }}
-                        fileName="appointments-data"
-                        fields={fields}
-                      >
-                        Export
-                      </ExportTableButton>
+                      <Row>
+                        <Col>
+                          <Button onClick={this.handleExportData}>
+                            {loadingCsv ? "Loading csv..." : "Export to CSV"}
+                          </Button>
+                          <CSVLink
+                            data={dataFromList}
+                            filename={"appointments.csv"}
+                            headers={headers}
+                            ref={this.csvLinkEl}
+                          ></CSVLink>
+                        </Col>
+                        <Col>
+                          <Row>
+                            <Col>
+                              <span>From</span>
+                              <input
+                                type="date"
+                                name="fromDate"
+                                value={fromDate}
+                                onChange={this.handleDateChange}
+                                className="form-control"
+                              />
+                            </Col>
+                            <Col>
+                              <span>To</span>
+                              <input
+                                type="date"
+                                name="toDate"
+                                value={toDate}
+                                onChange={this.handleDateChange}
+                                className="form-control"
+                              />
+                            </Col>
+                            <Col>
+                              <Button
+                                disabled={!fromDate || !toDate}
+                                onClick={this.handleDateFilter}
+                                style={{ marginTop: "12%" }}
+                              >
+                                Apply Filter
+                              </Button>
+                              <Button
+                                variant="secondary"
+                                onClick={() => this.handleDateClear()}
+                                style={{ marginTop: "12%" }}
+                              >
+                                Clear Filter
+                              </Button>
+                            </Col>
+                          </Row>
+                        </Col>
+                      </Row>
                       <Table
                         className="table-striped"
-                        columns={columns}
                         scroll={{ x: 1300 }}
-                        // bordered
-                        onChange={this.handleDataChange}
-                        dataSource={data}
+                        columns={columns}
                         rowKey={(record) => record._id}
-                        showSizeChanger={true}
+                        dataSource={data}
                         pagination={{
                           position: ["topRight", "bottomRight"],
                           total:
@@ -519,6 +801,8 @@ class Appointments extends Component {
                           onShowSizeChange: onShowSizeChange,
                           itemRender: itemRender,
                         }}
+                        loading={this.state.loading}
+                        onChange={this.handleDataChange}
                       />
                     </div>
                   </div>

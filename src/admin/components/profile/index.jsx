@@ -15,6 +15,7 @@ import whiteBgIco from "../../assets/images/white_background.png";
 import moment from "moment";
 import {
   getTextClassForStatus,
+  renderButton,
   renderDropDown,
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
@@ -26,6 +27,7 @@ import UpdateSchedule from "../UpdateSchedule";
 import MultiSelect from "../MultiSelect/MultiSelect";
 import UploadImage from "../UploadImage";
 import Spinner from "../spinner/customSpinner";
+import { isEmpty } from "../../../_utils/Validators";
 
 class Profile extends Component {
   constructor(props) {
@@ -36,6 +38,11 @@ class Profile extends Component {
       loadingSpec: false,
       loadingLang: false,
       loadingCountry: false,
+      diabeticValueSelected: false,
+      hypertensiveValueSelected: false,
+      vaccineDateSelected: false,
+      doseSelected: false,
+      vaccineNameSelected: false,
       key: 1,
       show: "",
       data: null,
@@ -193,8 +200,14 @@ class Profile extends Component {
       specialities: specialities.data,
       qualification: qualification.data,
       profileDescription: data.additional_info.desc,
-      fees: data.additional_info && data.additional_info.qualif && data.additional_info.qualif.fee,
-      experience: data.additional_info && data.additional_info.qualif && data.additional_info.qualif.exp,
+      fees:
+        data.additional_info &&
+        data.additional_info.qualif &&
+        data.additional_info.qualif.fee,
+      experience:
+        data.additional_info &&
+        data.additional_info.qualif &&
+        data.additional_info.qualif.exp,
       languages: languages.data,
       selectedLanguage: selectedLanguage,
       countryStateCity: {
@@ -348,10 +361,19 @@ class Profile extends Component {
     });
   }
 
+
+  handleBookAppointment = (record) => {
+    localStorage.setItem("SELECTED_PATIENT_ID", record._id);
+    this.props.history.push("/patient/topConsultants");
+  };
+
   handleDiabetic = (id) => {
     this.setState({
       isDiabetic: id === "yes",
     });
+    if (id === "no") {
+      this.setState({ diabeticValue: "" });
+    }
     const newDiabetic = this.state.diabetics.map((item) => {
       return Object.assign({}, item, { checked: item.id === id });
     });
@@ -364,7 +386,9 @@ class Profile extends Component {
     this.setState({
       isHypertensive: id === "yes",
     });
-
+    if (id === "no") {
+      this.setState({ hypertensiveValue: "" });
+    }
     const newHypertensives = this.state.hypertensives.map((item) => {
       return Object.assign({}, item, { checked: item.id === id });
     });
@@ -377,7 +401,9 @@ class Profile extends Component {
     this.setState({
       isSurgery: id === "yes",
     });
-
+    if (id === "no") {
+      this.setState({ surgeryValue: "" });
+    }
     const newSurgerys = this.state.hypertensives.map((item) => {
       return Object.assign({}, item, { checked: item.id === id });
     });
@@ -390,7 +416,9 @@ class Profile extends Component {
     this.setState({
       isAllergie: id === "yes",
     });
-
+    if (id === "no") {
+      this.setState({ allergieValue: "" });
+    }
     const newAllergies = this.state.allergies.map((item) => {
       return Object.assign({}, item, { checked: item.id === id });
     });
@@ -403,6 +431,9 @@ class Profile extends Component {
     this.setState({
       isCovid: id === "yes",
     });
+    if (id === "no") {
+      this.setState({ covidDetails: "" });
+    }
 
     const newCovids = this.state.covids.map((item) => {
       return Object.assign({}, item, { checked: item.id === id });
@@ -417,6 +448,10 @@ class Profile extends Component {
     this.setState({
       isVaccinated: id === "yes",
     });
+    if (id === "no") {
+      this.setState({ vaccineDate: "",dose:"",vaccineName:"" });
+    }
+    
 
     const newVaccinatedList = this.state.vaccinated.map((item) => {
       return Object.assign({}, item, { checked: item.id === id });
@@ -485,6 +520,55 @@ class Profile extends Component {
       updatedModel: data,
     });
   };
+
+  validateData = () => {
+    if (this.state.isVaccinated) {
+      if (!moment(this.state.vaccineDate, "YYYY-MM-DD", true).isValid()) {
+        toast.error("Please Select Date");
+        return false;
+      }
+      if (isEmpty(this.state.dose)) {
+        toast.error("Please Select Dose Type");
+        return false;
+      }
+      if (isEmpty(this.state.vaccineName)) {
+        toast.error("Please Select Vaccine Name");
+        return false;
+      }
+    }
+    if (this.state.isDiabetic) {
+      if (!moment(this.state.diabeticValue, "YYYY-MM-DD", true).isValid()) {
+        toast.error("Please Select Date of Diabetic");
+        return false;
+      }
+    }
+    if (this.state.isHypertensive) {
+      if (!moment(this.state.hypertensiveValue, "YYYY-MM-DD", true).isValid()) {
+        toast.error("Please Select Date of Hypertensive");
+        return false;
+      }
+    }
+    if (this.state.isSurgery) {
+      if (isEmpty(this.state.surgeryValue.trim())) {
+        toast.error("Please Mention about surgery");
+        return false;
+      }
+    }
+    if (this.state.isAllergie) {
+      if (isEmpty(this.state.allergieValue.trim())) {
+        toast.error("Please Mention about allergies");
+        return false;
+      }
+    }
+    if (this.state.isCovid) {
+      if (isEmpty(this.state.covidDetails.trim())) {
+        toast.error("Please Mention about covidDetails");
+        return false;
+      }
+    }
+    return true;
+  };
+
   updateProfile = async (e) => {
     const {
       isDiabetic,
@@ -509,136 +593,158 @@ class Profile extends Component {
       profileDescription,
     } = this.state;
     e.preventDefault();
-    let data = this.state.updatedModel;
-    let countryStateCity = this.state.countryStateCity;
-    data.additional_info.address = {
-      ...data.additional_info.address,
-      city: countryStateCity.city.name,
-      state: countryStateCity.state.name,
-      country: countryStateCity.country.name,
-    };
-    if (this.state.type === constants.USER_TYPE_DOCTOR) {
-      if (
-        selectedQualification !== data.additional_info.qualif.highest_qual._id
-      ) {
-        const QualificationData = this.state.qualification.find(
-          (qual) => qual._id === selectedQualification
-        );
-        data.additional_info.qualif["highest_qual"]["name"] =
-          QualificationData.name;
-        data.additional_info.qualif["highest_qual"]["_id"] =
-          QualificationData._id;
-      }
-      if (selectedDepartment !== data.additional_info.qualif.dept_id._id) {
-        const DepartmentData = this.state.department.find(
-          (depart) => depart._id === selectedDepartment
-        );
-        data.additional_info.qualif["dept_id"]["title"] = DepartmentData.title;
-        data.additional_info.qualif["dept_id"]["_id"] = DepartmentData._id;
-      }
-      if (selectedSpecialities !== data.additional_info.qualif.specl[0]._id) {
-        const SpecialitiesData = this.state.specialities.find(
-          (specl) => specl._id === selectedSpecialities
-        );
-        data.additional_info.qualif["specl"][0]["title"] =
-          SpecialitiesData.title;
-        data.additional_info.qualif["specl"][0]["_id"] = SpecialitiesData._id;
-      }
-    }
-    if (this.state.type === constants.USER_TYPE_PATIENT) {
-      (data.additional_info.med_cond = [
-        {
-          name: "diabetic",
-          selected: isDiabetic,
-          diag_at: isDiabetic ? diabeticValue : "",
-          desc: "",
-        },
-        {
-          name: "hypertensive",
-          selected: isHypertensive,
-          diag_at: isHypertensive ? hypertensiveValue : "",
-          desc: "",
-        },
-        {
-          name: "diagnosed_with_covid",
-          selected: isCovid,
-          diag_at: "",
-          desc: isCovid ? covidDetails : "",
-        },
-        {
-          name: "past_surgeries",
-          selected: isSurgery,
-          diag_at: "",
-          desc: isSurgery ? surgeryValue : "",
-        },
-        {
-          name: "allergy_to_meds",
-          selected: isAllergie,
-          diag_at: "",
-          desc: isAllergie ? allergieValue : "",
-        },
-        {
-          name: "covid_vaccinated",
-          selected: isVaccinated,
-          diag_at: isVaccinated ? vaccineDate : "",
-          desc: "",
-          meta: isVaccinated
-            ? [
-                {
-                  name: "dose_type",
-                  selected: true,
-                  diag_at: "",
-                  desc: dose,
-                },
-                {
-                  name: "vaccine_name",
-                  selected: true,
-                  diag_at: "",
-                  desc: vaccineName,
-                },
-              ]
-            : [],
-        },
-      ]),
-        (data.additional_info.other_med_cond = otherMedical);
-    }
 
-    try {
-      let requestBody = {
-        ...data.user,
-        ...data.additional_info,
-        user_id: data.user._id,
-        type: this.state.type,
+    if (this.validateData()) {
+      let data = this.state.updatedModel;
+      let countryStateCity = this.state.countryStateCity;
+      data.additional_info.address = {
+        ...data.additional_info.address,
+        city: countryStateCity.city.name,
+        state: countryStateCity.state.name,
+        country: countryStateCity.country.name,
       };
       if (this.state.type === constants.USER_TYPE_DOCTOR) {
-        requestBody = {
+        if (
+          selectedQualification !== data.additional_info.qualif.highest_qual._id
+        ) {
+          const QualificationData = this.state.qualification.find(
+            (qual) => qual._id === selectedQualification
+          );
+          data.additional_info.qualif["highest_qual"]["name"] =
+            QualificationData.name;
+          data.additional_info.qualif["highest_qual"]["_id"] =
+            QualificationData._id;
+        }
+        if (selectedDepartment !== data.additional_info.qualif.dept_id._id) {
+          const DepartmentData = this.state.department.find(
+            (depart) => depart._id === selectedDepartment
+          );
+          data.additional_info.qualif["dept_id"]["title"] =
+            DepartmentData.title;
+          data.additional_info.qualif["dept_id"]["_id"] = DepartmentData._id;
+        }
+        if (
+          selectedSpecialities !== data.additional_info &&
+          data.additional_info.qualif &&
+          data.additional_info.qualif.specl[0] &&
+          data.additional_info.qualif.specl[0]._id
+        ) {
+          const SpecialitiesData = this.state.specialities.find(
+            (specl) => specl._id === selectedSpecialities
+          );
+          data.additional_info.qualif["specl"][0]["title"] =
+            SpecialitiesData.title;
+          data.additional_info.qualif["specl"][0]["_id"] = SpecialitiesData._id;
+        } else if (
+          selectedSpecialities &&
+          data.additional_info &&
+          data.additional_info.qualif &&
+          data.additional_info.qualif.specl.length === 0
+        ) {
+          const SpecialitiesData = this.state.specialities.find(
+            (specl) => specl._id === selectedSpecialities
+          );
+          const speclData = {
+            title : SpecialitiesData.title,
+            _id : SpecialitiesData._id
+          }
+          data.additional_info.qualif.specl.push(speclData);
+        }
+      }
+      if (this.state.type === constants.USER_TYPE_PATIENT) {
+        (data.additional_info.med_cond = [
+          {
+            name: "diabetic",
+            selected: isDiabetic,
+            diag_at: isDiabetic ? diabeticValue : "",
+            desc: "",
+          },
+          {
+            name: "hypertensive",
+            selected: isHypertensive,
+            diag_at: isHypertensive ? hypertensiveValue : "",
+            desc: "",
+          },
+          {
+            name: "diagnosed_with_covid",
+            selected: isCovid,
+            diag_at: "",
+            desc: isCovid ? covidDetails : "",
+          },
+          {
+            name: "past_surgeries",
+            selected: isSurgery,
+            diag_at: "",
+            desc: isSurgery ? surgeryValue : "",
+          },
+          {
+            name: "allergy_to_meds",
+            selected: isAllergie,
+            diag_at: "",
+            desc: isAllergie ? allergieValue : "",
+          },
+          {
+            name: "covid_vaccinated",
+            selected: isVaccinated,
+            diag_at: isVaccinated ? vaccineDate : "",
+            desc: "",
+            meta: isVaccinated
+              ? [
+                  {
+                    name: "dose_type",
+                    selected: true,
+                    diag_at: "",
+                    desc: dose,
+                  },
+                  {
+                    name: "vaccine_name",
+                    selected: true,
+                    diag_at: "",
+                    desc: vaccineName,
+                  },
+                ]
+              : [],
+          },
+        ]),
+          (data.additional_info.other_med_cond = otherMedical);
+      }
+
+      try {
+        let requestBody = {
           ...data.user,
+          ...data.additional_info,
           user_id: data.user._id,
           type: this.state.type,
-          language: selectedLanguage,
-          address: data.additional_info.address,
-          desc: profileDescription,
-          qualif: {
-            ...data.additional_info.qualif,
-            exp: this.state.experience,
-            fee: this.state.fees,
-            //   address: data.additional_info.address,
-          },
         };
-      }
-      console.log("requestBody", requestBody, "console.", profileDescription);
-      let result = await fetchApi({
-        url: "v1/user/updateProfile",
-        method: "POST",
-        body: requestBody,
-      });
+        if (this.state.type === constants.USER_TYPE_DOCTOR) {
+          requestBody = {
+            ...data.user,
+            user_id: data.user._id,
+            type: this.state.type,
+            language: selectedLanguage,
+            address: data.additional_info.address,
+            desc: profileDescription,
+            qualif: {
+              ...data.additional_info.qualif,
+              exp: this.state.experience,
+              fee: this.state.fees,
+              //   address: data.additional_info.address,
+            },
+          };
+        }
+        let result = await fetchApi({
+          url: "v1/user/updateProfile",
+          method: "POST",
+          body: requestBody,
+        });
 
-      if (result) {
-        toast.success(result.message);
-        this.setState({ data: result.data });
-      }
-    } catch (e) {}
-    this.setState({ showMenu: false, show: "" });
+        if (result) {
+          toast.success(result.message);
+          this.setState({ data: result.data });
+        }
+      } catch (e) {}
+      this.setState({ showMenu: false, show: "" });
+    }
   };
 
   async handleItemClick(dropdownItem) {
@@ -804,6 +910,30 @@ class Profile extends Component {
       </div>
     );
   };
+  // handleSave = (e) => {
+  //   e.preventDefault();
+
+  //   if (this.state.isVaccinated) {
+  //     if (!moment(this.state.vaccineDate, "YYYY-MM-DD", true).isValid()) {
+  //       toast.error("Please Select Date");
+  //     }
+  //     if (isEmpty(this.state.vaccineName)) {
+  //       toast.error("Please Select Vaccine Name");
+  //     }
+  //     if (isEmpty(this.state.dose)) {
+  //       toast.error("Please Select Dose Type");
+  //     }
+  //   }
+
+  //   if (
+  //     this.state.vaccinated &&
+  //     moment(this.state.vaccineDate, "YYYY-MM-DD", true).isValid() &&
+  //     this.state.vaccineName &&
+  //     this.state.dose
+  //   ) {
+  //     this.updateProfile(e);
+  //   }
+  // };
 
   render() {
     return (
@@ -888,6 +1018,11 @@ class Profile extends Component {
                           (elem, index) => this.handleItemClick(elem),
                           () => this.handleDropdownClick(),
                           this.showDropDownMenu()
+                        )}
+                        {this.state.type == constants.USER_TYPE_PATIENT && renderButton(() =>
+                          this.handleBookAppointment(
+                            this.state.data.additional_info
+                          )
                         )}
                       </div>
                     </div>
@@ -982,14 +1117,16 @@ class Profile extends Component {
                               )}
                             </p>
                           </div>
-                          {this.state.type === constants.USER_TYPE_DOCTOR && <div className="row">
-                            <p className="col-sm-2 text-muted text-sm-right mb-0">
-                              Profile Description
-                            </p>
-                            <p className="col-sm-10 mb-0">
-                              {this.state.data.additional_info.desc}
-                            </p>
-                          </div>}
+                          {this.state.type === constants.USER_TYPE_DOCTOR && (
+                            <div className="row">
+                              <p className="col-sm-2 text-muted text-sm-right mb-0">
+                                Profile Description
+                              </p>
+                              <p className="col-sm-10 mb-0">
+                                {this.state.data.additional_info.desc}
+                              </p>
+                            </div>
+                          )}
                           {this.state.type === constants.USER_TYPE_PATIENT && (
                             <>
                               <div className="row">
@@ -1125,14 +1262,21 @@ class Profile extends Component {
                                     Are you Diabetic?
                                   </p>
                                   <p className="col-sm-10 mb-0">
-                                    {`${
-                                      this.state.isDiabetic ? "yes" : "no"
-                                    } since ${
-                                      this.state.isDiabetic &&
-                                      moment(this.state.diabeticValue)?.format(
-                                        "DD-MM-YYYY"
-                                      )
-                                    }`}
+                                    {this.state.data.additional_info &&
+                                      this.state.data.additional_info.med_cond.map(
+                                        (info) => {
+                                          if (
+                                            info.name === "diabetic" &&
+                                            info.selected === true
+                                          ) {
+                                            return `YES, since ${moment(
+                                              info.diag_at
+                                            )?.format("DD-MM-YYYY")}`;
+                                          } else if (info.name === "diabetic") {
+                                            return "NO";
+                                          }
+                                        }
+                                      )}
                                   </p>
                                 </div>
                                 <div className="row">
@@ -1140,14 +1284,23 @@ class Profile extends Component {
                                     Are you Hypertensive?
                                   </p>
                                   <p className="col-sm-10 mb-0">
-                                    {`${
-                                      this.state.isHypertensive ? "yes" : "no"
-                                    } since ${
-                                      this.state.isHypertensive &&
-                                      moment(
-                                        this.state.hypertensiveValue
-                                      )?.format("DD-MM-YYYY")
-                                    }`}
+                                    {this.state.data.additional_info &&
+                                      this.state.data.additional_info.med_cond.map(
+                                        (info) => {
+                                          if (
+                                            info.name === "hypertensive" &&
+                                            info.selected === true
+                                          ) {
+                                            return `YES, since ${moment(
+                                              info.diag_at
+                                            )?.format("DD-MM-YYYY")}`;
+                                          } else if (
+                                            info.name === "hypertensive"
+                                          ) {
+                                            return "NO";
+                                          }
+                                        }
+                                      )}
                                   </p>
                                 </div>
                                 <div className="row">
@@ -1155,11 +1308,21 @@ class Profile extends Component {
                                     Any past surgery?
                                   </p>
                                   <p className="col-sm-10 mb-0">
-                                    {`${this.state.isSurgery ? "yes" : "no"}, ${
-                                      this.state.isSurgery
-                                        ? this.state.surgeryValue
-                                        : ""
-                                    }`}
+                                    {this.state.data.additional_info &&
+                                      this.state.data.additional_info.med_cond.map(
+                                        (info) => {
+                                          if (
+                                            info.name === "past_surgeries" &&
+                                            info.selected === true
+                                          ) {
+                                            return `YES, ${info.desc}`;
+                                          } else if (
+                                            info.name === "past_surgeries"
+                                          ) {
+                                            return "NO";
+                                          }
+                                        }
+                                      )}
                                   </p>
                                 </div>
                                 <div className="row">
@@ -1167,13 +1330,21 @@ class Profile extends Component {
                                     Any allergies to medications?
                                   </p>
                                   <p className="col-sm-10 mb-0">
-                                    {`${
-                                      this.state.isAllergie ? "yes" : "no"
-                                    }, ${
-                                      this.state.isAllergie
-                                        ? this.state.allergieValue
-                                        : ""
-                                    }`}
+                                    {this.state.data.additional_info &&
+                                      this.state.data.additional_info.med_cond.map(
+                                        (info) => {
+                                          if (
+                                            info.name === "allergy_to_meds" &&
+                                            info.selected === true
+                                          ) {
+                                            return `YES, ${info.desc}`;
+                                          } else if (
+                                            info.name === "allergy_to_meds"
+                                          ) {
+                                            return "NO";
+                                          }
+                                        }
+                                      )}
                                   </p>
                                 </div>
                                 <div className="row">
@@ -1181,11 +1352,22 @@ class Profile extends Component {
                                     Have you been diagnosed with Covid?
                                   </p>
                                   <p className="col-sm-10 mb-0">
-                                    {`${this.state.isCovid ? "yes" : "no"}, ${
-                                      this.state.isCovid
-                                        ? this.state.covidDetails
-                                        : ""
-                                    }`}
+                                    {this.state.data.additional_info &&
+                                      this.state.data.additional_info.med_cond.map(
+                                        (info) => {
+                                          if (
+                                            info.name ===
+                                              "diagnosed_with_covid" &&
+                                            info.selected === true
+                                          ) {
+                                            return `YES, ${info.desc}`;
+                                          } else if (
+                                            info.name === "diagnosed_with_covid"
+                                          ) {
+                                            return "NO";
+                                          }
+                                        }
+                                      )}
                                   </p>
                                 </div>
                                 <div className="row">
@@ -1193,16 +1375,30 @@ class Profile extends Component {
                                     Have you been vaccinated against Covid?
                                   </p>
                                   <p className="col-sm-10 mb-0">
-                                    {`${
-                                      this.state.isVaccinated ? "yes" : "no"
-                                    } since ${
-                                      this.state.isVaccinated &&
-                                      moment(this.state.vaccineDate)?.format(
-                                        "DD-MM-YYYY"
-                                      )
-                                    } with ${this.state.dose} dose of ${
-                                      this.state.vaccineName
-                                    }`}
+                                    {this.state.data.additional_info &&
+                                      this.state.data.additional_info.med_cond.map(
+                                        (info) => {
+                                          if (
+                                            info.name === "covid_vaccinated" &&
+                                            info.selected === true
+                                          ) {
+                                            return `YES, since ${moment(
+                                              info.diag_at
+                                            )?.format("DD-MM-YYYY")} with ${
+                                              info.meta.length > 0 &&
+                                              info.meta[0].desc
+                                            }
+                                             dose of ${
+                                               info.meta.length > 0 &&
+                                               info.meta[1].desc
+                                             }`;
+                                          } else if (
+                                            info.name === "covid_vaccinated"
+                                          ) {
+                                            return "NO";
+                                          }
+                                        }
+                                      )}
                                   </p>
                                 </div>
                                 <div className="row">
@@ -1481,21 +1677,23 @@ class Profile extends Component {
                     </div>
                   </div>
 
-                  {this.state.type === constants.USER_TYPE_DOCTOR && <div className="form-group">
-                    <label htmlFor="profile_description">
-                      Profile Description
-                    </label>
-                    <textarea
-                      className="form-control"
-                      id="profile_description"
-                      rows="5"
-                      style={{ minHeight: 80 }}
-                      onChange={(e) =>
-                        this.setState({ profileDescription: e.target.value })
-                      }
-                      value={this.state.profileDescription}
-                    />
-                  </div>}
+                  {this.state.type === constants.USER_TYPE_DOCTOR && (
+                    <div className="form-group">
+                      <label htmlFor="profile_description">
+                        Profile Description
+                      </label>
+                      <textarea
+                        className="form-control"
+                        id="profile_description"
+                        rows="5"
+                        style={{ minHeight: 80 }}
+                        onChange={(e) =>
+                          this.setState({ profileDescription: e.target.value })
+                        }
+                        value={this.state.profileDescription}
+                      />
+                    </div>
+                  )}
 
                   <div className="patient-more-fields">
                     {this.state.type === constants.USER_TYPE_PATIENT &&
@@ -1684,6 +1882,7 @@ class Profile extends Component {
                 <h5 className="modal-title">Additional Details</h5>
               </Modal.Title>
             </Modal.Header>
+
             <Modal.Body>
               {this.state.updatedModel && (
                 <div className="modal-body">
@@ -1694,7 +1893,7 @@ class Profile extends Component {
                           {/*<Col md>*/}
                           <div className="form-group">
                             <Radio
-                              labelStyle={{ paddingLeft: "15px" }}
+                              labelStyle={{ paddingLeft: "15px", fontSize: "16px" }}
                               inputRowStyle={{
                                 paddingLeft: "15px",
                                 marginLeft: "5px",
@@ -1720,6 +1919,7 @@ class Profile extends Component {
                                   onChange={(e) =>
                                     this.setState({
                                       diabeticValue: e.target.value,
+                                      diabeticValueSelected: true,
                                     })
                                   }
                                 />
@@ -1732,7 +1932,7 @@ class Profile extends Component {
                       <div className="col-12 col-sm-6">
                         <div className="form-group">
                           <Radio
-                            labelStyle={{ paddingLeft: "15px" }}
+                            labelStyle={{ paddingLeft: "15px", fontSize: "16px" }}
                             inputRowStyle={{
                               paddingLeft: "15px",
                               marginLeft: "5px",
@@ -1758,6 +1958,7 @@ class Profile extends Component {
                                 onChange={(e) =>
                                   this.setState({
                                     hypertensiveValue: e.target.value,
+                                    hypertensiveValueSelected: true,
                                   })
                                 }
                               />
@@ -1770,7 +1971,7 @@ class Profile extends Component {
                           <Col md className="no-padding">
                             <div className="form-group">
                               <Radio
-                                labelStyle={{ paddingLeft: "15px" }}
+                                labelStyle={{ paddingLeft: "15px", fontSize: "16px" }}
                                 inputRowStyle={{
                                   paddingLeft: "15px",
                                   marginLeft: "5px",
@@ -1806,7 +2007,7 @@ class Profile extends Component {
                           <Col md className="no-padding">
                             <div className="form-group">
                               <Radio
-                                labelStyle={{ paddingLeft: "15px" }}
+                                labelStyle={{ paddingLeft: "15px", fontSize: "16px" }}
                                 inputRowStyle={{
                                   paddingLeft: "15px",
                                   marginLeft: "5px",
@@ -1846,6 +2047,7 @@ class Profile extends Component {
                               id="diagCovid"
                               options={this.state.covids}
                               handleSelect={this.handleCovids}
+                              labelStyle={{fontSize: "16px" }}
                             />
                           </div>
                         </Col>
@@ -1854,7 +2056,10 @@ class Profile extends Component {
                             {this.state.isCovid && (
                               <Col md className="no-padding">
                                 <Input
+                                  required={true}
                                   type="text"
+                                  labelStyle={{ fontSize: "16px" }}
+                                  inputStyle={{paddingLeft: "15px"}}
                                   placeholder="Enter additional details"
                                   label="Provide additional details of Covid illness"
                                   value={this.state.covidDetails}
@@ -1871,6 +2076,7 @@ class Profile extends Component {
                         <Col md>
                           <div className="form-group">
                             <Radio
+                              labelStyle={{ fontSize: "16px" }}
                               label="Have you been vaccinated against Covid?"
                               id="vaccinated"
                               options={this.state.vaccinated}
@@ -1883,39 +2089,42 @@ class Profile extends Component {
                                 <Form.Control
                                   type="date"
                                   value={this.state.vaccineDate}
-                                  onKeyDown={(e) => e.preventDefault()}
                                   min={moment(new Date())
                                     .subtract(50, "years")
                                     .format("YYYY-MM-DD")}
                                   max={moment(new Date()).format("YYYY-MM-DD")}
-                                  onChange={(e) =>
+                                  onChange={(e) => {
                                     this.setState({
                                       vaccineDate: e.target.value,
-                                    })
-                                  }
+                                      vaccineDateSelected: true,
+                                    });
+                                  }}
                                 />
-                                <div className="p-15" />
+                                <div className="p-10" />
                                 <Selector
+                                  required={true}
                                   defaultValue="Choose dose type"
                                   id="dose"
                                   options={this.state.dosages}
                                   // handleSelect={this.setDose}
-                                  handleSelect={(item) =>
+                                  handleSelect={(item) => {
                                     this.setState({
                                       dose: item,
-                                    })
-                                  }
+                                      doseSelected: true,
+                                    });
+                                  }}
                                   value={this.state.dose}
                                 />
-                                <div className="p-15" />
+
                                 <Selector
-                                  defaultValue="Choose vaccine name"
                                   id="v-name"
+                                  defaultValue="Choose vaccine name"
                                   options={this.state.vaccineNames}
                                   // handleSelect={setVaccineName}
                                   handleSelect={(item) => {
                                     this.setState({
                                       vaccineName: item,
+                                      vaccineNameSelected: true,
                                     });
                                   }}
                                   value={this.state.vaccineName}
@@ -1926,10 +2135,14 @@ class Profile extends Component {
                         </Col>
                       </div>
                       {/*<div className="col-12 col-sm-6">*/}
-                      <div className="form-group">
+                      <div
+                        style={{ marginLeft: "3%", width: "100%" }}
+                        className="form-group"
+                      >
                         <Col md className="no-padding">
                           <div className="form-group">
                             <TextArea
+                              labelStyle={{ fontSize: "16px" }}
                               noPadding
                               label="Other medical conditions"
                               id={"other-condition"}
@@ -1952,8 +2165,8 @@ class Profile extends Component {
                     </div>
                     <button
                       type="submit"
-                      onClick={this.updateProfile}
                       className="btn btn-primary btn-block"
+                      onClick={this.updateProfile}
                     >
                       Save Changes
                     </button>

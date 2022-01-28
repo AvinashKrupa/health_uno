@@ -58,7 +58,7 @@ html {
   height: 100%;
 }
 body {
-  background-color: #f8f9fa;
+  background-color: #fff;
   color: #333;
   font-family: "Mada", sans-serif;
   font-size: 1rem;
@@ -5365,8 +5365,8 @@ input#menu[type="checkbox"] {
   padding-left: 5px !important;
   border-color: #28a3da;
   color: #28a3da;
-  width: 35px;
-  height: 35px;
+  width: 25px;
+  height: 20px;
 }
 
 .patient-slot-booking-btn {
@@ -5816,6 +5816,15 @@ input#menu[type="checkbox"] {
   border-radius: 8px;
 }
 .textarea-label, .form-label {
-  font-weight: 500;
   font-size: 20px;
+}
+
+.p-10 {
+  padding: 10px !important;
+}
+
+.filter_appointment{
+  display: flex;
+  justify-content: flex-end;
+  width: 500px;
 }

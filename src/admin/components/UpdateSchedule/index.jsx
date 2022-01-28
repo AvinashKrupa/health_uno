@@ -154,22 +154,29 @@ const UpdateSchedule = ({ data }) => {
           sat: selectedDays[6].isChecked,
         },
         shift: {
-          shift1: {
+          ...(isDayShift ? {shift1: {
             start: moment(
               `${moment().format("DD-MMM-YYYY")} ${dayShiftFrom}`
             ).format("HH:mm"),
             end: moment(
               `${moment().format("DD-MMM-YYYY")} ${dayShiftTo}`
             ).format("HH:mm"),
-          },
-          shift2: {
+          }}: {
+            shift1: {
+              start: '',
+              end: '',
+          }}),
+           ...(isEveningShift ? {shift2: {
             start: moment(
               `${moment().format("DD-MMM-YYYY")} ${eveningShiftFrom}`
             ).format("HH:mm"),
             end: moment(
               `${moment().format("DD-MMM-YYYY")} ${eveningShiftTo}`
             ).format("HH:mm"),
-          },
+          }}: {shift2: {
+            start: '',
+            end: '',
+          }})
         },
       },
       user_id: data.user._id,
@@ -196,6 +203,7 @@ const UpdateSchedule = ({ data }) => {
   function getSlots() {
     let params = {
       doctor_id: data.additional_info._id,
+      look_ahead:true,
       date: currentDate,
     };
 

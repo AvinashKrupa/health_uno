@@ -102,13 +102,13 @@ const PatientSlotBooking = (props) => {
   function getSlots() {
     let params = {
       doctor_id: props.match.params.doctor_id,
+      look_ahead:true,
       date: currentDate,
     };
 
     // post(API.GETAVAILABLESLOT, params)
     fetchApi({ url: "v1/slot/getAvailableSlots", method: "POST", body: params })
       .then(response => {
-          console.log('response :>> ', response);
         if (response.status === 200) {
           if (response.data.shift1) {
             let data = response.data.shift1.map(info => {

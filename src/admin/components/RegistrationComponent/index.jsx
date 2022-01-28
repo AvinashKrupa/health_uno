@@ -34,7 +34,7 @@ const RegistrationComponent = ({ history, image }) => {
   const [addressLine2, setAddressLine2] = useState("");
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState("India");
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
   const [isDiabetic, setIsDiabetic] = useState(false);
@@ -673,7 +673,6 @@ const RegistrationComponent = ({ history, image }) => {
                 <Col>
                   <Form.Control
                     type="date"
-                    onKeyDown={(e) => e.preventDefault()}
                     min={moment(new Date())
                       .subtract(50, "years")
                       .format("YYYY-MM-DD")}
@@ -696,7 +695,6 @@ const RegistrationComponent = ({ history, image }) => {
                 <Col>
                   <Form.Control
                     type="date"
-                    onKeyDown={(e) => e.preventDefault()}
                     min={moment(new Date())
                       .subtract(50, "years")
                       .format("YYYY-MM-DD")}
@@ -784,7 +782,6 @@ const RegistrationComponent = ({ history, image }) => {
                 <Col md style={{ paddingTop: "32px" }}>
                   <Form.Control
                     type="date"
-                    onKeyDown={(e) => e.preventDefault()}
                     min={moment(new Date())
                       .subtract(50, "years")
                       .format("YYYY-MM-DD")}
