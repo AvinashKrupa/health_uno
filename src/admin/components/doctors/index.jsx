@@ -55,11 +55,11 @@ class Doctors extends Component {
     this.csvLinkEl = React.createRef();
   }
 
-  fetchDoctors = async (params = {}) => {
+  async fetchDoctors(params = {}) {
+    this.setState({ loading: true });
     const body = {
       ...params,
     };
-    this.setState({ loading: true });
     let doctors = await fetchApi({
       url: "v2/doctors",
       method: "POST",
@@ -67,8 +67,8 @@ class Doctors extends Component {
     });
     let doctorsData = doctors.data.docs;
     this.setState({
-      data: JSON.parse(JSON.stringify(doctorsData)),
-      exportingData: JSON.parse(JSON.stringify(doctorsData)),
+      data: doctorsData,
+      exportingData: doctorsData,
       loading: false,
       total: doctors.data.total,
       pagination: {
@@ -77,9 +77,7 @@ class Doctors extends Component {
         total: doctors.data.total,
       },
     });
-
-    this.forceUpdate();
-  };
+  }
 
   async componentDidMount() {
     const { pagination } = this.state;
