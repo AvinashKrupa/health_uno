@@ -386,7 +386,7 @@ export const getColumnDropDownSearchProps = (
         style={{ width: 120 }}
         onChange={(value) => {
           setSelectedKeys(value ? (value === "All" ? [] : [value]) : []);
-          handleSearch(value ? (value === "All" ? [] : [value]) : [], confirm, dataIndex, "dept_name");
+          handleSearch(value ? (value === "All" ? [] : [value]) : [], confirm, dataIndex, "spcl_name");
         }}
       >
         <Select.Option value="All">All</Select.Option>
@@ -415,10 +415,17 @@ export const getColumnDropDownSearchProps = (
 
 export const getColumnFilterProps = (filterArray, recordValueToCompare) => {
   filterArray = filterArray.map((filter) => {
-    return {
-      text: changeCaseFirstLetter(filter),
-      value: filter,
-    };
+    if(typeof filter=='object'){
+      return {
+        text: changeCaseFirstLetter(filter.name),
+        value: filter.value,
+      };
+    }else{
+      return {
+        text: changeCaseFirstLetter(filter),
+        value: filter,
+      };
+    }
   });
   return {
     filters: filterArray,
