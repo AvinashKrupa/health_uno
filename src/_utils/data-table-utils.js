@@ -59,15 +59,24 @@ const createProfileLink = (record) => {
     : "/profile";
 };
 
-export const renderNameForAppointment = (record, prefix, suffix, includeImage = false, type) => {
+export const renderNameForAppointment = (
+  record,
+  prefix,
+  suffix,
+  includeImage = false,
+  type
+) => {
   return (
     <h2 className="table-avatar">
       {includeImage && (
-        <Link to={createProfileLinkForAppointment(record,type)} className="avatar avatar-sm mr-2">
+        <Link
+          to={createProfileLinkForAppointment(record, type)}
+          className="avatar avatar-sm mr-2"
+        >
           <img alt="" src={record.user_id.dp} />
         </Link>
       )}
-      <Link to={createProfileLinkForAppointment(record,type)}>
+      <Link to={createProfileLinkForAppointment(record, type)}>
         <a>{`${prefix ? prefix + " " : ""}${getFullName(record)}${
           suffix ? " " + suffix : ""
         }`}</a>
@@ -76,23 +85,14 @@ export const renderNameForAppointment = (record, prefix, suffix, includeImage = 
   );
 };
 
-const createProfileLinkForAppointment = (record,type) => {
-  let url = ''
-  if(type === "patient"){
-    url =record
-    ? "/profile/" +
-        record?.user_id?._id +
-        "/1"
-    : "/profile"
+const createProfileLinkForAppointment = (record, type) => {
+  let url = "";
+  if (type === "patient") {
+    url = record ? "/profile/" + record?.user_id?._id + "/1" : "/profile";
+  } else if (type === "doctor") {
+    url = record ? "/profile/" + record?.user_id + "/2" : "/profile";
   }
-  else if(type === 'doctor'){
-   url =  record
-    ? "/profile/" +
-        record?.user_id +
-        "/2"
-    : "/profile";
-  }
-  return url
+  return url;
 };
 
 export const renderChips = (items) => {
@@ -329,7 +329,9 @@ export const getColumnSearchProps = (
         onChange={(e) =>
           setSelectedKeys(e.target.value ? [e.target.value] : [])
         }
-        onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex, "name")}
+        onPressEnter={() =>
+          handleSearch(selectedKeys, confirm, dataIndex, "name")
+        }
         style={{ marginBottom: 8, display: "block" }}
       />
       <Space>
@@ -386,7 +388,12 @@ export const getColumnDropDownSearchProps = (
         style={{ width: 120 }}
         onChange={(value) => {
           setSelectedKeys(value ? (value === "All" ? [] : [value]) : []);
-          handleSearch(value ? (value === "All" ? [] : [value]) : [], confirm, dataIndex, "dept_name");
+          handleSearch(
+            value ? (value === "All" ? [] : [value]) : [],
+            confirm,
+            dataIndex,
+            "spcl_name"
+          );
         }}
       >
         <Select.Option value="All">All</Select.Option>
@@ -413,16 +420,31 @@ export const getColumnDropDownSearchProps = (
   // },
 });
 
-export const getColumnFilterProps = (filterArray, recordValueToCompare) => {
+export const getColumnFilterProps = (
+  filterArray,
+  recordValueToCompare,
+  isLocalFilter = true
+) => {
   filterArray = filterArray.map((filter) => {
-    return {
-      text: changeCaseFirstLetter(filter),
-      value: filter,
-    };
+    if (typeof filter == "object") {
+      return {
+        text: changeCaseFirstLetter(filter.name),
+        value: filter.value,
+      };
+    } else {
+      return {
+        text: changeCaseFirstLetter(filter),
+        value: filter,
+      };
+    }
   });
   return {
     filters: filterArray,
     onFilter: (value, record) => {
+      if (isLocalFilter == false) {
+        return true;
+      }
+      console.log("value", value, "record", record);
       let childern = recordValueToCompare.split(".");
       let finalVal = record;
       childern.forEach((child) => {
@@ -447,16 +469,16 @@ export const renderTagStatus = (status) => {
 };
 
 export const renderButton = (onButtonClick) => {
-  return(
+  return (
     <button
-        type="button"
-        onClick={() => onButtonClick()}
-        className="btn btn-primary book-btn"
-      >
-        Book Appointment
-      </button>
-  )
-}
+      type="button"
+      onClick={() => onButtonClick()}
+      className="btn btn-primary book-btn"
+    >
+      Book Appointment
+    </button>
+  );
+};
 
 export const getUpdatedColumnSearchProps = (
   context,
@@ -481,13 +503,15 @@ export const getUpdatedColumnSearchProps = (
         onChange={(e) =>
           setSelectedKeys(e.target.value ? [e.target.value] : [])
         }
-        onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex, 'name')}
+        onPressEnter={() =>
+          handleSearch(selectedKeys, confirm, dataIndex, "name")
+        }
         style={{ marginBottom: 8, display: "block" }}
       />
       <Space>
         <Button
           type="primary"
-          onClick={() => handleSearch(selectedKeys, confirm, dataIndex, 'name')}
+          onClick={() => handleSearch(selectedKeys, confirm, dataIndex, "name")}
           size="small"
           style={{ width: 90 }}
         >
