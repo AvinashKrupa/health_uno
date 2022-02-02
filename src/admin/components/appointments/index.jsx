@@ -250,7 +250,7 @@ class Appointments extends Component {
   };
 
   handleDateFilter = () => {
-    const { fromDate, toDate } = this.state;
+    const { fromDate, pagination, toDate } = this.state;
     this.setState(
       {
         filters: {
@@ -267,6 +267,9 @@ class Appointments extends Component {
           delete filterValue.time;
         }
         const obj = {
+          pagination: {
+            ...pagination,
+          },
           filter: {
             ...filterValue,
           },
