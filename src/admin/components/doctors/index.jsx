@@ -183,7 +183,7 @@ class Doctors extends Component {
   };
 
   handleExportData = async (event, done) => {
-    const { pagination, filters } = this.state;
+    const { pagination, searchStatus, filters } = this.state;
     this.setState({
       loadingCsv: true,
     });
@@ -195,6 +195,7 @@ class Doctors extends Component {
       },
       filter: {
         ...filters,
+        status: searchStatus
       },
     };
     const body = {
