@@ -141,6 +141,11 @@ class Patients extends Component {
         ),
       },
       {
+        title: "Email",
+        dataIndex: "email",
+        render: (text, record) => <span>{record.user_id.email}</span>,
+      },
+      {
         title: "Created At",
         dataIndex: "created_at",
         render: (text) => renderDate(text),
@@ -207,6 +212,12 @@ class Patients extends Component {
         header: "Weight (Kg)",
         formatter: (_fieldValue, record) => {
           return record?.weight;
+        },
+      },
+      email: {
+        header: "Email",
+        formatter: (_fieldValue, record) => {
+          return record?.user_id.email;
         },
       },
       mobileNumber: {
