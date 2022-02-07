@@ -160,13 +160,10 @@ class Doctors extends Component {
   }
 
   handleDataChange = (pagination, filters, sorter, extra) => {
-    if (filters.status) {
-      this.setState({ searchStatus: filters.status });
-    } else if (filters.specialities) {
-      this.setState({ searchSpecialities: filters.specialities });
-    } else {
-      this.setState({ searchStatus: "", searchSpecialities: "" });
-    }
+    this.setState({
+      searchStatus: filters.status,
+      searchSpecialities: filters.specialities
+    })
     const obj = {
       sort_key: sorter.field,
       sort_order: sorter.order,
@@ -183,18 +180,18 @@ class Doctors extends Component {
   };
 
   handleExportData = async (event, done) => {
-    const { pagination, searchStatus, filters } = this.state;
+    const { searchStatus, searchSpecialities, filters } = this.state;
     this.setState({
       loadingCsv: true,
     });
     const obj = {
       pagination: {
-        ...pagination,
         page: null,
         limit: null,
       },
       filter: {
         ...filters,
+        specialities: searchSpecialities,
         status: searchStatus
       },
     };
@@ -252,6 +249,11 @@ class Doctors extends Component {
             });
           }
         );
+      }else{
+        this.setState(
+          {
+            loadingCsv: false,
+          }, () => toast.success('No data found'))
       }
     }
   };
