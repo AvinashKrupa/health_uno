@@ -5365,8 +5365,8 @@ input#menu[type="checkbox"] {
   padding-left: 5px !important;
   border-color: #28a3da;
   color: #28a3da;
-  width: 35px;
-  height: 35px;
+  width: 25px;
+  height: 20px;
 }
 
 .patient-slot-booking-btn {
@@ -5821,4 +5821,10 @@ input#menu[type="checkbox"] {
 
 .p-10 {
   padding: 10px !important;
+}
+
+.filter_appointment{
+  display: flex;
+  justify-content: flex-end;
+  width: 500px;
 }
