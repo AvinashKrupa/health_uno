@@ -88,7 +88,7 @@ export const renderNameForAppointment = (
 const createProfileLinkForAppointment = (record, type) => {
   let url = "";
   if (type === "patient") {
-    url = record ? "/profile/" + record?.user_id?._id + "/1" : "/profile";
+    url = record ? "/profile/" + record?.user_id + "/1" : "/profile";
   } else if (type === "doctor") {
     url = record ? "/profile/" + record?.user_id + "/2" : "/profile";
   }

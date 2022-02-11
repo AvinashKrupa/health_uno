@@ -437,7 +437,8 @@ class Appointments extends Component {
         title: "Doctor",
         render: (text, record) =>
           renderNameForAppointment(record.doctor, "Dr", "", false, "doctor"),
-        sorter: (a, b) => sorterText(a.doctor.first_name, b.doctor.first_name),
+        // sorter: (a, b) => sorterText(a.doctor.first_name, b.doctor.first_name),
+        sorter: (a, b) => sorterText(a.doctor?.first_name, b.doctor?.last_name),
         ...getUpdatedColumnSearchProps(
           this,
           "Doctor",
@@ -481,7 +482,7 @@ class Appointments extends Component {
         dataIndex: "created_by",
         render: (text, record) => (
           <span>
-            {record.created_by.first_name + " " + record.created_by.first_name}
+            {record.created_by.first_name + " " + record.created_by.last_name}
           </span>
         ),
       },
@@ -490,9 +491,7 @@ class Appointments extends Component {
         dataIndex: "updated_by",
         render: (text, record) => (
           <span>
-            {record.updated_by?.first_name +
-              " " +
-              record.updated_by?.first_name}
+            {record.updated_by?.first_name + " " + record.updated_by?.last_name}
           </span>
         ),
       },
