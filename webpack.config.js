@@ -4,7 +4,7 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const Dotenv = require('dotenv-webpack');
+const Dotenv = require("dotenv-webpack");
 // const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 // const publicPath = '/template/';
@@ -34,7 +34,7 @@ module.exports = {
     // global app config object
     config: JSON.stringify({
       // apiUrl: 'http://localhost:3005/',
-      apiUrl: "https://uat.healthuno.com:6002/",
+      apiUrl: "https://api.healthuno.com/",
       imageapiUrl: "",
       publicPath: "/",
     }),
@@ -93,7 +93,6 @@ module.exports = {
         test: /\.(woff|woff2|eot|ttf|svg)$/,
         loader: "url-loader?limit=100000",
       },
-
     ],
   },
   //  optimization: {
