@@ -29,7 +29,7 @@ class UploadImage extends Component {
     }
     bodyFormData.append("type", "profile");
     this.uploadImageWithData(
-      "'https://api.healthuno.com/v1/fileUpload",
+      "https://api.healthuno.com/v1/fileUpload",
       bodyFormData
     )
       .then((response) => {})
