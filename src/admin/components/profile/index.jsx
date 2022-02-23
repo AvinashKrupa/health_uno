@@ -361,7 +361,6 @@ class Profile extends Component {
     });
   }
 
-
   handleBookAppointment = (record) => {
     localStorage.setItem("SELECTED_PATIENT_ID", record._id);
     this.props.history.push("/patient/topConsultants");
@@ -449,9 +448,8 @@ class Profile extends Component {
       isVaccinated: id === "yes",
     });
     if (id === "no") {
-      this.setState({ vaccineDate: "",dose:"",vaccineName:"" });
+      this.setState({ vaccineDate: "", dose: "", vaccineName: "" });
     }
-    
 
     const newVaccinatedList = this.state.vaccinated.map((item) => {
       return Object.assign({}, item, { checked: item.id === id });
@@ -645,9 +643,9 @@ class Profile extends Component {
             (specl) => specl._id === selectedSpecialities
           );
           const speclData = {
-            title : SpecialitiesData.title,
-            _id : SpecialitiesData._id
-          }
+            title: SpecialitiesData.title,
+            _id: SpecialitiesData._id,
+          };
           data.additional_info.qualif.specl.push(speclData);
         }
       }
@@ -875,6 +873,11 @@ class Profile extends Component {
     } catch (e) {}
   };
 
+  openInNewTab(url) {
+    const newWindow = window.open(url, "_blank", "noopener,noreferrer");
+    if (newWindow) newWindow.opener = null;
+  }
+
   handleImage = (file) => {
     this.updateUserProfile(file);
   };
@@ -1019,11 +1022,12 @@ class Profile extends Component {
                           () => this.handleDropdownClick(),
                           this.showDropDownMenu()
                         )}
-                        {this.state.type == constants.USER_TYPE_PATIENT && renderButton(() =>
-                          this.handleBookAppointment(
-                            this.state.data.additional_info
-                          )
-                        )}
+                        {this.state.type == constants.USER_TYPE_PATIENT &&
+                          renderButton(() =>
+                            this.handleBookAppointment(
+                              this.state.data.additional_info
+                            )
+                          )}
                       </div>
                     </div>
                   </div>
@@ -1224,6 +1228,50 @@ class Profile extends Component {
                               </p>
                               <p className="col-sm-10">
                                 ₹{this.state.data.additional_info.qualif.fee}
+                              </p>
+                            </div>
+                            <div className="row">
+                              <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                Medical Report
+                              </p>
+                              <p className="col-sm-3">
+                                {this.state.data.additional_info
+                                  .medical_cert_url ? (
+                                  <button
+                                    type="submit"
+                                    onClick={() => {
+                                      this.openInNewTab(
+                                        this.state.data.additional_info
+                                          .medical_cert_url
+                                      );
+                                    }}
+                                    className="btn btn-primary btn-block"
+                                  >
+                                    View Report
+                                  </button>
+                                ) : (
+                                  <p className="col-sm-10">Not found</p>
+                                )}
+                              </p>
+                            </div>
+                            <div className="row">
+                              <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                Doctor Signature
+                              </p>
+                              <p className="col-sm-10">
+                                {this.state.data.additional_info
+                                  .digital_signature_url ? (
+                                  <img
+                                    style={{ width: 280, height: 200 }}
+                                    alt="signature"
+                                    src={
+                                      this.state.data.additional_info
+                                        .digital_signature_url
+                                    }
+                                  />
+                                ) : (
+                                  <p className="col-sm-10">Not found</p>
+                                )}
                               </p>
                             </div>
                           </div>
@@ -1893,7 +1941,10 @@ class Profile extends Component {
                           {/*<Col md>*/}
                           <div className="form-group">
                             <Radio
-                              labelStyle={{ paddingLeft: "15px", fontSize: "16px" }}
+                              labelStyle={{
+                                paddingLeft: "15px",
+                                fontSize: "16px",
+                              }}
                               inputRowStyle={{
                                 paddingLeft: "15px",
                                 marginLeft: "5px",
@@ -1932,7 +1983,10 @@ class Profile extends Component {
                       <div className="col-12 col-sm-6">
                         <div className="form-group">
                           <Radio
-                            labelStyle={{ paddingLeft: "15px", fontSize: "16px" }}
+                            labelStyle={{
+                              paddingLeft: "15px",
+                              fontSize: "16px",
+                            }}
                             inputRowStyle={{
                               paddingLeft: "15px",
                               marginLeft: "5px",
@@ -1971,7 +2025,10 @@ class Profile extends Component {
                           <Col md className="no-padding">
                             <div className="form-group">
                               <Radio
-                                labelStyle={{ paddingLeft: "15px", fontSize: "16px" }}
+                                labelStyle={{
+                                  paddingLeft: "15px",
+                                  fontSize: "16px",
+                                }}
                                 inputRowStyle={{
                                   paddingLeft: "15px",
                                   marginLeft: "5px",
@@ -2007,7 +2064,10 @@ class Profile extends Component {
                           <Col md className="no-padding">
                             <div className="form-group">
                               <Radio
-                                labelStyle={{ paddingLeft: "15px", fontSize: "16px" }}
+                                labelStyle={{
+                                  paddingLeft: "15px",
+                                  fontSize: "16px",
+                                }}
                                 inputRowStyle={{
                                   paddingLeft: "15px",
                                   marginLeft: "5px",
@@ -2047,7 +2107,7 @@ class Profile extends Component {
                               id="diagCovid"
                               options={this.state.covids}
                               handleSelect={this.handleCovids}
-                              labelStyle={{fontSize: "16px" }}
+                              labelStyle={{ fontSize: "16px" }}
                             />
                           </div>
                         </Col>
@@ -2059,7 +2119,7 @@ class Profile extends Component {
                                   required={true}
                                   type="text"
                                   labelStyle={{ fontSize: "16px" }}
-                                  inputStyle={{paddingLeft: "15px"}}
+                                  inputStyle={{ paddingLeft: "15px" }}
                                   placeholder="Enter additional details"
                                   label="Provide additional details of Covid illness"
                                   value={this.state.covidDetails}
