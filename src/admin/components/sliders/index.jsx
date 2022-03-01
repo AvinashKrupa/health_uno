@@ -226,7 +226,13 @@ class Sliders extends Component {
         // data.append('file', record.mobilefile)
         data.append("title", record.title);
         data.append("desc", record.desc || "");
-        data.append("speciality_id", this.state.selectedSpeciality || "");
+
+        if (this.state.selectedSpeciality != "") {
+          data.append("speciality_id", this.state.selectedSpeciality || "");
+        } else {
+          data.append("speciality_id", "");
+        }
+
         data.append("type", record.selectedType);
         data.append("user_type", record.selectedUserType);
         data.append("_id", record._id);
@@ -248,7 +254,10 @@ class Sliders extends Component {
         data.append("title", record.title);
         data.append("desc", record.desc ? record.desc : "");
         data.append("type", record.selectedType);
-        data.append("speciality_id", this.state.selectedSpeciality || "");
+        if (this.state.selectedSpeciality != "") {
+          data.append("speciality_id", this.state.selectedSpeciality || "");
+        }
+        // data.append("speciality_id", this.state.selectedSpeciality || "");
         data.append("user_type", record.selectedUserType);
         result = await fetchApiWithFileUpload({
           url: "v1/slider/addNewMulti",
