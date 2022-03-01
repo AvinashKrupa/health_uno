@@ -476,6 +476,7 @@ class Sliders extends Component {
                           }
                           className="form-control"
                         >
+                          <option value={""}>{"Select speciality"}</option>
                           {this.state.specialitiesData.map((info) => {
                             return (
                               <option value={info._id}>{info.name}</option>
