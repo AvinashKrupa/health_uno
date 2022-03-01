@@ -22,8 +22,10 @@ const MultiSelect = ({ label, options, selected, handleChange, className }) => {
         className={classes.select}
         value={selected}
         onChange={handleChange}
-        renderValue={(selected) =>{
-          return selected.map((obj) => options.find(option=>option._id == obj).name).join(",")
+        renderValue={(selected) => {
+          return selected
+            .map((obj) => options.find((option) => option._id == obj).name)
+            .join(",");
         }}
         MenuProps={MenuProps}
         disableUnderline
@@ -31,7 +33,10 @@ const MultiSelect = ({ label, options, selected, handleChange, className }) => {
         {options.map((option) => (
           <MenuItem key={option._id} value={option._id}>
             <ListItemIcon>
-              <Checkbox style={{color:"#28a3da"}} checked={selected.indexOf(option._id) > -1} />
+              <Checkbox
+                style={{ color: "#28a3da" }}
+                checked={selected.indexOf(option._id) > -1}
+              />
             </ListItemIcon>
             <ListItemText primary={option.name} />
           </MenuItem>
