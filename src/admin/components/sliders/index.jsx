@@ -22,6 +22,7 @@ import {
 import toast from "react-hot-toast";
 import { changeCaseFirstLetter } from "../../../_utils/common-utils";
 import { some } from "lodash";
+import MultiSelect from "../MultiSelect/MultiSelect";
 
 const sliderTypes = ["promo"];
 const userTypes = {
@@ -37,10 +38,13 @@ class Sliders extends Component {
       title: "",
       edited: false,
       data: [],
+      specialitiesData: [],
+      selectedSpeciality: "",
     };
   }
 
   async componentDidMount() {
+    this.fetchSpeciality();
     await this.reloadData();
   }
 
@@ -50,6 +54,22 @@ class Sliders extends Component {
       method: "GET",
     });
     this.setState({ data: result.data });
+  }
+
+  async fetchSpeciality() {
+    let specialities = await fetchApi({
+      url: "v1/specialities?showAll=true",
+      method: "GET",
+    });
+    console.log("specialities", specialities);
+    let data = [];
+
+    if (Array.isArray(specialities.data)) {
+      data = specialities.data.map((info) => {
+        return { name: info.title, _id: info._id };
+      });
+    }
+    this.setState({ specialitiesData: data });
   }
 
   handleClose = () => {
@@ -69,6 +89,10 @@ class Sliders extends Component {
         title: showRecord.title,
         edited: true,
       });
+
+      if (record.speciality_id && record.speciality_id != "") {
+        this.setState({ selectedSpeciality: record.speciality_id._id });
+      }
     } else {
       let showRecord = { ...record };
       showRecord["selectedUserType"] = showRecord.user_type || "1";
@@ -202,6 +226,13 @@ class Sliders extends Component {
         // data.append('file', record.mobilefile)
         data.append("title", record.title);
         data.append("desc", record.desc || "");
+
+        if (this.state.selectedSpeciality != "") {
+          data.append("speciality_id", this.state.selectedSpeciality || "");
+        } else {
+          data.append("speciality_id", "");
+        }
+
         data.append("type", record.selectedType);
         data.append("user_type", record.selectedUserType);
         data.append("_id", record._id);
@@ -223,6 +254,10 @@ class Sliders extends Component {
         data.append("title", record.title);
         data.append("desc", record.desc ? record.desc : "");
         data.append("type", record.selectedType);
+        if (this.state.selectedSpeciality != "") {
+          data.append("speciality_id", this.state.selectedSpeciality || "");
+        }
+        // data.append("speciality_id", this.state.selectedSpeciality || "");
         data.append("user_type", record.selectedUserType);
         result = await fetchApiWithFileUpload({
           url: "v1/slider/addNewMulti",
@@ -248,8 +283,7 @@ class Sliders extends Component {
       if (result) {
         toast.success(result.message);
       }
-    } catch (e) {
-    }
+    } catch (e) {}
     this.handleClose();
     await this.reloadData();
   };
@@ -264,8 +298,7 @@ class Sliders extends Component {
       if (result) {
         toast.success(result.message);
       }
-    } catch (e) {
-    }
+    } catch (e) {}
     this.handleClose();
     await this.reloadData();
   };
@@ -293,6 +326,12 @@ class Sliders extends Component {
         ellipsis: true,
         render: (text, record) => renderTextWithImage("", record.image),
         //sorter: (a, b) => sorterText(a.image, b.image),
+      },
+      {
+        title: "Speciality",
+        dataIndex: "speciality_id",
+        render: (text, record) =>
+          renderText(record.speciality_id ? record.speciality_id.title : ""),
       },
       {
         title: "Type",
@@ -432,33 +471,32 @@ class Sliders extends Component {
                         />
                       </div>
                     </div>
-                  </div>
-                  <div className="row form-row">
+
                     <div className="col-12 col-sm-6">
                       <div className="form-group">
-                        <label>Mobile Banner</label>
-                        <input
-                          type="file"
+                        <label>Speciality</label>
+                        <select
+                          value={this.state.selectedSpeciality}
+                          name="speciality"
+                          onChange={(e) =>
+                            this.setState({
+                              selectedSpeciality: event.target.value,
+                            })
+                          }
                           className="form-control"
-                          ref={(ref) => (this.fileMobileInput = ref)}
-                          onChange={(e) => this.handleMobileFileSelection(e)}
-                        />
-                        <p><em>800w * 400h (2 : 1 aspect ration) </em></p>
-                      </div>
-                    </div>
-                    <div className="col-12 col-sm-6">
-                      <div className="form-group">
-                        <label>Web Banner</label>
-                        <input
-                          type="file"
-                          className="form-control"
-                          ref={(ref) => (this.fileInput = ref)}
-                          onChange={(e) => this.handleWebFileSelection(e)}
-                        />
-                        <p><em>2400w * 600h (4 : 1 aspect ration) </em></p>
+                        >
+                          <option value={""}>{"Select speciality"}</option>
+                          {this.state.specialitiesData.map((info) => {
+                            return (
+                              <option value={info._id}>{info.name}</option>
+                            );
+                          })}
+                        </select>
                       </div>
                     </div>
                   </div>
+
+                  <div style={{ marginTop: 16 }}></div>
                   <div className="row form-row">
                     <div className="col-12 col-sm-6">
                       <div className="form-group">
@@ -499,6 +537,38 @@ class Sliders extends Component {
                       </div>
                     </div>
                   </div>
+
+                  <div className="row form-row">
+                    <div className="col-12 col-sm-6">
+                      <div className="form-group">
+                        <label>Mobile Banner</label>
+                        <input
+                          type="file"
+                          className="form-control"
+                          ref={(ref) => (this.fileMobileInput = ref)}
+                          onChange={(e) => this.handleMobileFileSelection(e)}
+                        />
+                        <p>
+                          <em>800w * 400h (2 : 1 aspect ration) </em>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="col-12 col-sm-6">
+                      <div className="form-group">
+                        <label>Web Banner</label>
+                        <input
+                          type="file"
+                          className="form-control"
+                          ref={(ref) => (this.fileInput = ref)}
+                          onChange={(e) => this.handleWebFileSelection(e)}
+                        />
+                        <p>
+                          <em>2400w * 600h (4 : 1 aspect ration) </em>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* <div className="row form-row">
                     <div className="col-12 col-sm-12">
                       <div className="form-group">
