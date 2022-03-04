@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import SidebarNav from "../sidebar";
 import { Col, Form, Modal, Tab, Tabs } from "react-bootstrap";
 import DatePicker from "react-datepicker";
-import { fetchApi } from "../../../_utils/http-utils";
+import { fetchApi, fetchApiWithFileUpload } from "../../../_utils/http-utils";
 import {
   assign,
   changeCaseFirstLetter,
@@ -114,6 +114,10 @@ class Profile extends Component {
       selectedLanguage: [],
       experience: "",
       fees: "",
+      medicalCertificate: null,
+      isMedicalCertUpdate: false,
+      signatureImage: null,
+      isSignatureImageUpdate: false,
     };
   }
 
@@ -224,6 +228,10 @@ class Profile extends Component {
   };
 
   async componentDidMount() {
+    await this.getUserProfile();
+  }
+
+  async getUserProfile() {
     let profile = await fetchApi({
       url: "v1/user/getUserProfile",
       method: "POST",
@@ -567,6 +575,25 @@ class Profile extends Component {
     return true;
   };
 
+  uploadImageWithData(endPoint, formData) {
+    return new Promise(async (resolve, reject) => {
+      fetchApiWithFileUpload({
+        method: "post",
+        url: endPoint,
+        formData: formData,
+        headers: { "Content-Type": undefined },
+      })
+        .then((response) => {
+          // this.props.getImage(response.data.url);
+
+          resolve(response);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
+
   updateProfile = async (e) => {
     const {
       isDiabetic,
@@ -594,6 +621,8 @@ class Profile extends Component {
 
     if (this.validateData()) {
       let data = this.state.updatedModel;
+      console.log("ASDasda", data);
+
       let countryStateCity = this.state.countryStateCity;
       data.additional_info.address = {
         ...data.additional_info.address,
@@ -726,19 +755,59 @@ class Profile extends Component {
               ...data.additional_info.qualif,
               exp: this.state.experience,
               fee: this.state.fees,
-              //   address: data.additional_info.address,
             },
           };
-        }
-        let result = await fetchApi({
-          url: "v1/user/updateProfile",
-          method: "POST",
-          body: requestBody,
-        });
 
-        if (result) {
-          toast.success(result.message);
-          this.setState({ data: result.data });
+          let bodyFormData = new FormData();
+          bodyFormData.append("user_data", JSON.stringify(requestBody));
+
+          if (
+            this.state.medicalCertificate != undefined &&
+            this.state.medicalCertificate.uri != "" &&
+            this.state.isMedicalCertUpdate
+          ) {
+            console.log(this.state.medicalCertificate[0]);
+            bodyFormData.append(
+              "medical_cert_file",
+              this.state.medicalCertificate[0]
+            );
+          }
+          if (
+            this.state.signatureImage != undefined &&
+            this.state.signatureImage != "" &&
+            this.state.isSignatureImageUpdate
+          ) {
+            bodyFormData.append(
+              "digital_signature_file",
+              this.state.signatureImage[0]
+            );
+          }
+
+          bodyFormData.append("type", "profile");
+          this.uploadImageWithData("v1/user/updateProfile2", bodyFormData)
+            .then((response) => {
+              console.log(response.data);
+              toast.success(response.message);
+              this.getUserProfile();
+              this.setState({
+                medicalCertificate: null,
+                isMedicalCertUpdate: false,
+                signatureImage: null,
+                isSignatureImageUpdate: false,
+              });
+            })
+            .catch((error) => {});
+        } else {
+          let result = await fetchApi({
+            url: "v1/user/updateProfile",
+            method: "POST",
+            body: requestBody,
+          });
+
+          if (result) {
+            toast.success(result.message);
+            this.setState({ data: result.data });
+          }
         }
       } catch (e) {}
       this.setState({ showMenu: false, show: "" });
@@ -937,6 +1006,13 @@ class Profile extends Component {
   //     this.updateProfile(e);
   //   }
   // };
+
+  handleWebFileSelection = async (e) => {
+    const targetFile = e.target.files[0];
+    const type = "web";
+    // let valid = await this.validateImageDimentions(e, type);
+    //this.newMethod(true, targetFile, type);
+  };
 
   render() {
     return (
@@ -1906,6 +1982,58 @@ class Profile extends Component {
                               );
                             })}
                           </select>
+                        </div>
+                      </div>
+                      <div className="row">
+                        {/* <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                          Doctor Signature
+                        </p>
+                        <p className="col-sm-10">
+                          {this.state.data.additional_info
+                            .digital_signature_url ? (
+                            <img
+                              style={{ width: 280, height: 200 }}
+                              alt="signature"
+                              src={
+                                this.state.data.additional_info
+                                  .digital_signature_url
+                              }
+                            />
+                          ) : (
+                            <p className="col-sm-10">Not found</p>
+                          )}
+                        </p> */}
+                        <div className="col-12 col-sm-6">
+                          <div className="form-group">
+                            <label>Update Signature</label>
+                            <input
+                              type="file"
+                              className="form-control"
+                              ref={(ref) => (this.fileInput = ref)}
+                              onChange={(e) =>
+                                this.setState({
+                                  signatureImage: e.target.files,
+                                  isSignatureImageUpdate: true,
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="col-12 col-sm-6">
+                          <div className="form-group">
+                            <label>Medical Signature</label>
+                            <input
+                              type="file"
+                              className="form-control"
+                              ref={(ref) => (this.fileInput = ref)}
+                              onChange={(e) =>
+                                this.setState({
+                                  medicalCertificate: e.target.files,
+                                  isMedicalCertUpdate: true,
+                                })
+                              }
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
