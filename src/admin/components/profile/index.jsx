@@ -621,7 +621,6 @@ class Profile extends Component {
 
     if (this.validateData()) {
       let data = this.state.updatedModel;
-      console.log("ASDasda", data);
 
       let countryStateCity = this.state.countryStateCity;
       data.additional_info.address = {
