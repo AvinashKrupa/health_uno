@@ -17,8 +17,6 @@ import toast from "react-hot-toast";
 import SidebarNav from "../sidebar";
 import { fetchApi } from "../../../_utils/http-utils";
 
-
-
 const PatientSlotBooking = (props) => {
   // const { addToast } = useToasts();
   const setDate = patientSlotBookingStore((state) => state.setDate);
@@ -102,40 +100,40 @@ const PatientSlotBooking = (props) => {
   function getSlots() {
     let params = {
       doctor_id: props.match.params.doctor_id,
-      look_ahead:true,
+      look_ahead: false,
       date: currentDate,
     };
 
     // post(API.GETAVAILABLESLOT, params)
     fetchApi({ url: "v1/slot/getAvailableSlots", method: "POST", body: params })
-      .then(response => {
+      .then((response) => {
         if (response.status === 200) {
           if (response.data.shift1) {
-            let data = response.data.shift1.map(info => {
-              const time = info.start.split(":")
-              info.timeInNumber = time[0]
-              info.time = time[0] ;
+            let data = response.data.shift1.map((info) => {
+              const time = info.start.split(":");
+              info.timeInNumber = time[0];
+              info.time = time[0];
               return info;
             });
             const group = getGroupWiseDate(data);
             setDataMorningShift(group);
           }
-          if(response.data.shift2) {
-            let data = response.data.shift2.map(info => {
-              const time = info.start.split(":")
-              info.timeInNumber = time[0]
-              info.time = time[0] ;
+          if (response.data.shift2) {
+            let data = response.data.shift2.map((info) => {
+              const time = info.start.split(":");
+              info.timeInNumber = time[0];
+              info.time = time[0];
               return info;
             });
             const group = getGroupWiseDate(data);
             setDataEveningShift(group);
           }
         } else {
-            toast.error(response.message, { appearance: 'error' });
+          toast.error(response.message, { appearance: "error" });
         }
       })
-      .catch(error => {
-        toast.error(error.response.data.message, { appearance: 'error' });
+      .catch((error) => {
+        toast.error(error.response.data.message, { appearance: "error" });
       });
   }
 
