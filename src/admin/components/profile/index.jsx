@@ -35,6 +35,8 @@ class Profile extends Component {
     this.state = {
       loadingQual: false,
       loadingDept: false,
+      isEditNotes: false,
+      notes: "",
       loadingSpec: false,
       loadingLang: false,
       loadingCountry: false,
@@ -748,6 +750,7 @@ class Profile extends Component {
             user_id: data.user._id,
             type: this.state.type,
             language: selectedLanguage,
+            notes: data.additional_info.notes || "",
             address: data.additional_info.address,
             desc: profileDescription,
             qualif: {
@@ -921,6 +924,34 @@ class Profile extends Component {
     return this.state.showMenu;
   }
 
+  updateNotesProfile = async (notes) => {
+    console.log("NOTES", notes);
+    const params = {
+      notes: notes,
+      user_id: this.state.user_id,
+      type: this.state.type,
+    };
+    console.log("params", params);
+    let bodyFormData = new FormData();
+    bodyFormData.append("user_data", JSON.stringify(params));
+
+    bodyFormData.append("type", "profile");
+    this.uploadImageWithData("v1/user/updateProfile2", bodyFormData)
+      .then((response) => {
+        console.log(response.data);
+        toast.success(response.message);
+        this.getUserProfile();
+        this.setState({
+          medicalCertificate: null,
+          isMedicalCertUpdate: false,
+          signatureImage: null,
+          isSignatureImageUpdate: false,
+          isEditNotes: false,
+        });
+      })
+      .catch((error) => {});
+  };
+
   updateUserProfile = async (file) => {
     let params = {
       dp: file,
@@ -1083,6 +1114,7 @@ class Profile extends Component {
                           {getAddress(this.state.data.additional_info.address)}
                         </div>
                       </div>
+
                       <div className="col-auto profile-btn">
                         {renderDropDown(
                           "Change Status",
@@ -1104,6 +1136,112 @@ class Profile extends Component {
                             )
                           )}
                       </div>
+                    </div>
+
+                    <div className="col-sm-12">
+                      <div className="row">
+                        <p style={{ marginTop: 26 }} className="ext-muted mb-0">
+                          Notes
+                        </p>
+
+                        {!this.state.isEditNotes && (
+                          <div className="col-md-3">
+                            <div className="form-group">
+                              <button
+                                style={{
+                                  height: 30,
+                                  width: 30,
+                                  marginTop: 16,
+                                }}
+                                type="button"
+                                onClick={(e) => {
+                                  this.setState({
+                                    isEditNotes: true,
+                                  });
+                                }}
+                                className="btn btn-primary"
+                              >
+                                <i
+                                  style={{ marginLeft: -3 }}
+                                  class="fa fa-edit"
+                                  aria-hidden="true"
+                                ></i>
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {!this.state.isEditNotes ? (
+                        <p className="col-sm-10">
+                          {this.state.data.additional_info.notes || ""}
+                        </p>
+                      ) : (
+                        <div className="row">
+                          <div className="col-md-6">
+                            <div className="form-group">
+                              <textarea
+                                rows={8}
+                                value={this.state.notes}
+                                className="form-control"
+                                defaultValue={""}
+                                name="notes"
+                                onChange={(e) => {
+                                  this.setState({
+                                    notes: e.target.value,
+                                  });
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div className="col-md-3">
+                            <div className="form-group">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  if (this.state.isEditNotes) {
+                                    this.setState(
+                                      {
+                                        updatedModel: {
+                                          user: { ...this.state.data.user },
+                                          additional_info: {
+                                            ...this.state.data.additional_info,
+                                          },
+                                        },
+                                      },
+                                      () => {
+                                        this.updateNotesProfile(
+                                          this.state.notes
+                                        );
+                                      }
+                                    );
+                                  } else {
+                                    this.setState({
+                                      isEditNotes: !this.state.isEditNotes,
+                                    });
+                                  }
+                                }}
+                                className="btn btn-primary btn-block"
+                              >
+                                Save Changes
+                              </button>
+                            </div>
+                          </div>
+                          <div className="col-md-3">
+                            <div className="form-group">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  this.setState({ isEditNotes: false });
+                                }}
+                                className="btn btn-primary btn-block"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
