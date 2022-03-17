@@ -480,6 +480,18 @@ export const renderButton = (onButtonClick) => {
   );
 };
 
+export const renderDeleteButton = (onClickAction) => {
+  return (
+    <button
+      type="button"
+      onClick={() => onClickAction()}
+      className="btn btn-danger book-btn"
+    >
+      <i style={{ marginLeft: -3 }} class="fa fa-trash" aria-hidden="true"></i>
+    </button>
+  );
+};
+
 export const getUpdatedColumnSearchProps = (
   context,
   dataIndex,

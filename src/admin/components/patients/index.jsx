@@ -19,6 +19,7 @@ import {
   sorterNumber,
   sorterText,
   renderButton,
+  renderDeleteButton,
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
 
@@ -38,7 +39,7 @@ class Patients extends Component {
   }
 
   async componentDidMount() {
-    this.fetchPatientsList()
+    this.fetchPatientsList();
   }
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -49,12 +50,12 @@ class Patients extends Component {
     });
   };
 
-  fetchPatientsList = async() => {
+  fetchPatientsList = async () => {
     let patients = await fetchApi({ url: "v1/patients", method: "GET" });
-        let patientsData = patients.data;
-        this.setState({ data: patientsData });
-        this.setState({ exportingData: patientsData });
-  }
+    let patientsData = patients.data;
+    this.setState({ data: patientsData });
+    this.setState({ exportingData: patientsData });
+  };
 
   handleReset = (clearFilters) => {
     clearFilters();
@@ -75,7 +76,7 @@ class Patients extends Component {
       if (result) {
         toast.success(result.message);
         this.setState({ data: data });
-        this.fetchPatientsList()
+        this.fetchPatientsList();
       }
     } catch (e) {}
   }
@@ -84,9 +85,9 @@ class Patients extends Component {
     let isShown = this.state.showMenu[record._id];
     this.setState({ showMenu: { [record._id]: !isShown } });
   }
-  handleBookAppointment(record){
-    localStorage.setItem('SELECTED_PATIENT_ID', record._id)
-    this.props.history.push("/patient/topConsultants")
+  handleBookAppointment(record) {
+    localStorage.setItem("SELECTED_PATIENT_ID", record._id);
+    this.props.history.push("/patient/topConsultants");
   }
 
   showDropDownMenu(record) {
@@ -188,7 +189,8 @@ class Patients extends Component {
                   () => this.handleDropdownClick(record),
                   this.showDropDownMenu(record)
                 )}
-                {renderButton(()=> this.handleBookAppointment(record))}
+                {renderButton(() => this.handleBookAppointment(record))}
+                {renderDeleteButton(() => alert("Adsad"))}
               </div>
             </>
           );

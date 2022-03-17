@@ -23,6 +23,7 @@ import {
   sorterDate,
   sorterNumber,
   sorterText,
+  renderDeleteButton,
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
 
@@ -162,8 +163,8 @@ class Doctors extends Component {
   handleDataChange = (pagination, filters, sorter, extra) => {
     this.setState({
       searchStatus: filters.status,
-      searchSpecialities: filters.specialities
-    })
+      searchSpecialities: filters.specialities,
+    });
     const obj = {
       sort_key: sorter.field,
       sort_order: sorter.order,
@@ -192,7 +193,7 @@ class Doctors extends Component {
       filter: {
         ...filters,
         specialities: searchSpecialities,
-        status: searchStatus
+        status: searchStatus,
       },
     };
     const body = {
@@ -249,11 +250,13 @@ class Doctors extends Component {
             });
           }
         );
-      }else{
+      } else {
         this.setState(
           {
             loadingCsv: false,
-          }, () => toast.success('No data found'))
+          },
+          () => toast.success("No data found")
+        );
       }
     }
   };
@@ -338,14 +341,22 @@ class Doctors extends Component {
       },
       {
         title: "Actions",
-        render: (text, record) =>
-          renderDropDown(
-            "Change Status",
-            doctorStatus.filter((item) => item !== record.status),
-            (elem, index) => this.handleItemClick(record, elem),
-            () => this.handleDropdownClick(record),
-            this.showDropDownMenu(record)
-          ),
+        render: (text, record) => {
+          return (
+            <>
+              <div>
+                {renderDropDown(
+                  "Change Status",
+                  doctorStatus.filter((item) => item !== record.status),
+                  (elem, index) => this.handleItemClick(record, elem),
+                  () => this.handleDropdownClick(record),
+                  this.showDropDownMenu(record)
+                )}
+                {renderDeleteButton(() => alert("Adsad"))}
+              </div>
+            </>
+          );
+        },
       },
     ];
 
