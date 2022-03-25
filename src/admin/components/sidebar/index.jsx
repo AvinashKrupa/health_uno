@@ -10,6 +10,7 @@ import PatientsIcon from "../../assets/images/patient.svg";
 import QualificationsIcon from "../../assets/images/qualification.svg";
 import SlidersIcon from "../../assets/images/sliders.svg";
 import SpecialitiesIcon from "../../assets/images/specialist.svg";
+import UsersIcon from "../../assets/images/specialist.svg";
 import { Scrollbars } from "react-custom-scrollbars";
 
 class SidebarNav extends Component {
@@ -152,6 +153,11 @@ class SidebarNav extends Component {
                     alt="Specialities"
                   />
                   <span>Specialities</span>
+                </Link>
+              </li>
+              <li className={pathname.includes("users") ? "active" : ""}>
+                <Link to="/users">
+                  &nbsp;<i className="fe fe-user"></i> <span>Users</span>
                 </Link>
               </li>
               {/* <li className={pathname.includes("revenue") ? "active" : ""}>

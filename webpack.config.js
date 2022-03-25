@@ -33,8 +33,7 @@ module.exports = {
   externals: {
     // global app config object
     config: JSON.stringify({
-      // apiUrl: 'http://localhost:3005/',
-      apiUrl: "https://api.healthuno.com/",
+      apiUrl: process.env.NODE_ENV === "production" ? "https://api.healthuno.com/" : "https://dev.healthuno.com:6002/",
       imageapiUrl: "",
       publicPath: "/",
     }),
