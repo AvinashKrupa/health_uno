@@ -3,6 +3,7 @@ import { Table, ExportTableButton } from "ant-table-extensions";
 import { CSVLink } from "react-csv";
 import { Button } from "react-bootstrap";
 import moment from "moment";
+import { Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import SidebarNav from "../sidebar";
 import {
@@ -51,7 +52,9 @@ class Doctors extends Component {
         limit: 10,
       },
       loading: false,
+      isConfirmation: false,
       page: 1,
+      selectedRecord: null,
     };
     this.csvLinkEl = React.createRef();
   }
@@ -179,6 +182,25 @@ class Doctors extends Component {
     };
     this.fetchDoctors(obj);
   };
+
+  async deleteUser(record) {
+    if (record.user_id && record.user_id.mobile_number)
+      try {
+        let result = await fetchApi({
+          url: "v1/admin/delete",
+          method: "POST",
+          body: { user_id: record.user_id._id },
+        });
+        if (result) {
+          toast.success(result.message);
+          const { pagination } = this.state;
+          this.fetchDoctors(pagination);
+        }
+        this.setState({ isConfirmation: false });
+      } catch (e) {
+        this.setState({ isConfirmation: false });
+      }
+  }
 
   handleExportData = async (event, done) => {
     const { searchStatus, searchSpecialities, filters } = this.state;
@@ -352,7 +374,14 @@ class Doctors extends Component {
                   () => this.handleDropdownClick(record),
                   this.showDropDownMenu(record)
                 )}
-                {renderDeleteButton(() => alert("Adsad"))}
+                {record.appointment_stats &&
+                  record.appointment_stats.completed < 1 &&
+                  renderDeleteButton(() => {
+                    this.setState({
+                      isConfirmation: true,
+                      selectedRecord: record,
+                    });
+                  })}
               </div>
             </>
           );
@@ -473,6 +502,38 @@ class Doctors extends Component {
                 </div>
               </div>
             </div>
+
+            <Modal
+              show={this.state.isConfirmation}
+              onHide={this.handleClose}
+              centered
+            >
+              <Modal.Body>
+                <div className="form-content p-2">
+                  <h4 className="modal-title">Delete</h4>
+                  <p className="mb-4">{`Are you sure want to delete this user permanently?`}</p>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => {
+                      this.deleteUser(this.state.selectedRecord);
+                    }}
+                  >
+                    Yes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      this.setState({ isConfirmation: false });
+                    }}
+                    className="btn btn-danger"
+                    data-dismiss="modal"
+                  >
+                    No
+                  </button>
+                </div>
+              </Modal.Body>
+            </Modal>
 
             <div className="row">
               <div className="col-md-12">

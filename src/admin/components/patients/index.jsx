@@ -8,6 +8,7 @@ import {
   onShowSizeChange,
 } from "../../components/paginationfunction";
 import { fetchApi } from "../../../_utils/http-utils";
+import { Modal } from "react-bootstrap";
 import {
   getColumnFilterProps,
   getColumnSearchProps,
@@ -35,6 +36,8 @@ class Patients extends Component {
       showMenu: {},
       searchText: "",
       searchedColumn: "",
+      isConfirmation: false,
+      selectedRecord: null,
     };
   }
 
@@ -53,9 +56,28 @@ class Patients extends Component {
   fetchPatientsList = async () => {
     let patients = await fetchApi({ url: "v1/patients", method: "GET" });
     let patientsData = patients.data;
+
     this.setState({ data: patientsData });
     this.setState({ exportingData: patientsData });
   };
+
+  async deleteUser(record) {
+    if (record.user_id && record.user_id.mobile_number)
+      try {
+        let result = await fetchApi({
+          url: "v1/admin/delete",
+          method: "POST",
+          body: { user_id: record.user_id._id },
+        });
+        if (result) {
+          toast.success(result.message);
+          this.fetchPatientsList();
+        }
+        this.setState({ isConfirmation: false });
+      } catch (e) {
+        this.setState({ isConfirmation: false });
+      }
+  }
 
   handleReset = (clearFilters) => {
     clearFilters();
@@ -190,7 +212,15 @@ class Patients extends Component {
                   this.showDropDownMenu(record)
                 )}
                 {renderButton(() => this.handleBookAppointment(record))}
-                {renderDeleteButton(() => alert("Adsad"))}
+
+                {record.appointment_stats &&
+                  record.appointment_stats.completed < 1 &&
+                  renderDeleteButton(() => {
+                    this.setState({
+                      isConfirmation: true,
+                      selectedRecord: record,
+                    });
+                  })}
               </div>
             </>
           );
@@ -270,6 +300,38 @@ class Patients extends Component {
                 </div>
               </div>
             </div>
+
+            <Modal
+              show={this.state.isConfirmation}
+              onHide={this.handleClose}
+              centered
+            >
+              <Modal.Body>
+                <div className="form-content p-2">
+                  <h4 className="modal-title">Delete</h4>
+                  <p className="mb-4">{`Are you sure want to delete this user permanently?`}</p>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => {
+                      this.deleteUser(this.state.selectedRecord);
+                    }}
+                  >
+                    Yes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      this.setState({ isConfirmation: false });
+                    }}
+                    className="btn btn-danger"
+                    data-dismiss="modal"
+                  >
+                    No
+                  </button>
+                </div>
+              </Modal.Body>
+            </Modal>
 
             <div className="row">
               <div className="col-md-12">
