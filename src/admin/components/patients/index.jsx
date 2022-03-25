@@ -56,18 +56,17 @@ class Patients extends Component {
   fetchPatientsList = async () => {
     let patients = await fetchApi({ url: "v1/patients", method: "GET" });
     let patientsData = patients.data;
-
     this.setState({ data: patientsData });
     this.setState({ exportingData: patientsData });
   };
 
-  async deleteUser(record) {
+  async deletePatient(record) {
     if (record.user_id && record.user_id.mobile_number)
       try {
         let result = await fetchApi({
-          url: "v1/admin/delete",
+          url: "v1/admin/deletePatient",
           method: "POST",
-          body: { user_id: record.user_id._id },
+          body: { mobile_number: record.user_id.mobile_number },
         });
         if (result) {
           toast.success(result.message);
@@ -314,7 +313,7 @@ class Patients extends Component {
                     type="button"
                     className="btn btn-primary"
                     onClick={() => {
-                      this.deleteUser(this.state.selectedRecord);
+                      this.deletePatient(this.state.selectedRecord);
                     }}
                   >
                     Yes
@@ -363,7 +362,6 @@ class Patients extends Component {
                           this.props.history.push("/patient-registration")
                         }
                       >
-                        {" "}
                         Add Patient
                       </button>
 

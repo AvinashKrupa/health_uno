@@ -183,13 +183,13 @@ class Doctors extends Component {
     this.fetchDoctors(obj);
   };
 
-  async deleteUser(record) {
+  async deleteDoctor(record) {
     if (record.user_id && record.user_id.mobile_number)
       try {
         let result = await fetchApi({
-          url: "v1/admin/delete",
+          url: "v1/admin/deleteDoctor",
           method: "POST",
-          body: { user_id: record.user_id._id },
+          body: { mobile_number: record.user_id.mobile_number },
         });
         if (result) {
           toast.success(result.message);
@@ -516,7 +516,7 @@ class Doctors extends Component {
                     type="button"
                     className="btn btn-primary"
                     onClick={() => {
-                      this.deleteUser(this.state.selectedRecord);
+                      this.deleteDoctor(this.state.selectedRecord);
                     }}
                   >
                     Yes
