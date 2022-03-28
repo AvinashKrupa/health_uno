@@ -251,6 +251,18 @@ export const renderEditDisableActions = (
               {record.enabled ? "Disable" : " Enable"}
             </a>
           </>
+        ) : (type == 2 ? (
+          <>
+            <a
+              href="#0"
+              className="btn btn-sm bg-success-light"
+              onClick={() => {
+                handleShow("edit");
+              }}
+            >
+              <i className="fe fe-pencil"></i> Edit
+            </a>
+          </>
         ) : (
           <>
             {record.status == "inactive" || record.status == "active" ? (
@@ -275,7 +287,9 @@ export const renderEditDisableActions = (
               </a>
             )}
           </>
-        )}
+          )
+        )
+      }
         <a
           href="#0"
           className="btn btn-sm bg-danger-light"
@@ -491,6 +505,60 @@ export const renderDeleteButton = (onClickAction) => {
     </button>
   );
 };
+
+export const getDynamicSearchProps = (
+  context,
+  dataIndex,
+  handleSearch,
+  handleReset,
+  recordValueToCompare
+) => ({
+  filterDropdown: ({
+    setSelectedKeys,
+    selectedKeys,
+    confirm,
+    clearFilters,
+  }) => (
+    <div style={{ padding: 8 }}>
+      <Input
+        ref={(node) => {
+          context.searchInput = node;
+        }}
+        placeholder={`Search ${dataIndex}`}
+        value={selectedKeys[0]}
+        onChange={(e) =>
+          setSelectedKeys(e.target.value ? [e.target.value] : [])
+        }
+        onPressEnter={() =>
+          handleSearch(selectedKeys, confirm, dataIndex, recordValueToCompare)
+        }
+        style={{ marginBottom: 8, display: "block" }}
+      />
+      <Space>
+        <Button
+          type="primary"
+          onClick={() => handleSearch(selectedKeys, confirm, dataIndex, recordValueToCompare)}
+          size="small"
+          style={{ width: 90 }}
+        >
+          Search
+        </Button>
+        <Button
+          onClick={() => handleReset(clearFilters, dataIndex)}
+          size="small"
+          style={{ width: 90 }}
+        >
+          Reset
+        </Button>
+      </Space>
+    </div>
+  ),
+  onFilterDropdownVisibleChange: (visible) => {
+    if (visible) {
+      setTimeout(() => context.searchInput.select(), 100);
+    }
+  },
+});
 
 export const getUpdatedColumnSearchProps = (
   context,

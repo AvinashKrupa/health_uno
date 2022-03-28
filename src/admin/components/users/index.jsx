@@ -134,7 +134,7 @@ class Users extends Component {
         let result
         if (record && record._id) {
             let body = {
-                _id: record._id,
+                user_id: record._id,
                 mobile_number: this.state.show.record.mobile_number,                
                 first_name: this.state.show.record.first_name,
                 last_name: this.state.show.record.last_name
@@ -142,7 +142,7 @@ class Users extends Component {
             if (this.state.show.record.password) {
                 body.password = this.state.show.record.password
             }
-            result = await fetchApi({url: "v1/auth/admin/update", method: "POST", body: body})
+            result = await fetchApi({url: "v1/admin/update", method: "POST", body: body})
 
         } else {
             if (!this.state.show.record.password) {
@@ -245,14 +245,8 @@ class Users extends Component {
                 sorter: (a, b) => sorterDate(a.updated_at, b.updated_at),
             },
             {
-                title: "Status",
-                dataIndex: "status",
-                render: (text) => renderBoolean(text),
-                sorter:(a,b)=>sorterBoolean(a.status,b.status)
-            },
-            {
                 title: 'Actions',
-                render: (text, record) => renderEditDisableActions((elem) => this.handleShow(elem, record), record),
+                render: (text, record) => renderEditDisableActions((elem) => this.handleShow(elem, record), record,2),
             },
         ]
 
