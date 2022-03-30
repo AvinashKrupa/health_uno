@@ -279,8 +279,10 @@ const DocRegistrationPage1 = (props) => {
               />
             </Col>
           </Row>
+          
           <Row>
             <Col>
+              <br/>
               <Input
                 type="text"
                 placeholder="Enter address"
@@ -291,6 +293,7 @@ const DocRegistrationPage1 = (props) => {
               />
             </Col>
             <Col>
+              <br/>
               <Input
                 type="text"
                 placeholder="Enter address (optional)"

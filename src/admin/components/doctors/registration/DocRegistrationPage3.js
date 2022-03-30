@@ -189,8 +189,8 @@ const DocRegistrationPage3 = (props) => {
     return (
         <>
             <Row>
-                <Col lg='3'></Col>
-                <Col lg='8'>
+                <Col lg='1'></Col>
+                <Col lg='10'>
                     <Row>
                         <span style={{marginBottom: "10px"}} className="H3">Select available timings</span>
                     </Row>
@@ -209,6 +209,7 @@ const DocRegistrationPage3 = (props) => {
                     <Row>
                         <span style={{marginTop: "40px", marginBottom: "-15px"}} className="H3">Select available timings</span>
                     </Row>
+                    <br/>
                     <Row>
                         <Col lg='3'>
                             <InputGroup>

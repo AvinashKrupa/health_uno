@@ -8,10 +8,9 @@ import { isEmailValid, isEmpty, isNumberOnly } from "../../../../_utils/Validato
 import toast from "react-hot-toast";
 import CustomStepper from "./CustomStepper";
 import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
-//import { API, post } from "../../../api/config/APIController";
-import { fetchApi } from "../../../../_utils/http-utils";
-import axios from "axios";
+import { fetchApiWithFileUpload } from "../../../../_utils/http-utils";
 import SidebarNav from "../../sidebar";
+import  '../../../assets/css/doctorRegistrationPage.scss';
 
 
 const MultiStepFormRegistration = ({ history }) => {
@@ -75,17 +74,17 @@ const MultiStepFormRegistration = ({ history }) => {
     
     return new Promise(async (resolve, reject) => {
            
-        fetchApi({
+        fetchApiWithFileUpload({            
+            method: "post",
             url: "v1/auth/registerDoctor2",
-            method: "POST",
-            body: formData,
+            formData: formData
         })
         .then((response) => {
           if (response.status === 200) {
             const user = response.data["user"];
             const additional_info = response.data["additional_info"];
    
-            history.push("/doctor/home");
+            history.push("/doctor-list");
             setShowLoader(false);
             toast.success(response.message, { appearance: "success" });
           } else {

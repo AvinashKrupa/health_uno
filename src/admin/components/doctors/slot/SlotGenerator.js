@@ -4,7 +4,7 @@ import getColor from "../../../../_utils/colors";
 import { convert24hto12h } from "../../../../_utils/utilities";
 
 const SlotGenerator = (props) => {
-  const userType = 1;
+  const userType = 2;
   return (
     <Row style={{ display: "flex", flexDirection: "row", marginBottom: "5px" }}>
       <Col xs="1" sm="1" className="slot-timings-title">

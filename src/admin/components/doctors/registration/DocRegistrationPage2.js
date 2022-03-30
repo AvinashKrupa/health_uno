@@ -164,8 +164,8 @@ const DocRegistrationPage2 = (props) => {
   return (
     <>
       <Row>
-        <Col lg='3'></Col>
-        <Col lg='8'>
+        <Col lg='1'></Col>
+        <Col lg='10'>
           <Row>
             <Col>
               <KeyValueSelector
@@ -188,16 +188,14 @@ const DocRegistrationPage2 = (props) => {
             </Col>
           </Row>
           <Row>
-            <Col>
-               <br />
+            <Col> 
                 <Form.Label>Date of Registration</Form.Label>
                 <br />
                 <Form.Control type="date" value={dateOfRegistration} onChange={(e) => setDateOfRegistration(e.target.value)}
                               min={moment(new Date()).subtract(100, 'years').format('YYYY-MM-DD')}
                               max={moment(new Date()).format('YYYY-MM-DD')}/>
             </Col>
-            <Col>
-            <br />
+            <Col> 
                 <Form.Label>Date of Renewal</Form.Label>
                 <br />
                 <Form.Control type="date" value={dateOfRenewal} onChange={(e) => setDateOfRenewal(e.target.value)}
@@ -209,23 +207,25 @@ const DocRegistrationPage2 = (props) => {
 
           <Row>
             <Col>
-            <KeyValueSelector
-                label="Specialization"
-                id="specialization"
-                value={getSpecializationValue(specialization)}
-                defaultValue="Select specialization"
-                options={specializations}
-                handleSelect={setSpecializationValue}
+              <br/>
+              <KeyValueSelector
+                  label="Specialization"
+                  id="specialization"
+                  value={getSpecializationValue(specialization)}
+                  defaultValue="Select specialization"
+                  options={specializations}
+                  handleSelect={setSpecializationValue}
                 />
             </Col>
             <Col>
-              <KeyValueSelector
-                label="Highest Qualification"
-                value={getQualificationValue(qualification)}
-                id="qualification"
-                defaultValue="Select qualification"
-                options={qualifications}
-                handleSelect={setQualificationValue}
+              <br/>
+                <KeyValueSelector
+                  label="Highest Qualification"
+                  value={getQualificationValue(qualification)}
+                  id="qualification"
+                  defaultValue="Select qualification"
+                  options={qualifications}
+                  handleSelect={setQualificationValue}
               />
             </Col>
           </Row>
@@ -243,8 +243,7 @@ const DocRegistrationPage2 = (props) => {
             </Col>
           </Row>
           <Row>          
-            <Col>
-              <br/>
+            <Col> 
               <label className="form-label">Upload Medical Certificate</label>
               <div className="upload-file" style={{marginTop: 0}}>
                 {medicalCertFiles.map((fileName) => (
@@ -304,8 +303,7 @@ const DocRegistrationPage2 = (props) => {
               )}
             </Col>
             <Col>
-              <div>
-                <br/>
+              <div> 
                 <label className="form-label">Add Signature</label>
               </div>
               <>
