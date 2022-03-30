@@ -9,7 +9,6 @@ import upload from "../../../assets/images/uploadIcon.svg";
 import toast from "react-hot-toast";
 
 const DocRegistrationPage2 = (props) => {
-
      
   const [departments, setDepartments] = useState([]);
   const [specializations, setSpecializations] = useState([]);
@@ -147,18 +146,6 @@ const DocRegistrationPage2 = (props) => {
       .catch(error => {
         toast.error(error.response.message, { appearance: 'error' });
       });
-  }
-
-  function dataURIToBlob(dataURI) {
-    const splitDataURI = dataURI.split(',')
-    const byteString = splitDataURI[0].indexOf('base64') >= 0 ? atob(splitDataURI[1]) : decodeURI(splitDataURI[1])
-    const mimeString = splitDataURI[0].split(':')[1].split(';')[0]
-
-    const ia = new Uint8Array(byteString.length)
-    for (let i = 0; i < byteString.length; i++)
-        ia[i] = byteString.charCodeAt(i)
-
-    return new Blob([ia], { type: mimeString })
   }
   
   return (

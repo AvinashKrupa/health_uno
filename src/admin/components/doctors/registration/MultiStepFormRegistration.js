@@ -168,8 +168,12 @@ const MultiStepFormRegistration = ({ history }) => {
       relation: relationType,
     };
     const formData = new FormData();
-    formData.append('medical_cert_file',medicalCertificate);
-    formData.append('digital_signature_file',signature);
+    if(medicalCertificate){
+      formData.append('medical_cert_file',medicalCertificate);
+    }    
+    if(signature){
+      formData.append('digital_signature_file',signature);
+    }    
     formData.append('user_data',JSON.stringify(params));
     registerLogin(formData);
   }
@@ -302,13 +306,15 @@ const MultiStepFormRegistration = ({ history }) => {
     } else if (isEmpty(fee)) {
       toast.error("Please enter consulting fee", { appearance: "error" });
       return false;
-    } else if (isEmpty(medicalCertificate)) {
-      toast.error("Please upload medical certificate file", { appearance: "error" });
-      return false;
-    }else if (isEmpty(signature)) {
-      toast.error("Please create or upload digital signature", { appearance: "error" });
-      return false;
-    } else {
+    } 
+    // else if (isEmpty(medicalCertificate)) {
+    //   toast.error("Please upload medical certificate file", { appearance: "error" });
+    //   return false;
+    // }else if (isEmpty(signature)) {
+    //   toast.error("Please create or upload digital signature", { appearance: "error" });
+    //   return false;
+    // } 
+    else {
       return true;
     }
   }
@@ -548,7 +554,7 @@ const MultiStepFormRegistration = ({ history }) => {
                   )}
                   {!showLoader && (
                     <CustomButton
-                      className="multistepform-button"
+                      className="multistepform-button btn-lg"
                       type="submit"
                       onClick={handleNext}
                       text={activeStep === "3" ? "Submit" : "Continue"}
