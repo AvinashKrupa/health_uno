@@ -569,6 +569,15 @@ class Doctors extends Component {
                         headers={headers}
                         ref={this.csvLinkEl}
                       ></CSVLink>
+                      <button
+                          type="primary"
+                          className="btn btn-primary float-right"
+                          onClick={() =>
+                            this.props.history.push("/doctor-registration")
+                          }
+                        >
+                          Add Doctor
+                      </button>
                       <Table
                         className="table-striped"
                         style={{ overflowX: "auto" }}

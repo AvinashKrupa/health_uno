@@ -5828,3 +5828,19 @@ input#menu[type="checkbox"] {
   justify-content: flex-end;
   width: 500px;
 }
+
+.makeStyles-formControl-8 { 
+  margin-top: -5px!important;
+}
+.upload-file {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 40px;
+  padding: 30px;
+  border: 1.5px solid rgba(27, 27, 27, 0.15);
+  box-sizing: border-box;
+  border-radius: 12px;
+  cursor: pointer;
+}
