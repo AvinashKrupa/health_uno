@@ -15,11 +15,14 @@ const SlotGenerator = (props) => {
           props.slots.map((slot) => {
             return (
               <button
-                style={{ backgroundColor: getColor(slot) }}
+                style={{
+                  backgroundColor: getColor(
+                    slot,
+                    props.selectedSlots.indexOf(slot.slot_id) > -1
+                  ),
+                }}
                 className={`slot-timings-button ${
-                  props.selectedSlots.indexOf(slot.slot_id) > -1
-                    ? "active-btn"
-                    : ""
+                  props.selectedSlots.indexOf(slot.slot_id) > -1 ? "active" : ""
                 }`}
                 onClick={(e) => {
                   userType === 2
