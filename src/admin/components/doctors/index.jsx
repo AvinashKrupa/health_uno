@@ -14,8 +14,7 @@ import { fetchApi } from "../../../_utils/http-utils";
 import {
   getColumnFilterProps,
   getUpdatedColumnSearchProps,
-  getColumnSearchProps,
-  getColumnDropDownSearchProps,
+  getDynamicSearchProps,
   renderChips,
   renderDate,
   renderDropDown,
@@ -117,10 +116,16 @@ class Doctors extends Component {
       this.setState({ searchText: selectedKeys[0] });
     } else if (fieldName === "dept_name") {
       this.setState({ searchDept: selectedKeys });
+    }else if (fieldName === "user_id.mobile_number") {
+      this.setState({ searchMobile: selectedKeys[0] });
     }
+
     const filter = {
       ...{
         name: fieldName == "name" ? selectedKeys[0] : this.state.searchText,
+      },
+      ...{
+        mobile_number: fieldName == "user_id.mobile_number" ? selectedKeys[0] : this.state.searchMobile,
       },
       ...{
         dept_name:
@@ -175,6 +180,7 @@ class Doctors extends Component {
       limit: pagination.pageSize,
       filter: {
         name: this.state.searchText,
+        mobile_number: this.state.searchMobile,
         dept_name: this.state.searchDept,
         status: filters.status,
         specialities: filters.specialities,
@@ -258,6 +264,7 @@ class Doctors extends Component {
               `${element?.user_id?.country_code} ${element?.user_id?.mobile_number}` ||
               "",
             email: element?.user_id?.email || "",
+            dob: element?.user_id?.dob || "",
           };
           finalData.push(dataObj);
         });
@@ -299,6 +306,18 @@ class Doctors extends Component {
           this.handleSearch,
           this.handleReset,
           "first_name"
+        ),
+      },{
+        title: "Mobile Number",
+        render: (text, record) => renderText(record.user_id.mobile_number),
+        sorter: (a, b) =>
+          sorterText(a.user_id.mobile_number, b.user_id.mobile_number),
+        ...getDynamicSearchProps(
+          this,
+          "Mobile Number",
+          this.handleSearch,
+          this.handleReset,
+          "user_id.mobile_number"
         ),
       },
       {
@@ -473,6 +492,7 @@ class Doctors extends Component {
       { label: "Highest Qualification", key: "highest_qual" },
       { label: "Mobile No", key: "mobile" },
       { label: "Email ID", key: "email" },
+      { label: "DoB", key: "dob" },
       { label: "Specialities", key: "specl" },
       { label: "Created At", key: "created_at" },
       { label: "Updated At", key: "updated_at" },
@@ -545,10 +565,19 @@ class Doctors extends Component {
                       </Button>
                       <CSVLink
                         data={dataFromList}
-                        filename={"appointments.csv"}
+                        filename={"Doctors.csv"}
                         headers={headers}
                         ref={this.csvLinkEl}
                       ></CSVLink>
+                      <button
+                          type="primary"
+                          className="btn btn-primary float-right"
+                          onClick={() =>
+                            this.props.history.push("/doctor-registration")
+                          }
+                        >
+                          Add Doctor
+                      </button>
                       <Table
                         className="table-striped"
                         style={{ overflowX: "auto" }}
