@@ -13,8 +13,7 @@ import { convert24hto12h } from "../../../_utils/utilities";
 import SidebarNav from "../sidebar";
 import { fetchApi } from "../../../_utils/http-utils";
 import toast from "react-hot-toast";
-import "./doctorDetails.scss"
-
+import "./doctorDetails.scss";
 
 const DoctorDetails = (props) => {
   useEffect(() => {
@@ -32,16 +31,16 @@ const DoctorDetails = (props) => {
       method: "POST",
       body: { doctor_id: props.match.params.doctor_id, include_similar: true },
     })
-    .then(response => {
+      .then((response) => {
         if (response.status === 200) {
-        setDoctorDetails(response.data);
+          setDoctorDetails(response.data);
         } else {
-        toast.error(response.data.message, { appearance: 'error' });
+          toast.error(response.data.message, { appearance: "error" });
         }
-    })
-    .catch(error => {
-        toast.error(error.response.data.message, { appearance: 'error' });
-    });
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message, { appearance: "error" });
+      });
   }
 
   return (
@@ -307,8 +306,8 @@ const DoctorDetails = (props) => {
                                 name={`${doctor.first_name} ${doctor.last_name}`}
                                 fees="2000"
                                 details={`${doctor.city}, ${doctor.country} | ${doctor.exp} Y Exp`}
-                                qualifications={doctor.specialities}
-                                language={doctor.language}
+                                qualifications={doctor.specialities ?? []}
+                                language={doctor.language ?? []}
                               />
                             );
                           })}

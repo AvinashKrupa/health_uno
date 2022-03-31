@@ -18,7 +18,6 @@ import SidebarNav from "../sidebar";
 import { fetchApi } from "../../../_utils/http-utils";
 import toast from "react-hot-toast";
 
-
 import "./TopConsultants.scss";
 
 const TopConsultants = (props) => {
@@ -39,9 +38,9 @@ const TopConsultants = (props) => {
     getTopConsultants();
   }, [searchText]);
 
-  window.addEventListener('resize', function(event){
+  window.addEventListener("resize", function (event) {
     setWindowWidth(window.innerWidth);
-  })
+  });
 
   useEffect(() => {
     // document.querySelectorAll('[role="navigation"]').forEach(function (el){
@@ -218,8 +217,8 @@ const TopConsultants = (props) => {
                               name={`Dr ${doctor.first_name} ${doctor.last_name}`}
                               fees={doctor.fee}
                               details={`${doctor.city}, ${doctor.country} | ${doctor.exp} Y Exp`}
-                              qualifications={doctor.specialities}
-                              language={doctor.language}
+                              qualifications={doctor.specialities ?? []}
+                              language={doctor.language ?? []}
                             />
                           </Grid>
                         );
