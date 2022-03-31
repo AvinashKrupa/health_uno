@@ -13,6 +13,7 @@ import Languages from "./components/languages";
 import Departments from "./components/departments";
 import Qualifications from "./components/qualifications";
 import Doctors from "./components/doctors";
+import DoctorRegistration from "./components/doctors/registration/MultiStepFormRegistration";
 import Patients from "./components/patients";
 import Chat from "./components/chat";
 import Reviews from "./components/reviews";
@@ -86,6 +87,7 @@ const AppUniversal = function (props) {
             component={Qualifications}
           />
           <PrivateRoute path="/doctor-list" exact component={Doctors} />
+          <PrivateRoute path="/doctor-registration" exact component={DoctorRegistration} />
           <PrivateRoute path="/patient-list" exact component={Patients} />
           <PrivateRoute path="/patient/topConsultants" exact component={TopConsultants} />
           <PrivateRoute path="/patient-registration" exact component={Registration} />

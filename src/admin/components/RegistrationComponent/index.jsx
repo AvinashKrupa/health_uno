@@ -240,10 +240,12 @@ const RegistrationComponent = ({ history, image }) => {
     if (isEmpty(firstName)) {
       toast.error("Please enter first name", { appearance: "error" });
       return false;
-    } else if (isEmpty(lastName)) {
-      toast.error("Please enter last name", { appearance: "error" });
-      return false;
-    } else if (isEmpty(mobile)) {
+    } 
+    // else if (isEmpty(lastName)) {
+    //   toast.error("Please enter last name", { appearance: "error" });
+    //   return false;
+    // } 
+    else if (isEmpty(mobile)) {
       toast.error("Please enter mobile number", { appearance: "error" });
       return false;
     } else if (isNumberOnly(mobile)) {
@@ -252,10 +254,12 @@ const RegistrationComponent = ({ history, image }) => {
     } else if (!isLength10(mobile)) {
       toast.error("Please enter valid mobile number", { appearance: "error" });
       return false;
-    } else if (isEmpty(email)) {
-      toast.error("Please enter email id", { appearance: "error" });
-      return false;
-    } else if (!isEmailValid(email)) {
+    } 
+    // else if (isEmpty(email)) {
+    //   toast.error("Please enter email id", { appearance: "error" });
+    //   return false;
+    // } 
+    else if (!isEmpty(email) && !isEmailValid(email)) {
       toast.error("Please enter valid email id", { appearance: "error" });
       return false;
     } else if (isEmpty(birthDate)) {
@@ -269,22 +273,24 @@ const RegistrationComponent = ({ history, image }) => {
     } else if (isEmpty(gender) || gender === "Select Gender") {
       toast.error("Please select gender", { appearance: "error" });
       return false;
-    } else if (isEmpty(addressLine1)) {
-      toast.error("Please enter address line 1", { appearance: "error" });
-      return false;
-    } else if (isEmpty(state) || state === "Select state") {
-      toast.error("Please select state", { appearance: "error" });
-      return false;
-    } else if (isEmpty(city) || city === "Select city") {
-      toast.error("Please select city", { appearance: "error" });
-      return false;
-    } else if (isEmpty(language) || language === "Select language") {
-      toast.error("Please select language", { appearance: "error" });
-      return false;
-    } else if (isEmpty(isDiabetic)) {
-      toast.error("Please select diabetic", { appearance: "error" });
-      return false;
-    } else if (isDiabetic === true && isEmpty(diabeticValue)) {
+    } 
+    // else if (isEmpty(addressLine1)) {
+    //   toast.error("Please enter address line 1", { appearance: "error" });
+    //   return false;
+    // } else if (isEmpty(state) || state === "Select state") {
+    //   toast.error("Please select state", { appearance: "error" });
+    //   return false;
+    // } else if (isEmpty(city) || city === "Select city") {
+    //   toast.error("Please select city", { appearance: "error" });
+    //   return false;
+    // } else if (isEmpty(language) || language === "Select language") {
+    //   toast.error("Please select language", { appearance: "error" });
+    //   return false;
+    // } else if (isEmpty(isDiabetic)) {
+    //   toast.error("Please select diabetic", { appearance: "error" });
+    //   return false;
+    // } 
+    else if (isDiabetic === true && isEmpty(diabeticValue)) {
       toast.error("Please select diabetic from", { appearance: "error" });
       return false;
     } else if (currentDate < new Date(diabeticValue)) {
@@ -292,10 +298,12 @@ const RegistrationComponent = ({ history, image }) => {
         appearance: "error",
       });
       return false;
-    } else if (isEmpty(isHypertensive)) {
-      toast.error("Please select hypertensive", { appearance: "error" });
-      return false;
-    } else if (isHypertensive === true && isEmpty(hypertensiveValue)) {
+    } 
+    // else if (isEmpty(isHypertensive)) {
+    //   toast.error("Please select hypertensive", { appearance: "error" });
+    //   return false;
+    // } 
+    else if (isHypertensive === true && isEmpty(hypertensiveValue)) {
       toast.error("Please select hypertensive from", { appearance: "error" });
       return false;
     } else if (currentDate < new Date(hypertensiveValue)) {
@@ -303,34 +311,42 @@ const RegistrationComponent = ({ history, image }) => {
         appearance: "error",
       });
       return false;
-    } else if (isEmpty(isSurgery)) {
-      toast.error("Please select surgeries", { appearance: "error" });
-      return false;
-    } else if (isSurgery === true && isEmpty(surgeryValue)) {
+    } 
+    // else if (isEmpty(isSurgery)) {
+    //   toast.error("Please select surgeries", { appearance: "error" });
+    //   return false;
+    // } 
+    else if (isSurgery === true && isEmpty(surgeryValue)) {
       toast.error("Please mention about your surgeries", {
         appearance: "error",
       });
       return false;
-    } else if (isEmpty(isAllergie)) {
-      toast.error("Please select allergies", { appearance: "error" });
-      return false;
-    } else if (isAllergie === true && isEmpty(allergieValue)) {
+    } 
+    // else if (isEmpty(isAllergie)) {
+    //   toast.error("Please select allergies", { appearance: "error" });
+    //   return false;
+    // } 
+    else if (isAllergie === true && isEmpty(allergieValue)) {
       toast.error("Please mention allergies", { appearance: "error" });
       return false;
-    } else if (isEmpty(isCovid)) {
-      toast.error("Please select: Have you been diagnosed with Covid?", {
-        appearance: "error",
-      });
-      return false;
-    } else if (isCovid === true && isEmpty(covidDetails)) {
+    } 
+    // else if (isEmpty(isCovid)) {
+    //   toast.error("Please select: Have you been diagnosed with Covid?", {
+    //     appearance: "error",
+    //   });
+    //   return false;
+    // } 
+    else if (isCovid === true && isEmpty(covidDetails)) {
       toast.error("Please add covid details", { appearance: "error" });
       return false;
-    } else if (isEmpty(isVaccinated)) {
-      toast.error("Please select: Have you been vaccinated against Covid?", {
-        appearance: "error",
-      });
-      return false;
-    } else if (isVaccinated === true && isEmpty(vaccineDate)) {
+    } 
+    // else if (isEmpty(isVaccinated)) {
+    //   toast.error("Please select: Have you been vaccinated against Covid?", {
+    //     appearance: "error",
+    //   });
+    //   return false;
+    // } 
+    else if (isVaccinated === true && isEmpty(vaccineDate)) {
       toast.error("Please select vaccinated date", { appearance: "error" });
       return false;
     } else if (
@@ -509,6 +525,7 @@ const RegistrationComponent = ({ history, image }) => {
               maxLength="20"
               value={firstName}
               onChange={setFirstName}
+              required={true}
             />
           </Col>
           <Col md>
@@ -532,6 +549,7 @@ const RegistrationComponent = ({ history, image }) => {
               label="Mobile Number"
               value={mobile}
               onChange={setMobile}
+              required={true}
             />
           </Col>
           <Col md>
@@ -547,7 +565,7 @@ const RegistrationComponent = ({ history, image }) => {
         </Row>
         <Row className="g-2">
           <Col md>
-            <Form.Label>Date of birth</Form.Label>
+            <Form.Label>Date of birth<span className="star">*</span></Form.Label>
             <Form.Control
               type="date"
               onChange={(e) => setBirthDate(e.target.value)}
@@ -564,10 +582,11 @@ const RegistrationComponent = ({ history, image }) => {
               id="gender"
               options={genderOptions}
               handleSelect={setGender}
+              required={true}
             />
           </Col>
         </Row>
-        <Row className="g-2">
+        {/* <Row className="g-2">
           <Col md>
             <Input
               type="number"
@@ -804,9 +823,9 @@ const RegistrationComponent = ({ history, image }) => {
               )}
             </Row>
           </Col>
-        </Row>
+        </Row> */}
         <Row className="g-2">
-          <Col md>
+          {/* <Col md>
             <TextArea
               label="Other medical conditions"
               id={"other-condition"}
@@ -817,8 +836,8 @@ const RegistrationComponent = ({ history, image }) => {
               cols={20}
               noPadding="true"
             ></TextArea>
-          </Col>
-          <Col md>
+          </Col> */}
+          <Col md={6}>
             <Input
               type="text"
               placeholder="Enter code here"

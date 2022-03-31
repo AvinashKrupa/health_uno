@@ -18,3 +18,11 @@ export const isLength10 = (value) => {
         return false;
     }
 }
+export const isLength = (value,length) => {
+    if(value.length === length) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}

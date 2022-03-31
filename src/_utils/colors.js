@@ -1,12 +1,14 @@
 export default function getColor(info) {
-    if (info.status === 'available') {
-      return '';
-    } else if (info.status === 'unavailable') {
+    if (info.status === 'available' && info.is_avail) {
+      return Colors.primaryColor;
+    } else if (info.status === 'available') {
+      return Colors.white;
+    }else if (info.status === 'unavailable') {
       return Colors.gray;
     } else if (info.status === 'booked') {
       return Colors.lightPrimaryColor;
     }
-  }
+}
 
 export function getColorForAppointmentStatus(status) {
   if (status === 'scheduled') {
@@ -25,6 +27,8 @@ export function getColorForAppointmentStatus(status) {
 
   const Colors = {
     primaryColor: '#28A3DA',
+    red: 'red',
+    green: 'green',
     lightPrimaryColor: 'rgba(40,163,218, 0.2)',
     transparent: 'transparent',
     white: 'white',
