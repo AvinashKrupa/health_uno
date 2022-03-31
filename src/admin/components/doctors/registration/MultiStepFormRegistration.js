@@ -292,7 +292,10 @@ const MultiStepFormRegistration = ({ history }) => {
     } else if (isEmpty(dateOfRenewal)) {
       toast.error("Please enter Date of Renewal", { appearance: "error" });
       return false;
-    } else if (
+    } else if (new Date(dateOfRegistration) >= new Date(dateOfRenewal)) {
+      toast.error("Please select Date of Registration before Date of Renewal", { appearance: "error" });
+      return false;
+    }else if (
       isEmpty(specialization) ||
       specialization === "Select specialization"
     ) {

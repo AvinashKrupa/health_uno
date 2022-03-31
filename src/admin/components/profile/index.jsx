@@ -1531,7 +1531,7 @@ class Profile extends Component {
                             </div>
                             <div className="row">
                               <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                                Medical Report
+                                Medical Certificate
                               </p>
                               <p className="col-sm-3">
                                 {this.state.data.additional_info

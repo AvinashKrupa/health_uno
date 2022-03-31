@@ -64,6 +64,7 @@
 }
 
 .days-button:hover {
+  border: #28a3da 2px solid;
   .days-button-text {
     font-weight: 500;
     letter-spacing: -0.6138745546340942px;
@@ -110,4 +111,10 @@
   margin-right: 10px;
   margin-bottom: 48px;
   background: white;
+}
+.slot-timings-button:hover {
+  border: #28a3da 2px solid;
+}
+.MuiCheckbox-colorSecondary.Mui-checked {
+  color: #28a3da!important;
 }

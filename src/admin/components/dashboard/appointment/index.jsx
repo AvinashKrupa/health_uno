@@ -75,7 +75,7 @@ class TableAppointmentList extends Component {
           renderNameForAppointment(record.doctor, "Dr", "", false, "doctor"),
       },
       {
-        title: "Consulting type",
+        title: "Consulting Type",
         dataIndex: "consulting_type",
         render: (text) => renderText(text),
       },

@@ -115,7 +115,7 @@ class Dashboard extends Component {
                           </div>
                         </div>
                         <div className="dash-widget-info">
-                          <h6 className="text-muted">Appointment</h6>
+                          <h6 className="text-muted">Appointments</h6>
                           {/* <div className="progress progress-sm">
                         <div className="progress-bar bg-danger w-50"></div>
                       </div> */}
