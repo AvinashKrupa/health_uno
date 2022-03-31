@@ -11,6 +11,7 @@ import ProfilePictureColumn from "./profilePictureColumn";
 import moment from "moment";
 import MultiSelect from "../../../commons/MultiSelect/MultiSelect";
 import InputWithDropdown from "../../../commons/InputWithDropdown";
+import { getValidDate } from "../../../../_utils/utilities";
 
 const DocRegistrationPage1 = (props) => {
   // Get state and language from server
@@ -228,7 +229,10 @@ const DocRegistrationPage1 = (props) => {
                 label="Mobile Number"
                 type="number"
                 value={mobile}
-                onChange={setMobile}
+                pattern="[0-9]*"
+                onChange={(value) => {
+                  setMobile(value.replace(/\D/, "").slice(0, 10));
+                }}
               />
             </Col>
             <Col>
@@ -244,11 +248,11 @@ const DocRegistrationPage1 = (props) => {
           <Row>
             <Col>
               <Form.Label>Date of Birth</Form.Label>
-              <br />
+              <br />              
               <Form.Control
                 type="date"
                 value={birthDate}
-                onChange={(e) => setBirthDate(e.target.value)}
+                onChange={(e) => setBirthDate(getValidDate(e.target.value))}
                 min={moment(new Date())
                   .subtract(100, "years")
                   .format("YYYY-MM-DD")}

@@ -5,6 +5,7 @@ import DocRegistrationPage1 from "./DocRegistrationPage1";
 import DocRegistrationPage2 from "./DocRegistrationPage2";
 import DocRegistrationPage3 from "./DocRegistrationPage3";
 import { isEmailValid, isEmpty, isNumberOnly } from "../../../../_utils/Validators";
+import { getValidDate } from "../../../../_utils/utilities";
 import toast from "react-hot-toast";
 import CustomStepper from "./CustomStepper";
 import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
@@ -332,7 +333,7 @@ const MultiStepFormRegistration = ({ history }) => {
       toast.error("Please enter mobile number", { appearance: "error" });
       return false;
     } else if (isNumberOnly(mobile)) {
-      toast.error("Please enter mobile number", { appearance: "error" });
+      toast.error("Please enter valid mobile number", { appearance: "error" });
       return false;
     } else if (isEmpty(email)) {
       toast.error("Please enter email id", { appearance: "error" });

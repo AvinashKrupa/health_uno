@@ -7,6 +7,7 @@ import moment from "moment";
 import Dropzone from 'react-dropzone';
 import upload from "../../../assets/images/uploadIcon.svg";
 import toast from "react-hot-toast";
+import { getValidDate } from "../../../../_utils/utilities";
 
 const DocRegistrationPage2 = (props) => {
      
@@ -169,8 +170,10 @@ const DocRegistrationPage2 = (props) => {
                 label="Medical Council Registration Number"
                 placeholder="Type your registration Number"
                 type="text"
-                value={councilRegistrationNo}
-                onChange={setCouncilRegistrationNo}
+                value={councilRegistrationNo}                
+                onChange={(value) => {
+                  setCouncilRegistrationNo(value.slice(0, 24));
+                }}
               />
             </Col>
           </Row>
@@ -178,14 +181,14 @@ const DocRegistrationPage2 = (props) => {
             <Col> 
                 <Form.Label>Date of Registration</Form.Label>
                 <br />
-                <Form.Control type="date" value={dateOfRegistration} onChange={(e) => setDateOfRegistration(e.target.value)}
+                <Form.Control type="date" value={dateOfRegistration} onChange={(e) => setDateOfRegistration(getValidDate(e.target.value))}
                               min={moment(new Date()).subtract(100, 'years').format('YYYY-MM-DD')}
                               max={moment(new Date()).format('YYYY-MM-DD')}/>
             </Col>
             <Col> 
                 <Form.Label>Date of Renewal</Form.Label>
                 <br />
-                <Form.Control type="date" value={dateOfRenewal} onChange={(e) => setDateOfRenewal(e.target.value)}
+                <Form.Control type="date" value={dateOfRenewal} onChange={(e) => setDateOfRenewal(getValidDate(e.target.value))}
                               min={moment(new Date()).format('YYYY-MM-DD')}
                               max={moment(new Date()).add(100, 'years').format('YYYY-MM-DD')}
                 />
@@ -222,8 +225,11 @@ const DocRegistrationPage2 = (props) => {
                 label="Consulting Fee"
                 placeholder="120 per hour"
                 type="text"
-                value={fee}
-                onChange={setFee}
+                value={fee}               
+                pattern="[0-9]*"
+                onChange={(value) => {
+                  setFee(value.replace(/\D/, "").slice(0, 5));
+                }}
               />
             </Col>
             <Col>

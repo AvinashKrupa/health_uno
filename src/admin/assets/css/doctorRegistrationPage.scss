@@ -1,7 +1,6 @@
 .registration-page-1-container {
   .fa-camera {
     position: relative;
-    left: 245px !important;
     bottom: 120px !important;
 
     @media only screen and (max-width: 414px) {
@@ -72,6 +71,7 @@
 }
 
 .slot-timings-button.active {
+  background: rgba(40, 163, 218, 1) !important;
   .days-button-text {
     font-weight: 500;
     letter-spacing: -0.6138745546340942px;

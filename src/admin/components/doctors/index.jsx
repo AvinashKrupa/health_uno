@@ -565,7 +565,7 @@ class Doctors extends Component {
                       </Button>
                       <CSVLink
                         data={dataFromList}
-                        filename={"appointments.csv"}
+                        filename={"Doctors.csv"}
                         headers={headers}
                         ref={this.csvLinkEl}
                       ></CSVLink>

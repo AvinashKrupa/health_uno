@@ -66,3 +66,12 @@ export function replaceUnderscore(string) {
     const stringFormatted = _.startCase(_.toLower(string));
     return stringFormatted.replace(/_/g, " ");
 }
+
+export const getSlice = (value,length) => {
+    return value.slice(0,length)
+}
+export const getValidDate = (value) => {
+    let date = value.split("-");
+    let newDate = getSlice(date[0],4)+'-'+date[1]+'-'+date[2];
+    return newDate
+}
