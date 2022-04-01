@@ -5497,13 +5497,6 @@ input#menu[type="checkbox"] {
   color: rgba(27, 27, 27, 0.5);
 }
 
-.slot-timings-button:hover {
-  background: rgba(40, 163, 218, 1);
-}
-
-.slot-timings-button:hover .slot-timings-button-text {
-  color: white;
-}
 
 .time-select {
   display: flex;
@@ -5828,3 +5821,23 @@ input#menu[type="checkbox"] {
   justify-content: flex-end;
   width: 500px;
 }
+
+.languageRegistration { 
+  margin-top: -5px!important;
+}
+.upload-file {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 40px;
+  padding: 30px;
+  border: 1.5px solid rgba(27, 27, 27, 0.15);
+  box-sizing: border-box;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.card-table tr td, .card-table tr th {
+  padding: 5px!important;
+  border-top: 0px;
+} 

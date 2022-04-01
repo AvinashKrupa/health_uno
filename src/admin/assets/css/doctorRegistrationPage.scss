@@ -1,0 +1,120 @@
+.registration-page-1-container {
+  .fa-camera {
+    position: relative;
+    bottom: 120px !important;
+
+    @media only screen and (max-width: 414px) {
+      left: 120px !important;
+    }
+    @media only screen and (max-width: 375px) {
+      left: 100px !important;
+    }
+    @media only screen and (max-width: 1024px) {
+      left: 105px !important;
+    }
+  }
+}
+.registration-page-1-column {
+  width: 350px;
+}
+
+.H3 {
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 29px;
+  margin-bottom: 24px;
+}
+
+.H4 {
+  height: 24px;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0.30034899711608887px;
+  text-align: left;
+  color: #000000;
+  margin-bottom: 32px;
+  margin-right: 18px;
+}
+
+.shift-timings-input {
+  height: 35px;
+  width: 164px;
+  margin-right: 15px;
+  border-radius: 8px;
+  border: 2px solid rgba(196, 196, 196, 1);
+}
+
+.days-button {
+  height: 55px;
+  width: 160px;
+  border-radius: 12px;
+  border: 2px solid rgba(27, 27, 27, 0.2);
+  margin-right: 10px;
+  margin-bottom: 48px;
+  background: white;
+}
+
+.days-button-text {
+  font-weight: 500;
+  letter-spacing: -0.6138745546340942px;
+  color: rgba(27, 27, 27, 1);
+}
+
+.days-button:hover {
+  border: #28a3da 2px solid;
+  .days-button-text {
+    font-weight: 500;
+    letter-spacing: -0.6138745546340942px;
+  }
+}
+
+.slot-timings-button.active {
+  background: rgba(40, 163, 218, 1) !important;
+  .days-button-text {
+    font-weight: 500;
+    letter-spacing: -0.6138745546340942px;
+    color: white;
+  }
+}
+
+.stepper-icons {
+  height: 35.77183151245117px;
+  width: 26.47791862487793px;
+}
+
+.fa-bars,
+.fa-award,
+.fa-calendar-alt {
+  font-size: 33px;
+}
+
+.languageSelection {
+  margin-top: 23px !important;
+  max-width: 450px;
+  width: 100%;
+}
+
+.languageRegistration{
+  margin-top: 15px !important;
+  max-width: 500px !important;
+  width: 100%;
+}
+
+.reg-days-button {
+  height: 55px;
+  width: 120px;
+  border-radius: 12px;
+  border: 2px solid rgba(27, 27, 27, 0.2);
+  margin-right: 10px;
+  margin-bottom: 48px;
+  background: white;
+}
+.slot-timings-button:hover {
+  border: #28a3da 2px solid;
+}
+.MuiCheckbox-colorSecondary.Mui-checked {
+  color: #28a3da!important;
+}

@@ -10,7 +10,6 @@ import {
   getAddress,
   getFullName,
 } from "../../../_utils/common-utils";
-import cameraIco from "../../assets/images/camera.svg";
 import whiteBgIco from "../../assets/images/white_background.png";
 import moment from "moment";
 import {
@@ -28,6 +27,8 @@ import MultiSelect from "../MultiSelect/MultiSelect";
 import UploadImage from "../UploadImage";
 import Spinner from "../spinner/customSpinner";
 import { isEmpty } from "../../../_utils/Validators";
+import InputWithDropdown from "../../commons/InputWithDropdown";
+import { getValidDate } from "../../../_utils/utilities";
 
 class Profile extends Component {
   constructor(props) {
@@ -116,14 +117,20 @@ class Profile extends Component {
       selectedLanguage: [],
       experience: "",
       fees: "",
+      councilRegistrationNo: "",
+      dateOfRegistration: "",
+      dateOfRenewal: "",
       medicalCertificate: null,
       isMedicalCertUpdate: false,
       signatureImage: null,
       isSignatureImageUpdate: false,
     };
-  }
+  } 
 
   getDropdownData = async () => {
+    this.setState({
+      relationTypes: ["S/o", "W/o", "D/o"]
+    })
     this.setState({
       loadingQual: true,
       loadingSpec: true,
@@ -179,6 +186,7 @@ class Profile extends Component {
     if (!selectedCity) selectedCity = cities.data[0];
 
     const selectedLanguage = data.user.language.map((lang) => lang._id);
+    
 
     this.setState({
       countries: countries.data,
@@ -210,6 +218,9 @@ class Profile extends Component {
         data.additional_info &&
         data.additional_info.qualif &&
         data.additional_info.qualif.fee,
+      councilRegistrationNo: data.additional_info.qualif?.med_reg_num,
+      dateOfRegistration: moment(data.additional_info.qualif?.reg_date).format("YYYY-MM-DD") || "",
+      dateOfRenewal: moment(data.additional_info.qualif?.renewal_date).format("YYYY-MM-DD") || "",
       experience:
         data.additional_info &&
         data.additional_info.qualif &&
@@ -528,6 +539,20 @@ class Profile extends Component {
       updatedModel: data,
     });
   };
+  setRelativeName = (relativeName) => {
+    let data = this.state.updatedModel;
+    data.user.relative_name = relativeName
+    this.setState({
+      updatedModel: data
+    });
+  }
+  setRelationType = (relationType) => {
+    let data = this.state.updatedModel;
+    data.user.relation = relationType
+    this.setState({
+      updatedModel: data
+    });
+  }
 
   validateData = () => {
     if (this.state.isVaccinated) {
@@ -757,6 +782,9 @@ class Profile extends Component {
               ...data.additional_info.qualif,
               exp: this.state.experience,
               fee: this.state.fees,
+              med_reg_num: this.state.councilRegistrationNo,
+              reg_date: this.state.dateOfRegistration,
+              renewal_date: this.state.dateOfRenewal,
             },
           };
 
@@ -1282,10 +1310,32 @@ class Profile extends Component {
                           </div>
                           <div className="row">
                             <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                              Relation
+                            </p>
+                            <p className="col-sm-10">
+                              {
+                                this.state.data.additional_info.relation
+                              }
+                            </p>
+                          </div>
+                          <div className="row">
+                            <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                              Relative Name
+                            </p>
+                            <p className="col-sm-10">
+                              {
+                                this.state.data.additional_info.relative_name
+                              }
+                            </p>
+                          </div>
+                          <div className="row">
+                            <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
                               Date of Birth
                             </p>
                             <p className="col-sm-10">
-                              {this.state.data.user.dob}
+                              {                                
+                                moment(this.state.data.user.dob).format("DD/MM/YYYY") || ""
+                              }
                             </p>
                           </div>
                           {this.state.type === constants.USER_TYPE_DOCTOR && (
@@ -1389,7 +1439,8 @@ class Profile extends Component {
                               >
                                 <i className="fa fa-edit mr-1"></i>Edit
                               </a>
-                            </h5>
+                            </h5>                          
+                            
                             <div className="row">
                               <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
                                 Qualification
@@ -1398,6 +1449,41 @@ class Profile extends Component {
                                 {
                                   this.state.data.additional_info.qualif
                                     .highest_qual.name
+                                }
+                              </p>
+                            </div>
+                            <div className="row">
+                              <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                Medical Council Registration Number
+                              </p>
+                              <p className="col-sm-10">
+                                {
+                                  this.state.data.additional_info.qualif
+                                    .med_reg_num
+                                }
+                              </p>
+                            </div>
+                            <div className="row">
+                              <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                Date of Registration
+                              </p>
+                              <p className="col-sm-10">
+                                {
+                                   moment(this.state.data.additional_info.qualif
+                                    .reg_date).format("DD/MM/YYYY") || ""
+                                  
+                                }
+                              </p>
+                            </div>
+                            <div className="row">
+                              <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
+                                Date of Renewal
+                              </p>
+                              <p className="col-sm-10">
+                                {
+                                  moment(this.state.data.additional_info.qualif
+                                    .renewal_date).format("DD/MM/YYYY") || ""
+                                  
                                 }
                               </p>
                             </div>
@@ -1445,7 +1531,7 @@ class Profile extends Component {
                             </div>
                             <div className="row">
                               <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
-                                Medical Report
+                                Medical Certificate
                               </p>
                               <p className="col-sm-3">
                                 {this.state.data.additional_info
@@ -1720,7 +1806,7 @@ class Profile extends Component {
                           className="form-control"
                           name="first_name"
                           onChange={this.handleChange}
-                          maxlength="20"
+                          maxLength="20"
                           value={this.state.updatedModel.user.first_name}
                         />
                       </div>
@@ -1733,10 +1819,24 @@ class Profile extends Component {
                           className="form-control"
                           name="last_name"
                           onChange={this.handleChange}
-                          maxlength="20"
+                          maxLength="20"
                           value={this.state.updatedModel.user.last_name}
                         />
                       </div>
+                    </div>
+                    <div className="col-12 col-sm-12">                    
+                      <InputWithDropdown
+                        type="text"
+                        placeholder="Enter Name"
+                        id="relativeName"
+                        label="Relative Name"
+                        maxLength="20"
+                        value={this.state.updatedModel.user.relative_name ?? this.state.updatedModel.additional_info.relative_name}
+                        selectedValue={this.state.updatedModel.user.relation ?? this.state.updatedModel.additional_info.relation}
+                        onChange={this.setRelativeName}
+                        options={this.state.relationTypes}
+                        optionChange={this.setRelationType}
+                      />
                     </div>
                     <div className="col-12">
                       <div className="form-group">
@@ -1887,6 +1987,7 @@ class Profile extends Component {
                           value={this.state.countryStateCity.country.id}
                           onChange={(e) => this.getStateForCountry(e)}
                           className="form-control"
+                          disabled
                         >
                           {this.state.countries?.map((country) => {
                             return (
@@ -2037,7 +2138,7 @@ class Profile extends Component {
                               height={40}
                             />
                           </div>
-                        )}
+                        )}  
                         <div className="form-group">
                           <label>Department</label>
                           <select
@@ -2054,6 +2155,50 @@ class Profile extends Component {
                               );
                             })}
                           </select>
+                        </div>
+                      </div>
+                      <div className="col-12 col-sm-12">
+                        <div className="form-group">
+                          <label>Medical Council Registration Number</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            onChange={(e) => {
+                              this.setState({ councilRegistrationNo: e.target.value });
+                            }}
+                            name="additional_info.qualif.med_reg_num"
+                            value={this.state?.councilRegistrationNo}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-12 col-sm-12">
+                        <div className="form-group">
+                          <label>Date of Registration</label>
+                          <input
+                            type="date"
+                            className="form-control"
+                            onChange={(e) => {
+                              this.setState({ dateOfRegistration: getValidDate(e.target.value) });
+                            }}
+                            name="additional_info.qualif.reg_date"
+                            value={this.state?.dateOfRegistration}
+                            min={moment(new Date()).subtract(100, 'years').format('YYYY-MM-DD')}
+                            max={moment(new Date()).format('YYYY-MM-DD')}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-12 col-sm-12">
+                        <div className="form-group">
+                          <label>Date of Renewal</label>
+                          <input
+                            type="date"
+                            className="form-control"
+                            onChange={(e) => {
+                              this.setState({ dateOfRenewal: getValidDate(e.target.value) });
+                            }}
+                            name="additional_info.qualif.renewal_date"
+                            value={this.state?.dateOfRenewal}                              
+                          />
                         </div>
                       </div>
                       {this.state.data.additional_info.qualif.exp && (
@@ -2158,7 +2303,7 @@ class Profile extends Component {
                         </div>
                         <div className="col-12 col-sm-6">
                           <div className="form-group">
-                            <label>Medical Signature</label>
+                            <label>Medical Certificate</label>
                             <input
                               type="file"
                               className="form-control"

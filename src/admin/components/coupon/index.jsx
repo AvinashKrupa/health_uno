@@ -89,7 +89,11 @@ class CouponScreen extends Component {
 
   handleTitleChange = (e, key) => {
     let addDataSource = this.state.addDataSource;
-    addDataSource[key] = e.target.value;
+    if(key=='code'){
+      addDataSource[key] = e.target.value.toUpperCase();
+    }else{
+      addDataSource[key] = e.target.value;
+    }    
     this.setState({
       addDataSource: addDataSource,
     });
