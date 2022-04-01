@@ -898,7 +898,7 @@ class Appointments extends Component {
                         <Card.Title>Patient Detail</Card.Title>
                         <Card.Text>                      
                           <div className="row">
-                              <div className="col-md-3"><img width="100%" className="rounded-circle" src={this.state.show.record.patient.user.dp}/></div>
+                              <div className="col-md-3"><img width="100px" className="rounded-circle" src={this.state.show.record.patient.user.dp}/></div>
                               <div className="col-md-9">
                                 <table className="table card-table">
                                   <tr><th className="text-muted">Name</th><td>{this.state.show.record.patient.user.first_name} {this.state.show.record.patient.user.last_name ?? ""}</td></tr>
