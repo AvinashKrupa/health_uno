@@ -21,9 +21,10 @@ import {
   sorterDate,
   sorterNumber,
   sorterText,
+  getNextSlot,
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
-import { Col, Row, Button } from "react-bootstrap";
+import { Col, Row, Button, Modal, Card } from "react-bootstrap";
 import CSVButton from "../CSVButton";
 
 const statusArray = [
@@ -71,6 +72,7 @@ class Appointments extends Component {
         ongoing: 0,
         cancelled: 0,
       },
+      show: {id: null, record: null}
     };
     this.csvLinkEl = React.createRef();
   }
@@ -356,9 +358,10 @@ class Appointments extends Component {
       if (appointments?.data?.docs?.length > 0) {
         let finalData = [];
         appointments?.data?.docs.forEach((element) => {
+          
           const dataObj = {
             appointment_ID: element.huno_id || "",
-            appointment_time: `${element.time.utc_time}` || "",
+            appointment_time: `${moment(element?.time?.utc_time).format("DD/MM/YYYY")} ${element?.time?.slot} - ${moment(element?.time?.slot, "HH:mm").add(10, "minutes").format("HH:mm")}`,
             patient: `${
               element && element.patient && element.patient.first_name
             } ${element && element.patient && element.patient.last_name}`,
@@ -369,8 +372,8 @@ class Appointments extends Component {
             reason: element.reason || "",
             consulting_type: element.consulting_type || "",
             fees: element.fee || "",
-            created_at: element.created_at || "",
-            updated_at: element.updated_at || "",
+            created_at: moment(element?.created_at).format("DD/MM/YYYY") || "",
+            updated_at: moment(element?.updated_at).format("DD/MM/YYYY") || "",
             created_by:
               `${
                 element && element.created_by && element.created_by.first_name
@@ -403,6 +406,29 @@ class Appointments extends Component {
     }
   };
 
+  showAppointmentDetail = async (appointment_id) => {
+    let appointment = await fetchApi({
+      url: "v1/appointment/getDetails",
+      method: "POST",
+      body: {
+        appointment_id
+      },
+    });
+    if(appointment?.status == 200){ 
+       this.setState({ 
+        show: {id: 'appointment', record: appointment.data}
+       }) 
+    }else{
+      toast.error("Something went wrong. Please try again.");
+    }
+  }
+
+  handleClose = () => {
+    this.setState({
+      show : {id: null, record: null}
+    })
+  }
+
   render() {
     const { data, exportingData, loadingCsv, dataFromList, fromDate, toDate } =
       this.state;
@@ -410,6 +436,7 @@ class Appointments extends Component {
       {
         title: "Appointment ID",
         dataIndex: "huno_id",
+        render: (text, record) => <div role="button" className="text-primary" onClick={()=>this.showAppointmentDetail(record._id)}>{record.huno_id}</div>,
         sorter: true,
       },
       {
@@ -813,6 +840,109 @@ class Appointments extends Component {
             </div>
           </div>
         </div>
+        {
+          this.state.show.id &&
+          <Modal show={this.state.show.id === 'appointment'} onHide={this.handleClose} centered size="xl">
+              <Modal.Header closeButton>
+                <h3>Appointment Details</h3>
+              </Modal.Header>
+              <Modal.Body className="text-center">
+                <div className="row">
+                  <div className="col-md-6">
+                    <Card>
+                      <Card.Body>
+                        <Card.Title>Doctor Detail</Card.Title>
+                        <Card.Text>                      
+                          <div className="row">
+                              <div className="col-md-3"><img width="100px" className="rounded-circle" src={this.state.show.record.doctor.dp}/></div>
+                              <div className="col-md-9">
+                                <table className="table card-table">
+                                  <tr><th className="text-muted">Name</th><td>Dr {this.state.show.record.doctor.first_name} {this.state.show.record.doctor.last_name ?? ""}</td></tr>
+                                  <tr><th className="text-muted">Experience</th><td>{this.state.show.record.doctor.exp} Year(s)</td></tr>
+                                  <tr><th className="text-muted">Specialities</th><td>{this.state.show.record.doctor.specialities && (<ul>{this.state.show.record.doctor.specialities.map((item,index)=><li key={index}>{item}</li>)}</ul>)}</td></tr>
+                                  <tr><th className="text-muted">Address</th><td>{this.state.show.record.doctor.address.line1} {this.state.show.record.doctor.address.line2} {this.state.show.record.doctor.address.city}, {this.state.show.record.doctor.address.state}</td></tr>
+                                </table>
+                              </div>
+                          </div>
+                        </Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </div>
+                  {
+                    this.state.show.record.additional_doc && this.state.show.record.additional_doc.map( (item,index) => {
+                      return <div className="col-md-6" key={index}>
+                        <Card>
+                          <Card.Body>
+                            <Card.Title>Additional Doctor Detail ({index+1})</Card.Title>
+                            <Card.Text>                      
+                              <div className="row">
+                                  <div className="col-md-3"><img width="100px" className="rounded-circle" src={item.dp}/></div>
+                                  <div className="col-md-9">
+                                    <table className="table card-table">
+                                      <tr><th className="text-muted">Name</th><td>Dr {item.first_name} {item.last_name ?? ""}</td></tr>
+                                      <tr><th className="text-muted">Experience</th><td>{item.exp} Year(s)</td></tr>
+                                      <tr><th className="text-muted">Specialities</th><td>{item.specialities && (<ul>{item.specialities.map((item,index)=><li key={index}>{item}</li>)}</ul>)}</td></tr>
+                                      <tr><th className="text-muted">Address</th><td>{item.address.line1} {item.address.line2} {item.address.city}, {item.address.state}</td></tr>
+                                    </table>
+                                  </div>
+                              </div>
+                            </Card.Text>
+                          </Card.Body>
+                        </Card>
+                      </div>
+                    })
+                  }
+                  <div className="col-md-6">
+                    <Card>
+                      <Card.Body>
+                        <Card.Title>Patient Detail</Card.Title>
+                        <Card.Text>                      
+                          <div className="row">
+                              <div className="col-md-3"><img width="100%" className="rounded-circle" src={this.state.show.record.patient.user.dp}/></div>
+                              <div className="col-md-9">
+                                <table className="table card-table">
+                                  <tr><th className="text-muted">Name</th><td>{this.state.show.record.patient.user.first_name} {this.state.show.record.patient.user.last_name ?? ""}</td></tr>
+                                  <tr><th className="text-muted">Height</th><td>{this.state.show.record.patient.height} cm</td></tr>
+                                  <tr><th className="text-muted">Weight</th><td>{this.state.show.record.patient.weight} kg</td></tr>
+                                </table>
+                              </div>
+                          </div>
+                        </Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </div>
+                  <div className="col-md-6">
+                    <Card>
+                      <Card.Body>
+                        <Card.Title>Appointment Detail</Card.Title>
+                        <Card.Text>                      
+                          <div className="row">                              
+                              <div className="col-md-12">
+                                <table className="table card-table">
+                                  <tr><th className="text-muted">Appointment ID</th><td>{this.state.show.record.huno_id}</td></tr>
+                                  <tr><th className="text-muted">Appointment Time</th><td>{this.state.show.record.time.date} {this.state.show.record.time.slot}</td></tr>
+                                  <tr><th className="text-muted">Reason</th><td>{this.state.show.record.reason}</td></tr>
+                                  <tr><th className="text-muted">Complaints</th><td>{this.state.show.record.complaints}</td></tr>
+                                  <tr><th className="text-muted">Consulting type</th><td>{this.state.show.record.consulting_type}</td></tr>
+                                  <tr><th className="text-muted">Fees (Rupees)</th><td>{this.state.show.record.currency} {this.state.show.record.fee}</td></tr>
+                                  {this.state.show.record.coupon && <tr><th className="text-muted">Coupon Code</th><td>{this.state.show.record.coupon.map( (item,index) => <><span className="btn btn-success btn-sm">{item.code}</span> : <span>{item.discount_pct}% Discount</span></>)}</td></tr>}
+                                  <tr><th className="text-muted">Status</th><td>{renderTagStatus(this.state.show.record.status)}</td></tr>
+                                </table>
+                              </div>
+                          </div>
+                        </Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </div>
+                </div> 
+              </Modal.Body>
+              <Modal.Footer>
+                  <button type="button" onClick={this.handleClose} className="btn btn-danger"
+                          data-dismiss="modal">Close
+                  </button>
+              </Modal.Footer>
+          </Modal>
+        }
       </>
     );
   }

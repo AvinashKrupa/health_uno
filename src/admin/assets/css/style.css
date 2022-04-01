@@ -5837,3 +5837,7 @@ input#menu[type="checkbox"] {
   border-radius: 12px;
   cursor: pointer;
 }
+.card-table tr td, .card-table tr th {
+  padding: 5px!important;
+  border-top: 0px;
+} 
