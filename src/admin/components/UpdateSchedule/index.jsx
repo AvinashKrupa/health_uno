@@ -11,6 +11,7 @@ import { getData } from "../../../_utils/localStorage/LocalAsyncStorage";
 import { constants, convert24hto12h } from "../../../_utils/common-utils";
 import Checkbox from "../../commons/Checkbox";
 import _ from "lodash";
+import SlotGenerator from '../../components/doctors/slot/SlotGenerator'
 
 const UpdateSchedule = ({ data }) => {
   const [selectedDays, setSelectedDays] = useState([
@@ -22,6 +23,11 @@ const UpdateSchedule = ({ data }) => {
     { day: "Friday", isChecked: false },
     { day: "Saturday", isChecked: false },
   ]);
+  const [isAllDay, setIsAllDay] = useState(false);
+  const [daySlots, setDaySlots] = useState([]);
+  const [dataMorningShiftAllDay, setDataMorningShiftAllDay] = useState([]);
+  const [eveningSlots, setEveningSlots] = useState([]);
+  const [dataEveningShiftAllDay, setDataEveningShiftAllDay] = useState([]);
   const [isDayShift, setIsDayShift] = useState(false);
   const [isEveningShift, setIsEveningShift] = useState(false);
   const [dayShiftFrom, setDayShiftFrom] = useState("");
@@ -46,6 +52,67 @@ const UpdateSchedule = ({ data }) => {
   const [selectedDay, setSelectedDay] = useState(
     moment(currentDate).format("DD")
   );
+
+  useEffect(() => {
+    if (validateSlots(1))
+        getSlots(1, dayShiftFrom, dayShiftTo);
+    return () => {
+    };
+}, [dayShiftFrom, dayShiftTo, isDayShift]); // eslint-disable-line react-hooks/exhaustive-deps
+
+useEffect(() => {
+
+    if (validateSlots(2))
+        getSlots(2, eveningShiftFrom, eveningShiftTo);
+
+    return () => {
+    };
+}, [eveningShiftFrom, eveningShiftTo, isEveningShift]); // eslint-disable-line react-hooks/exhaustive-deps
+
+function validateSlots(type) {
+    let momentShift1From, momentShift1To;
+    let momentShift2From, momentShift2To;
+    switch (type) {
+        case 1:
+            if (dayShiftFrom === "" || dayShiftTo === "")
+                return true
+            momentShift1From = moment(dayShiftFrom, "HH:mm")
+            momentShift1To = moment(dayShiftTo, "HH:mm")
+            if (!momentShift1From.isBefore(momentShift1To)) {
+                toast.error("Morning shift start time cannot be after end time", {appearance: 'error'});
+                return false
+            }
+            if (eveningShiftFrom !== "" && eveningShiftTo !== "") {
+                momentShift2From = moment(eveningShiftFrom, "HH:mm")
+                if (!momentShift1To.isBefore(momentShift2From)) {
+                    toast.error("Morning shift end time cannot be after evening shift start time", {appearance: 'error'});
+                    return false
+                }
+            }
+            return true
+        case 2:
+
+            if (eveningShiftFrom === "" || eveningShiftTo === "")
+                return true
+            momentShift2From = moment(eveningShiftFrom, "HH:mm")
+            momentShift2To = moment(eveningShiftTo, "HH:mm")
+            if (!momentShift2From.isBefore(momentShift2To)) {
+                toast.error("Evening shift start time cannot be after end time", {appearance: 'error'});
+                return false
+            }
+            if (dayShiftFrom !== "" && dayShiftTo !== "") {
+                momentShift1To = moment(dayShiftTo, "HH:mm")
+                if (!momentShift1To.isBefore(momentShift2From)) {
+                    toast.error("Evening shift start time cannot be earlier than morning shift end time", {appearance: 'error'});
+                    return false
+                }
+            }
+            return true
+        default:
+            toast.error("It should not come here", { appearance: 'error' });
+
+    }
+}
 
   useEffect(() => {
     getDoctorDetails();
@@ -371,9 +438,29 @@ const UpdateSchedule = ({ data }) => {
     return (
       <>
         <Row>
-          <span style={{ marginTop: "32px" }} className="section-sub-title">
-            General Availability
-          </span>
+          <Col>
+            <span style={{ marginTop: "32px" }} className="section-sub-title">
+              General Availability
+            </span>
+          </Col>
+          <Col>
+          <InputGroup>
+            <span className="all-day-slot">All days</span>
+              <div
+                style={{
+                  marginTop: "auto",
+                  marginBottom: "auto",
+                  marginLeft: "20%",
+                }}
+              >
+                <Checkbox
+                  id="all-day-term"
+                  checked={isAllDay}
+                  handleSelect={setIsAllDay}
+                />
+              </div>
+            </InputGroup>
+          </Col>         
         </Row>
         <Row className={"days-selection-container"}>
           {selectedDays.map((item, index) => {
@@ -437,6 +524,9 @@ const UpdateSchedule = ({ data }) => {
             </Col>
           )}
         </Row>
+        {
+          isAllDay && isDayShift && dayShiftSlotAllDay() 
+        }
         <div className="slot-evening">
           <Row>
             <Col lg="3">
@@ -478,6 +568,9 @@ const UpdateSchedule = ({ data }) => {
               </Col>
             )}
           </Row>
+          {
+            isAllDay && isEveningShift && EveningShiftSlotAllDay()
+          }
           <Row style={{ justifyContent: "center" }}>
             <Button
               className="update-button"
@@ -491,6 +584,97 @@ const UpdateSchedule = ({ data }) => {
       </>
     );
   };
+
+  function getSlots(type, from, to) {
+    const date = moment(`${currentDate}`, 'DD-MM-YYYY').format('YYYY-MM-DD')
+    let fromDate = `${date}T${from}:00.000+05:30`;
+    let toDate = `${date}T${to}:59.999+05:30`;
+    ;
+
+    let params = {
+        start: fromDate,
+        end: toDate,
+    };
+    fetchApi({
+        url: "v1/slot/getSlots",
+        method: "POST",
+        body: params,
+    })
+    .then(response => {
+        if (response.status === 200) {
+            let data = response.data.map(info => {
+                const time = info.start.split(":")
+                info.timeInNumber = time[0]
+                info.time = time[0];
+                return info;
+            });
+
+            let slotIds = data.map(slot => slot.slot_id)
+
+
+            let group = data.reduce((r, a) => {
+                r[a.time] = [...r[a.time] || [], a];
+                return r;
+            }, {});
+            if (type === 1) {
+                setDataMorningShiftAllDay(group);
+                setDaySlots([...slotIds])
+            } else {
+                setDataEveningShiftAllDay(group);
+                setEveningSlots([...slotIds])
+            }
+        } else {
+            toast.error(response.message, { appearance: 'error' });
+        }
+    })
+    .catch(error => {
+
+        toast.error(error.response.message, { appearance: 'error' });
+    });
+  }
+  const handleDaySlotClick = (id) => {
+    const list = JSON.parse(JSON.stringify(daySlots));
+    const index = list.indexOf(id);
+
+    if (index > -1) {
+        list.splice(index, 1);
+        setDaySlots(list)
+    } else {
+        setDaySlots([...list, id])
+    }
+
+};
+
+const handleEveningSlotClick = (id) => {
+    const list = JSON.parse(JSON.stringify(eveningSlots));
+    const index = list.indexOf(id);
+
+    if (index > -1) {
+        list.splice(index, 1);
+        setEveningSlots(list)
+    } else {
+        setEveningSlots([...list, id])
+    }
+
+};
+
+  const dayShiftSlotAllDay = () => {
+      return Object.entries(dataMorningShiftAllDay).sort().map((timeSlot,index) => {
+          return (
+              <SlotGenerator key={index} selectedSlots={daySlots} handleSlotClick={handleDaySlotClick} label={`${timeSlot[0]}`}
+                            slots={timeSlot[1]}/>
+          )
+      })
+  };
+
+  const EveningShiftSlotAllDay = () => {
+      return Object.entries(dataEveningShiftAllDay).map((timeSlot,index) => {
+          return (
+              <SlotGenerator key={index} selectedSlots={eveningSlots} handleSlotClick={handleEveningSlotClick}
+                            label={`${timeSlot[0]}`} slots={timeSlot[1]}/>
+          )
+      })
+  }
 
   return (
     <>
