@@ -53,6 +53,25 @@ const UpdateSchedule = ({ data }) => {
     moment(currentDate).format("DD")
   );
 
+  useEffect( () => {
+    if(isAllDay){     
+      setSelectedDays( selectedDays.map( (item) => {
+        item.isChecked = true
+        return item
+      }))
+    }
+  },[isAllDay]);
+
+  useEffect( () => {
+    let dayCounter = 0;
+    selectedDays.map( (item) => {
+       if(item.isChecked){
+         dayCounter++
+       }
+    })    
+    setIsAllDay(dayCounter==7 ? true: false)    
+  },[selectedDays]);
+
   useEffect(() => {
     if (validateSlots(1))
         getSlots(1, dayShiftFrom, dayShiftTo);
@@ -132,7 +151,7 @@ function validateSlots(type) {
     const selectedDate = `${moment(date).format("YYYY-MM-DD")}`;
     setCurrentDate(selectedDate);
     setSelectedDay(moment(date).format("DD"));
-    setDate(selectedDate);
+    //setDate(selectedDate);
     setSlot("");
   }
 
@@ -146,7 +165,7 @@ function validateSlots(type) {
     const selectedDate = `${moment(date).format("YYYY-MM-DD")}`;
     setCurrentDate(selectedDate);
     setSelectedDay(dateNumber);
-    setDate(date);
+    //setDate(date);
     setSlot("");
   };
 
@@ -209,6 +228,16 @@ function validateSlots(type) {
   }
 
   function updateAvailabilityByDays() {
+    let slots = [];
+
+    if (isDayShift) {
+      slots = [...slots, ...daySlots];
+    }
+
+    if (isEveningShift) {
+      slots = [...slots, ...eveningSlots];
+    }
+
     let params = {
       avail: {
         day: {
@@ -247,7 +276,8 @@ function validateSlots(type) {
         },
       },
       user_id: data.user._id,
-      type: constants.USER_TYPE_DOCTOR
+      type: constants.USER_TYPE_DOCTOR,
+      slots: slots,
     };
     fetchApi({
       url: "v1/user/updateProfile",
@@ -332,9 +362,13 @@ function validateSlots(type) {
           ];
           let days = response.data.day;
           let shift = response.data.shift;
+          let dayCounter = 0;
           Object.keys(days).forEach((info, index) => {
             if (index < 7) {
               dataDay[index].isChecked = days[info];
+              if(days[info]){
+                dayCounter++;
+              }
             }
           });
           if (shift.shift1 && shift.shift1.start != "") {
@@ -348,6 +382,9 @@ function validateSlots(type) {
             setIsEveningShift(true);
           }
           setSelectedDays(JSON.parse(JSON.stringify(dataDay)));
+          if(dayCounter==7){
+            setIsAllDay(true)
+          }
         } else {
           toast.error(response.message);
         }
