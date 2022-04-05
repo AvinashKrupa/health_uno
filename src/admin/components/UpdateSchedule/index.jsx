@@ -74,7 +74,7 @@ const UpdateSchedule = ({ data }) => {
 
   useEffect(() => {
     if (validateSlots(1))
-        getSlots(1, dayShiftFrom, dayShiftTo);
+      getSlotsAllDay(1, dayShiftFrom, dayShiftTo);
     return () => {
     };
 }, [dayShiftFrom, dayShiftTo, isDayShift]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -82,7 +82,7 @@ const UpdateSchedule = ({ data }) => {
 useEffect(() => {
 
     if (validateSlots(2))
-        getSlots(2, eveningShiftFrom, eveningShiftTo);
+      getSlotsAllDay(2, eveningShiftFrom, eveningShiftTo);
 
     return () => {
     };
@@ -622,7 +622,7 @@ function validateSlots(type) {
     );
   };
 
-  function getSlots(type, from, to) {
+  function getSlotsAllDay(type, from, to) {
     const date = moment(`${currentDate}`, 'DD-MM-YYYY').format('YYYY-MM-DD')
     let fromDate = `${date}T${from}:00.000+05:30`;
     let toDate = `${date}T${to}:59.999+05:30`;
