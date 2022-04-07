@@ -279,7 +279,7 @@ const MultiStepFormRegistration = ({ history }) => {
       toast.error("Please enter department", { appearance: "error" });
       return false;
     } else if (isEmpty(councilRegistrationNo)) {
-      toast.error("Medical Council Registration Number", { appearance: "error" });
+      toast.error("Please enter Medical Council Registration Number", { appearance: "error" });
       return false;
     } else if (isEmpty(dateOfRegistration)) {
       toast.error("Please enter date of registration", { appearance: "error" });

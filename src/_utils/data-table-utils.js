@@ -36,11 +36,11 @@ export const renderName = (record, prefix, suffix, includeImage = false) => {
   return (
     <h2 className="table-avatar">
       {includeImage && (
-        <Link to={createProfileLink(record)} className="avatar avatar-sm mr-2">
+        <Link to={createProfileLink(record)} target="_blank" className="avatar avatar-sm mr-2">
           <img alt="" src={record.user_id.dp} />
         </Link>
       )}
-      <Link to={createProfileLink(record)}>
+      <Link to={createProfileLink(record)} target="_blank">
         <a>{`${prefix ? prefix + " " : ""}${getFullName(record)}${
           suffix ? " " + suffix : ""
         }`}</a>

@@ -7,6 +7,10 @@ import {
   renderText,
 } from "../../../../_utils/data-table-utils";
 import { fetchApi } from "../../../../_utils/http-utils";
+import {
+  itemRender,
+  onShowSizeChange,
+} from "../../../components/paginationfunction";
 
 class TableAppointmentList extends Component {
   constructor(props) {
@@ -117,8 +121,16 @@ class TableAppointmentList extends Component {
           rowKey={(record) => record.id}
           total={this.state.total}
           pagination={{
-            pageSize: 10,
-            total: this.state.total,
+            position: ["topRight", "bottomRight"],
+            total:
+              this.state.total >= 0
+                ? this.state.total
+                : this.state.appointments.length,
+            showTotal: (total, range) =>
+              `Showing ${range[0]} to ${range[1]} of ${total} entries`,
+            showSizeChanger: true,
+            onShowSizeChange: onShowSizeChange,
+            itemRender: itemRender,
           }}
         />
       </div>

@@ -227,10 +227,28 @@ class Patients extends Component {
       },
     ];
     const fields = {
+      hunoID: {
+        header: "HealthUno ID",
+        formatter: (_fieldValue, record) => {
+          return record?.huno_id;
+        },
+      },
       patientname: {
         header: "Patient Name",
         formatter: (_fieldValue, record) => {
           return record?.user_id.first_name + " " + record?.user_id.last_name;
+        },
+      },
+      relation: {
+        header: "Relation",
+        formatter: (_fieldValue, record) => {
+          return record?.relation;
+        },
+      },
+      relativeName: {
+        header: "Relative Name",
+        formatter: (_fieldValue, record) => {
+          return record?.relative_name;
         },
       },
       height: {
@@ -248,16 +266,102 @@ class Patients extends Component {
       email: {
         header: "Email",
         formatter: (_fieldValue, record) => {
-          return record?.user_id.email;
+          return record?.user_id?.email;
         },
       },
       mobileNumber: {
         header: "Mobile Number",
         formatter: (_fieldValue, record) => {
-          return record?.user_id.mobile_number;
+          return record?.user_id?.mobile_number;
         },
       },
-
+      address: {
+        header: "Address",
+        formatter: (_fieldValue, record) => {
+          return record?.address?.line1+' '+record?.address?.line2+', '+record?.address.city+', '+record?.address?.state+', '+record?.address?.country;
+        },
+      },
+      diabetic: {
+        header: "Are you Diabetic?",
+        formatter: (_fieldValue, record) => {
+          let check = '';
+          record?.med_cond?.map( (item) => { 
+            if(item?.name=='diabetic'){
+              check = item?.selected? 'Yes'+(item?.desc? ', '+item?.desc: ''): 'No'
+            }
+          })
+          return check;
+        },
+      },
+      hypertensive: {
+        header: "Are you Hypertensive?",
+        formatter: (_fieldValue, record) => {
+          let check = '';
+          record?.med_cond.map( (item) => {            
+            if(item?.name=='hypertensive'){
+              check = item?.selected? 'Yes'+(item?.desc? ', '+item?.desc: ''): 'No'
+            }
+          })
+          return check;
+        },
+      },
+      diagnosed_with_covid: {
+        header: "Have you been diagnosed with Covid?",
+        formatter: (_fieldValue, record) => {
+          let check = '';
+          record?.med_cond.map( (item) => {            
+            if(item?.name=='diagnosed_with_covid'){
+              check = item?.selected? 'Yes'+(item?.desc? ', '+item?.desc: ''): 'No'
+            }
+          })
+          return check;
+        },
+      },
+      past_surgeries: {
+        header: "Any past surgery?",
+        formatter: (_fieldValue, record) => {
+          let check = '';
+          record?.med_cond.map( (item) => {            
+            if(item?.name=='past_surgeries'){
+              check = item?.selected? 'Yes'+(item?.desc? ', '+item?.desc: ''): 'No'
+            }
+          })
+          return check;
+        },
+      },
+      allergy_to_meds: {
+        header: "Any allergies to medications?",
+        formatter: (_fieldValue, record) => {
+          let check = '';
+          record?.med_cond.map( (item) => {            
+            if(item?.name=='allergy_to_meds'){
+              check = item?.selected? 'Yes'+(item?.desc? ', '+item?.desc: ''): 'No'
+            }
+          })
+          return check;
+        },
+      },
+      covid_vaccinated: {
+        header: "Have you been vaccinated against Covid?",
+        formatter: (_fieldValue, record) => {
+          let check = '';
+          record?.med_cond.map( (item) => {            
+            if(item?.name=='covid_vaccinated'){
+              check = item?.selected? 'Yes'+(item?.desc? ', '+item?.desc: ''): 'No';
+              check += ', '+ item?.meta?.map( (meta) => {
+                return meta?.desc
+              })
+            }
+          })
+          return check;
+        },
+      },
+      other_med_cond: {
+        header: "Other medical conditions",
+        formatter: (_fieldValue, record) => {          
+          return record?.other_med_cond;
+        },
+      },
       createdAt: {
         header: "Created At",
         formatter: (_fieldValue, record) => {

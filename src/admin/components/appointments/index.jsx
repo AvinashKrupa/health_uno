@@ -448,6 +448,7 @@ class Appointments extends Component {
       },
       {
         title: "Patient",
+        dataIndex: "patient.first_name",
         render: (text, record) =>
           renderNameForAppointment(record.patient, "", "", false, "patient"),
         sorter: true,
@@ -457,11 +458,13 @@ class Appointments extends Component {
           "Patient",
           this.handleSearch,
           this.handleReset,
-          "patient.user_id.first_name"
+          "patient.first_name"
         ),
+        sorter: true,
       },
       {
         title: "Doctor",
+        dataIndex: "doctor.first_name",
         render: (text, record) =>
           renderNameForAppointment(record.doctor, "Dr", "", false, "doctor"),
         // sorter: (a, b) => sorterText(a.doctor.first_name, b.doctor.first_name),
@@ -473,6 +476,7 @@ class Appointments extends Component {
           this.handleReset,
           "doctor.first_name"
         ),
+        sorter: true,
       },
       {
         title: "Reason",
