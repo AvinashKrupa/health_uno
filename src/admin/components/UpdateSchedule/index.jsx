@@ -11,7 +11,7 @@ import { getData } from "../../../_utils/localStorage/LocalAsyncStorage";
 import { constants, convert24hto12h } from "../../../_utils/common-utils";
 import Checkbox from "../../commons/Checkbox";
 import _ from "lodash";
-import SlotGenerator from '../../components/doctors/slot/SlotGenerator'
+import SlotGenerator from './SlotGenerator'
 
 const UpdateSchedule = ({ data }) => {
   const [selectedDays, setSelectedDays] = useState([
@@ -23,6 +23,7 @@ const UpdateSchedule = ({ data }) => {
     { day: "Friday", isChecked: false },
     { day: "Saturday", isChecked: false },
   ]);
+  const [slotsAllDay, setSlotsAllDay] = useState([]);
   const [isAllDay, setIsAllDay] = useState(false);
   const [daySlots, setDaySlots] = useState([]);
   const [dataMorningShiftAllDay, setDataMorningShiftAllDay] = useState([]);
@@ -276,9 +277,11 @@ function validateSlots(type) {
         },
       },
       user_id: data.user._id,
-      type: constants.USER_TYPE_DOCTOR,
-      slots: slots,
+      type: constants.USER_TYPE_DOCTOR,      
     };
+    if(isAllDay){
+      params.avail.slots = slots;
+    }
     fetchApi({
       url: "v1/user/updateProfile",
       method: "POST",
@@ -293,7 +296,7 @@ function validateSlots(type) {
         }
       })
       .catch((error) => {
-        toast.error(error.response.message);
+        toast.error(error?.message);
       });
   }
 
@@ -336,7 +339,7 @@ function validateSlots(type) {
         }
       })
       .catch((error) => {
-        toast.error(error.response.message);
+        toast.error(error?.message);
       });
   }
 
@@ -360,6 +363,7 @@ function validateSlots(type) {
             { day: "Friday", isChecked: false },
             { day: "Saturday", isChecked: false },
           ];
+          setSlotsAllDay(response?.data?.slots);
           let days = response.data.day;
           let shift = response.data.shift;
           let dayCounter = 0;
@@ -390,7 +394,7 @@ function validateSlots(type) {
         }
       })
       .catch((error) => {
-        toast.error(error.response.message);
+        toast.error(error?.message);
       });
   }
 
@@ -416,7 +420,7 @@ function validateSlots(type) {
           selectedSlots={[slot]}
           handleSlotClick={updateSchedule}
           label={`${convert24hto12h(timeSlot[0])}`}
-          slots={timeSlot[1]}
+          slots={timeSlot[1]}          
         />
       );
     });
@@ -666,7 +670,7 @@ function validateSlots(type) {
     })
     .catch(error => {
 
-        toast.error(error.response.message, { appearance: 'error' });
+        toast.error(error?.message, { appearance: 'error' });
     });
   }
   const handleDaySlotClick = (id) => {
@@ -698,7 +702,7 @@ const handleEveningSlotClick = (id) => {
   const dayShiftSlotAllDay = () => {
       return Object.entries(dataMorningShiftAllDay).sort().map((timeSlot,index) => {
           return (
-              <SlotGenerator key={index} selectedSlots={daySlots} handleSlotClick={handleDaySlotClick} label={`${timeSlot[0]}`}
+              <SlotGenerator key={index} slotsAllDay={slotsAllDay} selectedSlots={daySlots} handleSlotClick={handleDaySlotClick} label={`${timeSlot[0]}`}
                             slots={timeSlot[1]}/>
           )
       })
@@ -707,7 +711,7 @@ const handleEveningSlotClick = (id) => {
   const EveningShiftSlotAllDay = () => {
       return Object.entries(dataEveningShiftAllDay).map((timeSlot,index) => {
           return (
-              <SlotGenerator key={index} selectedSlots={eveningSlots} handleSlotClick={handleEveningSlotClick}
+              <SlotGenerator key={index} slotsAllDay={slotsAllDay} selectedSlots={eveningSlots} handleSlotClick={handleEveningSlotClick}
                             label={`${timeSlot[0]}`} slots={timeSlot[1]}/>
           )
       })
