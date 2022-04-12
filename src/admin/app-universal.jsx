@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Header from "./components/header/index";
 import Dashboard from "./components/dashboard";
 import Users from "./components/users";
+import Logs from "./components/logs";
 import Appointments from "./components/appointments";
 import Specialities from "./components/specialities";
 import Sliders from "./components/sliders";
@@ -63,6 +64,7 @@ const AppUniversal = function (props) {
           <Route path="/" exact component={Login} />
           <PrivateRoute path="/dashboard" exact component={Dashboard} />
           <PrivateRoute path="/admin" exact component={Dashboard} />
+          <PrivateRoute path="/logs" exact component={Logs} />
           <PrivateRoute path="/users" exact component={Users} />
           <PrivateRoute
             path="/appointment-list"
