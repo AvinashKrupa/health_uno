@@ -106,8 +106,7 @@ class MessagePane extends Component {
     };
     socketObj.connect();
 
-    socketObj.on("connect", () => {
-    });
+    socketObj.on("connect", () => {});
     socketObj.on("onConversation", ({ conversation_id, room_id }) => {
       this.setState({ room_id: room_id });
       // attach the session ID to the next reconnection attempts
@@ -125,8 +124,7 @@ class MessagePane extends Component {
       });
     });
 
-    socketObj.on("disconnect", (response) => {
-    });
+    socketObj.on("disconnect", (response) => {});
 
     this.setState(
       {
@@ -161,7 +159,9 @@ class MessagePane extends Component {
         this.state.socketObj.emit("sendMessage", finalMessage);
         let messages = this.state.messages;
         messages.push(finalMessage);
-        this.setState({ text: "", messages: messages }, () => this.refs.messageList.scrollToBottom());
+        this.setState({ text: "", messages: messages }, () =>
+          this.refs.messageList.scrollToBottom()
+        );
       }
     }
   };
@@ -202,7 +202,7 @@ class MessagePane extends Component {
           </a>
           <div className="media">
             <div className="media-img-wrap">
-              <div className="avatar avatar-online">
+              <div className="avatar">
                 <img
                   src={this.state.selectedConv.recipient.dp}
                   alt="User"
