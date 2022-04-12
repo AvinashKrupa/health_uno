@@ -112,10 +112,7 @@ class Users extends Component {
                                         <li className="breadcrumb-item active">Logs</li>
                                     </ul>
                                 </div>
-                                <div className="col-sm-5 col">
-                                    <a href="#0" className="btn btn-primary float-right mt-2"
-                                       onClick={() => this.handleShow('edit')}>
-                                        Add</a>
+                                <div className="col-sm-5 col">                                  
 
                                 </div>
                             </div>
