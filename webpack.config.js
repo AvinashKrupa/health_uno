@@ -37,7 +37,7 @@ module.exports = {
          process.env.NODE_ENV === "production"
          ?
         "https://api.healthuno.com/"
-       : "https://dev.healthuno.com:6002/",
+       : "https://uat.healthuno.com:6002/",
       imageapiUrl: "",
       publicPath: "/",
     }),
