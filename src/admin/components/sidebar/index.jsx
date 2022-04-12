@@ -159,6 +159,8 @@ class SidebarNav extends Component {
                 <Link to="/users">
                   &nbsp;<i className="fe fe-user"></i> <span>Users</span>
                 </Link>
+              </li>
+              <li className={pathname.includes("logs") ? "active" : ""}>               
                 <Link to="/logs">
                   &nbsp;<i className="fe fe-clock"></i> <span>Logs</span>
                 </Link>
