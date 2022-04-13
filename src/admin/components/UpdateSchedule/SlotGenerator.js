@@ -1,6 +1,6 @@
 import React from "react";
 import { Row, Col } from "react-bootstrap";
-import getColor from "../../../_utils/colors";
+import getColor, { Colors } from "../../../_utils/colors";
 import { convert24hto12h } from "../../../_utils/utilities";
 
 const SlotGenerator = (props) => {
@@ -8,7 +8,7 @@ const SlotGenerator = (props) => {
   return (
     <Row style={{ display: "flex", flexDirection: "row", marginBottom: "5px" }}>
       <Col xs="1" sm="1" className="slot-timings-title">
-      {convert24hto12h(props.label)}
+        {convert24hto12h(props.label)}
       </Col>
       <Col>
         {props.selectedSlots &&
@@ -16,9 +16,18 @@ const SlotGenerator = (props) => {
             return (
               <button
                 key={key}
-                style={{ backgroundColor: getColor(slot) }} 
+                style={{
+                  backgroundColor: props.updateSlots
+                    ? props.selectedSlots.indexOf(slot.slot_id) > -1
+                      ? Colors.primaryColor
+                      : Colors.white
+                    : getColor(slot),
+                }}
                 className={`slot-timings-button ${
-                  props.selectedSlots.indexOf(slot.slot_id) > -1 && props.slotsAllDay.indexOf(slot.slot_id) > -1 ? "active" : ""
+                  props.selectedSlots.indexOf(slot.slot_id) > -1 &&
+                  props.slotsAllDay.indexOf(slot.slot_id) > -1
+                    ? "active"
+                    : ""
                 }`}
                 onClick={(e) => {
                   userType === 2
@@ -30,10 +39,14 @@ const SlotGenerator = (props) => {
                 <span
                   className="slot-timings-button-text"
                   style={{
-                    color:
-                      props.selectedSlots.indexOf(slot.slot_id) > -1 && props.slotsAllDay.indexOf(slot.slot_id) > -1
-                        ? "white"
-                        : "",
+                    color: props.updateSlots
+                      ? props.selectedSlots.indexOf(slot.slot_id) > -1
+                        ? Colors.white
+                        : Colors.black
+                      : props.selectedSlots.indexOf(slot.slot_id) > -1 &&
+                        props.slotsAllDay.indexOf(slot.slot_id) > -1
+                      ? "white"
+                      : "",
                   }}
                 >
                   {convert24hto12h(slot.start)}

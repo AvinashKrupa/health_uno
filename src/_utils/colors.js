@@ -28,7 +28,7 @@ export function getColorForAppointmentStatus(status) {
   }
 }
 
-const Colors = {
+export const Colors = {
   primaryColor: "#28A3DA",
   red: "red",
   green: "green",
