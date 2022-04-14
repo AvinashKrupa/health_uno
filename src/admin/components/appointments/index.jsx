@@ -388,6 +388,12 @@ class Appointments extends Component {
               }` || "",
             appointment_status: element.adtnl_status || "",
             status: element.status || "",
+            coupon_code: element?.coupon?.map( (item) => {
+              return item.code
+            }),
+            discount_percent: element?.coupon?.map( (item) => {
+              return item.discount_pct
+            }),
           };
           finalData.push(dataObj);
         });
@@ -619,7 +625,7 @@ class Appointments extends Component {
         formatter: (_fieldValue, record) => {
           return record?.status;
         },
-      },
+      },      
     };
 
     const headers = [
@@ -636,6 +642,8 @@ class Appointments extends Component {
       { label: "Updated By", key: "updated_by" },
       { label: "Appointment Status", key: "appointment_status" },
       { label: "Status", key: "status" },
+      { label: "Coupon Code", key: "coupon_code" },
+      { label: "Discount Percent", key: "discount_percent" },
     ];
 
     return (

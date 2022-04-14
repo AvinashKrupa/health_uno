@@ -6,6 +6,7 @@ import Header from "./components/header/index";
 import Dashboard from "./components/dashboard";
 import Users from "./components/users";
 import Logs from "./components/logs";
+import Notification from "./components/Notification";
 import Appointments from "./components/appointments";
 import Specialities from "./components/specialities";
 import Sliders from "./components/sliders";
@@ -66,6 +67,7 @@ const AppUniversal = function (props) {
           <PrivateRoute path="/admin" exact component={Dashboard} />
           <PrivateRoute path="/logs" exact component={Logs} />
           <PrivateRoute path="/users" exact component={Users} />
+          <PrivateRoute path="/notification" exact component={Notification} />
           <PrivateRoute
             path="/appointment-list"
             exact

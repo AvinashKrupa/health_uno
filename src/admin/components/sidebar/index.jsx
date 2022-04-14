@@ -165,6 +165,11 @@ class SidebarNav extends Component {
                   &nbsp;<i className="fe fe-clock"></i> <span>Logs</span>
                 </Link>
               </li>
+              <li className={pathname.includes("notification") ? "active" : ""}>               
+                <Link to="/notification">
+                  &nbsp;<i className="fe fe-bell"></i> <span>Notification</span>
+                </Link>
+              </li>
               {/* <li className={pathname.includes("revenue") ? "active" : ""}>
                 <Link to="/revenue">
                   <i className="fe fe-money" /> <span>Revenue</span>
