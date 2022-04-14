@@ -125,12 +125,12 @@ class Profile extends Component {
       signatureImage: null,
       isSignatureImageUpdate: false,
     };
-  } 
+  }
 
   getDropdownData = async () => {
     this.setState({
-      relationTypes: ["S/o", "W/o", "D/o"]
-    })
+      relationTypes: ["S/o", "W/o", "D/o"],
+    });
     this.setState({
       loadingQual: true,
       loadingSpec: true,
@@ -186,7 +186,6 @@ class Profile extends Component {
     if (!selectedCity) selectedCity = cities.data[0];
 
     const selectedLanguage = data.user.language.map((lang) => lang._id);
-    
 
     this.setState({
       countries: countries.data,
@@ -219,8 +218,13 @@ class Profile extends Component {
         data.additional_info.qualif &&
         data.additional_info.qualif.fee,
       councilRegistrationNo: data.additional_info.qualif?.med_reg_num,
-      dateOfRegistration: moment(data.additional_info.qualif?.reg_date).format("YYYY-MM-DD") || "",
-      dateOfRenewal: moment(data.additional_info.qualif?.renewal_date).format("YYYY-MM-DD") || "",
+      dateOfRegistration:
+        moment(data.additional_info.qualif?.reg_date).format("YYYY-MM-DD") ||
+        "",
+      dateOfRenewal:
+        moment(data.additional_info.qualif?.renewal_date).format(
+          "YYYY-MM-DD"
+        ) || "",
       experience:
         data.additional_info &&
         data.additional_info.qualif &&
@@ -250,6 +254,14 @@ class Profile extends Component {
       method: "POST",
       body: { user_id: this.state.user_id, type: this.state.type },
     });
+    if (
+      profile &&
+      profile.data &&
+      profile.data.additional_info &&
+      profile.data.additional_info.notes
+    ) {
+      this.setState({ notes: profile.data.additional_info.notes });
+    }
     if (this.state.type === constants.USER_TYPE_PATIENT) {
       profile.data.additional_info.med_cond.map((info) => {
         if (info.name === "diabetic") {
@@ -541,18 +553,18 @@ class Profile extends Component {
   };
   setRelativeName = (relativeName) => {
     let data = this.state.updatedModel;
-    data.user.relative_name = relativeName
+    data.user.relative_name = relativeName;
     this.setState({
-      updatedModel: data
+      updatedModel: data,
     });
-  }
+  };
   setRelationType = (relationType) => {
     let data = this.state.updatedModel;
-    data.user.relation = relationType
+    data.user.relation = relationType;
     this.setState({
-      updatedModel: data
+      updatedModel: data,
     });
-  }
+  };
 
   validateData = () => {
     if (this.state.isVaccinated) {
@@ -1313,9 +1325,7 @@ class Profile extends Component {
                               Relation
                             </p>
                             <p className="col-sm-10">
-                              {
-                                this.state.data.additional_info.relation
-                              }
+                              {this.state.data.additional_info.relation}
                             </p>
                           </div>
                           <div className="row">
@@ -1323,9 +1333,7 @@ class Profile extends Component {
                               Relative Name
                             </p>
                             <p className="col-sm-10">
-                              {
-                                this.state.data.additional_info.relative_name
-                              }
+                              {this.state.data.additional_info.relative_name}
                             </p>
                           </div>
                           <div className="row">
@@ -1333,9 +1341,9 @@ class Profile extends Component {
                               Date of Birth
                             </p>
                             <p className="col-sm-10">
-                              {                                
-                                moment(this.state.data.user.dob).format("DD/MM/YYYY") || ""
-                              }
+                              {moment(this.state.data.user.dob).format(
+                                "DD/MM/YYYY"
+                              ) || ""}
                             </p>
                           </div>
                           {this.state.type === constants.USER_TYPE_DOCTOR && (
@@ -1439,8 +1447,8 @@ class Profile extends Component {
                               >
                                 <i className="fa fa-edit mr-1"></i>Edit
                               </a>
-                            </h5>                          
-                            
+                            </h5>
+
                             <div className="row">
                               <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
                                 Qualification
@@ -1468,11 +1476,10 @@ class Profile extends Component {
                                 Date of Registration
                               </p>
                               <p className="col-sm-10">
-                                {
-                                   moment(this.state.data.additional_info.qualif
-                                    .reg_date).format("DD/MM/YYYY") || ""
-                                  
-                                }
+                                {moment(
+                                  this.state.data.additional_info.qualif
+                                    .reg_date
+                                ).format("DD/MM/YYYY") || ""}
                               </p>
                             </div>
                             <div className="row">
@@ -1480,11 +1487,10 @@ class Profile extends Component {
                                 Date of Renewal
                               </p>
                               <p className="col-sm-10">
-                                {
-                                  moment(this.state.data.additional_info.qualif
-                                    .renewal_date).format("DD/MM/YYYY") || ""
-                                  
-                                }
+                                {moment(
+                                  this.state.data.additional_info.qualif
+                                    .renewal_date
+                                ).format("DD/MM/YYYY") || ""}
                               </p>
                             </div>
                             <div className="row">
@@ -1824,15 +1830,21 @@ class Profile extends Component {
                         />
                       </div>
                     </div>
-                    <div className="col-12 col-sm-12">                    
+                    <div className="col-12 col-sm-12">
                       <InputWithDropdown
                         type="text"
                         placeholder="Enter Name"
                         id="relativeName"
                         label="Relative Name"
                         maxLength="20"
-                        value={this.state.updatedModel.user.relative_name ?? this.state.updatedModel.additional_info.relative_name}
-                        selectedValue={this.state.updatedModel.user.relation ?? this.state.updatedModel.additional_info.relation}
+                        value={
+                          this.state.updatedModel.user.relative_name ??
+                          this.state.updatedModel.additional_info.relative_name
+                        }
+                        selectedValue={
+                          this.state.updatedModel.user.relation ??
+                          this.state.updatedModel.additional_info.relation
+                        }
                         onChange={this.setRelativeName}
                         options={this.state.relationTypes}
                         optionChange={this.setRelationType}
@@ -2138,7 +2150,7 @@ class Profile extends Component {
                               height={40}
                             />
                           </div>
-                        )}  
+                        )}
                         <div className="form-group">
                           <label>Department</label>
                           <select
@@ -2164,7 +2176,9 @@ class Profile extends Component {
                             type="text"
                             className="form-control"
                             onChange={(e) => {
-                              this.setState({ councilRegistrationNo: e.target.value });
+                              this.setState({
+                                councilRegistrationNo: e.target.value,
+                              });
                             }}
                             name="additional_info.qualif.med_reg_num"
                             value={this.state?.councilRegistrationNo}
@@ -2178,12 +2192,18 @@ class Profile extends Component {
                             type="date"
                             className="form-control"
                             onChange={(e) => {
-                              this.setState({ dateOfRegistration: getValidDate(e.target.value) });
+                              this.setState({
+                                dateOfRegistration: getValidDate(
+                                  e.target.value
+                                ),
+                              });
                             }}
                             name="additional_info.qualif.reg_date"
                             value={this.state?.dateOfRegistration}
-                            min={moment(new Date()).subtract(100, 'years').format('YYYY-MM-DD')}
-                            max={moment(new Date()).format('YYYY-MM-DD')}
+                            min={moment(new Date())
+                              .subtract(100, "years")
+                              .format("YYYY-MM-DD")}
+                            max={moment(new Date()).format("YYYY-MM-DD")}
                           />
                         </div>
                       </div>
@@ -2194,10 +2214,12 @@ class Profile extends Component {
                             type="date"
                             className="form-control"
                             onChange={(e) => {
-                              this.setState({ dateOfRenewal: getValidDate(e.target.value) });
+                              this.setState({
+                                dateOfRenewal: getValidDate(e.target.value),
+                              });
                             }}
                             name="additional_info.qualif.renewal_date"
-                            value={this.state?.dateOfRenewal}                              
+                            value={this.state?.dateOfRenewal}
                           />
                         </div>
                       </div>
