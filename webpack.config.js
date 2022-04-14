@@ -34,10 +34,10 @@ module.exports = {
     // global app config object
     config: JSON.stringify({
       apiUrl:
-        //  process.env.NODE_ENV === "production"
-        //  ?
-        "https://api.healthuno.com/",
-      //  : "https://uat.healthuno.com:6002/",
+          process.env.NODE_ENV === "production"
+          ?
+        "https://api.healthuno.com/"
+        : "https://dev.healthuno.com:6002/",
       imageapiUrl: "",
       publicPath: "/",
     }),
