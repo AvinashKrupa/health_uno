@@ -34,7 +34,7 @@ const Notification = () => {
         method: "POST",
         body: {
             msg_title: messageTitle,
-            user_type: 0,// || parseInt(userType),
+            user_type: parseInt(userType),
             user_ids: ["6241a64686fe9c004e0e4dfd"],
             msg: message
         },
