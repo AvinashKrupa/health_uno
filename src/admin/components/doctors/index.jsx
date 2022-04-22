@@ -47,18 +47,31 @@ class Doctors extends Component {
       searchedColumn: "",
       loadingCsv: false,
       pagination: {
-        page: 1,
+        page: props.match.params.page ?? 1,
         limit: 10,
       },
       loading: false,
       isConfirmation: false,
-      page: 1,
+      page: props.match.params.page ?? 1,
       selectedRecord: null,
     };
     this.csvLinkEl = React.createRef();
   }
 
-  async fetchDoctors(params = {}) {
+  componentDidUpdate(prevProps) {
+    if (this.props.location !== prevProps.location) {
+      this.setState({
+        pagination: {
+          page: this.props.match.params.page
+        }
+      })
+      const { pagination } = this.state;
+      this.fetchDoctors(pagination);
+    }
+  }
+
+  async fetchDoctors(params = {}, changeRoute = false) {
+    
     this.setState({ loading: true });
     const body = {
       ...params,
@@ -80,11 +93,14 @@ class Doctors extends Component {
         total: doctors.data.total,
       },
     });
+    if(changeRoute){
+      this.props.history.push("/doctor-list/"+this.state.pagination.page)
+    }   
   }
 
   async componentDidMount() {
     const { pagination } = this.state;
-    this.fetchDoctors(pagination);
+    this.fetchDoctors(pagination,true);
     let speclData = await fetchApi({ url: "v1/specialities", method: "GET" });
     let specialities = speclData.data.map((ele) => {
       return { name: ele.title, value: ele._id };
@@ -186,7 +202,7 @@ class Doctors extends Component {
         specialities: filters.specialities,
       },
     };
-    this.fetchDoctors(obj);
+    this.fetchDoctors(obj,true);
   };
 
   async deleteDoctor(record) {
@@ -344,7 +360,7 @@ class Doctors extends Component {
         render: (text, record) => renderChips(record.qualif.specl),
         dataIndex: "specialities",
         sorter: (a, b) => {
-          if (a.qualif.specl && a.qualif.specl.length > 0) {
+          if (a.qualif.specl && a.qualif.specl.length > 0 && b.qualif.specl && b.qualif.specl.length > 0) {
             return sorterText(a.qualif.specl[0].title, b.qualif.specl[0].title);
           }
         },
@@ -588,7 +604,8 @@ class Doctors extends Component {
                         dataSource={[...data]}
                         rowKey={(record) => record._id}
                         showSizeChanger={true}
-                        pagination={{
+                        pagination={{                          
+                          current: this.state.pagination.page ?? 1,
                           total:
                             this.state.total >= 0
                               ? this.state.total
