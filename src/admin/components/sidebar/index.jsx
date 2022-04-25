@@ -87,7 +87,7 @@ class SidebarNav extends Component {
                 </Link>
               </li>
               <li className={pathname.includes("doctor-list") ? "active" : ""}>
-                <Link to="/doctor-list">
+                <Link to="/doctor-list/1">
                   <img
                     src={DoctorsIcon}
                     className="navigation_icon"
