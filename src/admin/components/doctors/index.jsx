@@ -47,12 +47,12 @@ class Doctors extends Component {
       searchedColumn: "",
       loadingCsv: false,
       pagination: {
-        page: props.match.params.page ?? 1,
+        page: parseInt(props.match.params.page) ?? 1,
         limit: 10,
       },
       loading: false,
       isConfirmation: false,
-      page: props.match.params.page ?? 1,
+      page: parseInt(props.match.params.page) ?? 1,
       selectedRecord: null,
     };
     this.csvLinkEl = React.createRef();
@@ -62,7 +62,7 @@ class Doctors extends Component {
     if (this.props.location !== prevProps.location) {
       this.setState({
         pagination: {
-          page: this.props.match.params.page
+          page: parseInt(this.props.match.params.page)
         }
       })
       const { pagination } = this.state;
@@ -88,7 +88,7 @@ class Doctors extends Component {
       loading: false,
       total: doctors.data.total,
       pagination: {
-        page: doctors.data.page,
+        page: parseInt(doctors.data.page),
         limit: doctors.data.limit,
         total: doctors.data.total,
       },
@@ -605,7 +605,7 @@ class Doctors extends Component {
                         rowKey={(record) => record._id}
                         showSizeChanger={true}
                         pagination={{                          
-                          current: this.state.pagination.page ?? 1,
+                          current: parseInt(this.props.match.params.page) ?? 1,
                           total:
                             this.state.total >= 0
                               ? this.state.total
