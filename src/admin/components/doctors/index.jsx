@@ -281,6 +281,10 @@ class Doctors extends Component {
               "",
             email: element?.user_id?.email || "",
             dob: element?.user_id?.dob || "",
+            language: element?.user_id?.language ? element?.user_id?.language?.map( (item) => item.name): "",
+            gender: element?.user_id?.gender || "",
+            state: element?.address?.state || "",
+            city: element?.address?.city || "",
           };
           finalData.push(dataObj);
         });
@@ -510,6 +514,10 @@ class Doctors extends Component {
       { label: "Email ID", key: "email" },
       { label: "DoB", key: "dob" },
       { label: "Specialities", key: "specl" },
+      { label: "Language", key: "language" },
+      { label: "Gender", key: "gender" },
+      { label: "State", key: "state" },
+      { label: "City", key: "city" },
       { label: "Created At", key: "created_at" },
       { label: "Updated At", key: "updated_at" },
       { label: "Created By", key: "created_by" },
