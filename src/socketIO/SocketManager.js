@@ -1,5 +1,5 @@
 const { io } = require("socket.io-client");
-const URL = "https://api.healthuno.com";
+const URL = "https://socket.healthuno.com";
 
 // const URL = "http://localhost:3007";
 const options = {
