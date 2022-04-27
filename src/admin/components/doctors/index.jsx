@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Table, ExportTableButton } from "ant-table-extensions";
+import { Table } from "ant-table-extensions";
 import { CSVLink } from "react-csv";
 import { Button } from "react-bootstrap";
 import moment from "moment";

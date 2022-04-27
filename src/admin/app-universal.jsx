@@ -92,7 +92,7 @@ const AppUniversal = function (props) {
           />
           <PrivateRoute path="/doctor-list/:page" exact component={Doctors} />
           <PrivateRoute path="/doctor-registration" exact component={DoctorRegistration} />
-          <PrivateRoute path="/patient-list" exact component={Patients} />
+          <PrivateRoute path="/patient-list/:page" exact component={Patients} />
           <PrivateRoute path="/patient/topConsultants" exact component={TopConsultants} />
           <PrivateRoute path="/patient-registration" exact component={Registration} />
           <PrivateRoute exact path='/patient/doctorDetails/:doctor_id' component={DoctorDetails}/>
