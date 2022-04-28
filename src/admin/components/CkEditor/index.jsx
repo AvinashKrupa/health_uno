@@ -5,6 +5,7 @@ import DecoupledcEditor from "@ckeditor/ckeditor5-build-decoupled-document";
 import SidebarNav from "../sidebar";
 import CustomButton from "../CustomButton";
 import { fetchApi } from "../../../_utils/http-utils";
+import { UPLOAD_FILE_URL } from "../../../_utils/constants";
 
 const CkEditor = ({}) => {
   const [editorValue, setEditorValue] = useState("");
@@ -53,6 +54,42 @@ const CkEditor = ({}) => {
     }
   };
 
+  function uploadAdapter(loader) {
+    return {
+      upload: () => {
+        return new Promise((resolve, reject) => {
+          const body = new FormData();
+          loader.file.then((file) => {
+            body.append("file", file);
+            body.append("type", 'about-us');
+            // let headers = new Headers();
+            // headers.append("Origin", "http://localhost:3000");
+            fetch(UPLOAD_FILE_URL,
+             {
+              method: "post",
+              body: body
+              // mode: "no-cors"
+              })
+              .then((res) => res.json())
+              .then((res) => {
+                resolve({
+                  default: res.data.url
+                });
+              })
+              .catch((err) => {
+                reject(err);
+              });
+          });
+        });
+      }
+    };
+  }
+  function uploadPlugin(editor) {
+    editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
+      return uploadAdapter(loader);
+    };
+  }
+
   return (
     <>
       <SidebarNav />
@@ -72,7 +109,9 @@ const CkEditor = ({}) => {
               data={editorValue}
               config={{
                 toolbarLocation: "bottom",
-                removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed', 'Link'],
+                removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'MediaEmbed', 'Link'],
+                //, 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload'
+                extraPlugins: [uploadPlugin]
               }}
               onReady={(editor) => {
                 // You can store the "editor" and use when it is needed.
