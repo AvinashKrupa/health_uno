@@ -187,7 +187,11 @@ class SidebarNav extends Component {
                   <i className="fe fe-question"></i> <span>About Us</span>
                 </Link>
               </li>
-
+              <li className={pathname.includes("videos") ? "active" : ""}>
+                <Link to="/videos">
+                  <i className="fe fe-camera"></i> <span>Videos</span>
+                </Link>
+              </li>
               {/*<li className={pathname.includes('reviews') ?"active" :""}> */}
               {/*  <Link to="/reviews"><i className="fe fe-star-o" /> <span>Reviews</span></Link>*/}
               {/*</li>*/}

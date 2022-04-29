@@ -55,6 +55,7 @@ import TopConsultants from "./components/TopConsultants"
 import DoctorDetails from "./components/doctorDetails";
 import PatientSlotBooking from "./components/PatientSlotBooking";
 import PatientBookingSummary from "./components/PatientBookingSummary";
+import Video from "./components/video";
 
 const AppUniversal = function (props) {
   return (
@@ -139,6 +140,7 @@ const AppUniversal = function (props) {
           <Route path="/form-mask" exact component={FormMask} />
           <Route path="/form-validation" exact component={FormValidation} />
           <Route path="/about-us" exact component={CkEditor} />
+          <Route path="/videos" exact component={Video} />
           <Route path="*" exact component={Error} />
         </Switch>
       </div>
