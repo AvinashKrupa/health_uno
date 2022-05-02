@@ -5841,3 +5841,6 @@ input#menu[type="checkbox"] {
   padding: 5px!important;
   border-top: 0px;
 } 
+.textarea-auto-height {
+  height: auto!important;
+}

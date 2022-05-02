@@ -106,6 +106,9 @@ export const renderText = (text) => {
 export const renderBoolean = (value) => {
   return <div className="sorting_1">{value ? "Enabled" : "Disabled"}</div>;
 };
+export const renderEnabledStatus = (value) => {
+  return <div className="sorting_1">{value=='active' ? "Enabled" : "Disabled"}</div>;
+};
 
 export const renderStatus = (value) => {
   return (
@@ -122,6 +125,13 @@ export const renderTextWithImage = (text, url) => {
         <img src={url} className="avatar-img" alt="" />
       </a>
       <a>{text}</a>
+    </h2>
+  );
+};
+export const renderTextWithLink = (text, url) => {
+  return (
+    <h2 className="table-avatar">
+      <a target="_blank" href={url} className="avatar avatar-sm mr-2">{text}</a>
     </h2>
   );
 };
@@ -275,7 +285,7 @@ export const renderEditDisableActions = (
                 }`}
                 onClick={() => handleShow("disable")}
               >
-                {record.status == "active" ? "Inactive" : " Active"}
+                {record.status == "active" ? "Disable" : " Enable"}
               </a>
             ) : (
               <a
