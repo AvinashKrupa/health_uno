@@ -9,10 +9,10 @@ import {
 } from "../../components/paginationfunction";
 import { fetchApi, fetchApiWithFileUpload } from "../../../_utils/http-utils";
 import {
-  renderBoolean,
   renderDate,
   renderEditDisableActions,
-  renderText,
+  renderEnabledStatus,
+  renderTextWithLink,
   renderTextWithImage,
   sorterBoolean,
   sorterDate,
@@ -139,7 +139,7 @@ class Video extends Component {
     }
   };
   changeStatus = async (record) => {
-    let body = { _id: record._id, enabled: !record.enabled };
+    let body = { _id: record._id, status: record.status=='active' ? 'inactive': 'active' };
     try {
       let result = await fetchApi({
         url: "v1/video/changeStatus",
@@ -183,7 +183,7 @@ class Video extends Component {
         title: "Video",
         dataIndex: "url",
         ellipsis: true,
-        render: (text, record) => renderTextWithImage("", record.url),
+        render: (text, record) => renderTextWithLink("view", record.url),
       },
       {
         title: "Thumb",
@@ -206,7 +206,7 @@ class Video extends Component {
       {
         title: "Status",
         dataIndex: "status",
-        render: (text) => renderBoolean(text),
+        render: (text) => renderEnabledStatus(text),
         sorter: (a, b) => sorterBoolean(a.status, b.status),
       },
       {
@@ -214,7 +214,9 @@ class Video extends Component {
         render: (text, record) =>
           renderEditDisableActions(
             (elem) => this.handleShow(elem, record),
-            record
+            record,
+            1,
+            false
           ),
       },
     ];
@@ -335,9 +337,6 @@ class Video extends Component {
                           ref={(ref) => (this.thumb_file = ref)}
                           onChange={(e) => this.handleThumbnailFileSelection(e)}
                         />
-                        <p>
-                          <em>2400w * 600h (4 : 1 aspect ration) </em>
-                        </p>
                       </div>
                     </div>
                   </div>
@@ -373,7 +372,7 @@ class Video extends Component {
                   <p className="mb-4">{`Are you sure want to ${
                     this.state.show.record.enabled ? "disable" : "enable"
                   } "${this.state.show.record.title}" ?`}</p>
-                  <button
+                  <button 
                     type="button"
                     className="btn btn-primary"
                     onClick={() => this.changeStatus(this.state.show.record)}
