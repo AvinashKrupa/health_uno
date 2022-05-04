@@ -87,7 +87,7 @@ class SidebarNav extends Component {
                 </Link>
               </li>
               <li className={pathname.includes("doctor-list") ? "active" : ""}>
-                <Link to="/doctor-list">
+                <Link to="/doctor-list/1">
                   <img
                     src={DoctorsIcon}
                     className="navigation_icon"
@@ -114,7 +114,7 @@ class SidebarNav extends Component {
               </li>
 
               <li className={pathname.includes("patient-list") ? "active" : ""}>
-                <Link to="/patient-list">
+                <Link to="/patient-list/1">
                   <img
                     src={PatientsIcon}
                     className="navigation_icon"
@@ -165,6 +165,11 @@ class SidebarNav extends Component {
                   &nbsp;<i className="fe fe-clock"></i> <span>Logs</span>
                 </Link>
               </li>
+              <li className={pathname.includes("notification") ? "active" : ""}>               
+                <Link to="/notification">
+                  &nbsp;<i className="fe fe-bell"></i> <span>Notification</span>
+                </Link>
+              </li>
               {/* <li className={pathname.includes("revenue") ? "active" : ""}>
                 <Link to="/revenue">
                   <i className="fe fe-money" /> <span>Revenue</span>
@@ -182,7 +187,11 @@ class SidebarNav extends Component {
                   <i className="fe fe-question"></i> <span>About Us</span>
                 </Link>
               </li>
-
+              <li className={pathname.includes("videos") ? "active" : ""}>
+                <Link to="/videos">
+                  <i className="fe fe-camera"></i> <span>Videos</span>
+                </Link>
+              </li>
               {/*<li className={pathname.includes('reviews') ?"active" :""}> */}
               {/*  <Link to="/reviews"><i className="fe fe-star-o" /> <span>Reviews</span></Link>*/}
               {/*</li>*/}

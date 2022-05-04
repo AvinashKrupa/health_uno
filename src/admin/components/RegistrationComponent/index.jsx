@@ -491,7 +491,7 @@ const RegistrationComponent = ({ history, image }) => {
           const additional_info = response.data["additional_info"];
          
           toast.success(response.message, { appearance: "success" });
-          history.push("/patient-list");
+          history.push("/patient-list/1");
         } else {
           toast.error(response.data.message, { appearance: "error" });
         }

@@ -157,13 +157,13 @@ const TopConsultants = (props) => {
               {/* <Col lg="1"  sm="1" xs='1' /> */}
               <Col lg="10" sm="10" xs="10" className="screen-768">
                 {/* <div className='back-navigation'>
-            <button><i class="fas fa-arrow-left" style={{cursor: 'pointer', paddingRight: '27px'}} onClick={() =>  props.history.push('/patient-list')}></i><span>Top Consultants</span></button>
+            <button><i class="fas fa-arrow-left" style={{cursor: 'pointer', paddingRight: '27px'}} onClick={() =>  props.history.push('/patient-list/1')}></i><span>Top Consultants</span></button>
           </div> */}
                 <button className="back-nav-container back-navigation">
                   <img
                     src={back_icon}
                     alt="back_icon-img"
-                    onClick={() => props.history.push("/patient-list")}
+                    onClick={() => props.history.push("/patient-list/1")}
                   ></img>
                   <span>Top Consultants</span>
                 </button>

@@ -432,10 +432,10 @@ class Users extends Component {
                                 <h4 className="modal-title">Delete</h4>
                                 <p className="mb-4">{`Are you sure want to delete "${this.state.show.record.first_name}"?`}</p>
                                 <button type="button" className="btn btn-primary"
-                                        onClick={() => this.deleteRecord(this.state.show.record)}>Save
+                                        onClick={() => this.deleteRecord(this.state.show.record)}>Yes
                                 </button>
                                 <button type="button" onClick={this.handleClose} className="btn btn-danger"
-                                        data-dismiss="modal">Close
+                                        data-dismiss="modal">No
                                 </button>
                             </div>
 

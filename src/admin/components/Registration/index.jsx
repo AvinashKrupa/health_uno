@@ -23,7 +23,7 @@ const Registration = () => {
         <div className="content container-fluid">
           {/* <Container className="registration-container"> */}
             <Row className="heading">
-              <Link to="/patient-list">
+              <Link to="/patient-list/1">
                 <i className="fas fa-arrow-left"></i>
                 <span>Complete Profile</span>
               </Link>

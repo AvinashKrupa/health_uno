@@ -62,6 +62,7 @@ class Users extends Component {
     const columns = [
       {
         title: "Name",
+        width: 200,
         dataIndex: "actioner.name",
         render: (text, record) =>
           renderText(record.actioner.name, record.actioner.avatar),
@@ -69,6 +70,7 @@ class Users extends Component {
       },
       {
         title: "Title",
+        width: 200,
         dataIndex: "title",
         render: (text, record) => renderText(record.title),
         sorter: (a, b) => sorterText(a.title, b.title),
@@ -78,6 +80,7 @@ class Users extends Component {
         dataIndex: "message",
         render: (text, record) => renderText(record.message),
         sorter: (a, b) => sorterText(a.message, b.message),
+        width: 300,
       },
       {
         title: "Updated time",
@@ -93,17 +96,34 @@ class Users extends Component {
       },
       {
         title: "Actions",
+        width: 100,
         render: (text, record) => {
           return (
             <>
               <div>
                 <button
                   type="button"
-                  onClick={() =>
-                    this.props.history.push(`/profile/${record.record_id}/2`, {
-                      profile_type: 2,
-                    })
-                  }
+                  onClick={() => {
+                    if (record.module_name == "Patient") {
+                      this.props.history.push(
+                        `/profile/${record.record_id}/1`,
+                        {
+                          profile_type: 1,
+                        }
+                      );
+                    } else if (record.module_name == "Doctor") {
+                      this.props.history.push(
+                        `/profile/${record.record_id}/2`,
+                        {
+                          profile_type: 2,
+                        }
+                      );
+                    } else if (record.module_name == "Coupon") {
+                      this.props.history.push(`/coupon`, {});
+                    } else if (record.module_name == "Appointment") {
+                      this.props.history.push(`/appointment-list`, {});
+                    }
+                  }}
                   className="btn btn-primary book-btn"
                 >
                   View
@@ -142,7 +162,7 @@ class Users extends Component {
                     <div className="table-responsive">
                       <Table
                         className="table-striped"
-                        scroll={{ x: 1300 }}
+                        scroll={{ x: 1000 }}
                         columns={columns}
                         rowKey={(record) => record._id}
                         dataSource={this.state.data}

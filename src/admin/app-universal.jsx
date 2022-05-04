@@ -6,6 +6,7 @@ import Header from "./components/header/index";
 import Dashboard from "./components/dashboard";
 import Users from "./components/users";
 import Logs from "./components/logs";
+import Notification from "./components/Notification";
 import Appointments from "./components/appointments";
 import Specialities from "./components/specialities";
 import Sliders from "./components/sliders";
@@ -54,6 +55,7 @@ import TopConsultants from "./components/TopConsultants"
 import DoctorDetails from "./components/doctorDetails";
 import PatientSlotBooking from "./components/PatientSlotBooking";
 import PatientBookingSummary from "./components/PatientBookingSummary";
+import Video from "./components/video";
 
 const AppUniversal = function (props) {
   return (
@@ -66,6 +68,7 @@ const AppUniversal = function (props) {
           <PrivateRoute path="/admin" exact component={Dashboard} />
           <PrivateRoute path="/logs" exact component={Logs} />
           <PrivateRoute path="/users" exact component={Users} />
+          <PrivateRoute path="/notification" exact component={Notification} />
           <PrivateRoute
             path="/appointment-list"
             exact
@@ -88,9 +91,9 @@ const AppUniversal = function (props) {
             exact
             component={Qualifications}
           />
-          <PrivateRoute path="/doctor-list" exact component={Doctors} />
+          <PrivateRoute path="/doctor-list/:page" exact component={Doctors} />
           <PrivateRoute path="/doctor-registration" exact component={DoctorRegistration} />
-          <PrivateRoute path="/patient-list" exact component={Patients} />
+          <PrivateRoute path="/patient-list/:page" exact component={Patients} />
           <PrivateRoute path="/patient/topConsultants" exact component={TopConsultants} />
           <PrivateRoute path="/patient-registration" exact component={Registration} />
           <PrivateRoute exact path='/patient/doctorDetails/:doctor_id' component={DoctorDetails}/>
@@ -137,6 +140,7 @@ const AppUniversal = function (props) {
           <Route path="/form-mask" exact component={FormMask} />
           <Route path="/form-validation" exact component={FormValidation} />
           <Route path="/about-us" exact component={CkEditor} />
+          <Route path="/videos" exact component={Video} />
           <Route path="*" exact component={Error} />
         </Switch>
       </div>

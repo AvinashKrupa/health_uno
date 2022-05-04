@@ -8,6 +8,7 @@ import { Image } from "react-bootstrap";
 import uploadCamera from "../assets/images/uploadCamera.png";
 import { Modal } from "antd";
 import "antd/dist/antd.css";
+import { UPLOAD_FILE_URL } from "../../_utils/constants";
 
 class UploadImage extends Component {
   beforeUpload(file) {
@@ -29,7 +30,7 @@ class UploadImage extends Component {
     }
     bodyFormData.append("type", "profile");
     this.uploadImageWithData(
-      "https://api.healthuno.com/v1/fileUpload",
+      UPLOAD_FILE_URL,
       bodyFormData
     )
       .then((response) => {})

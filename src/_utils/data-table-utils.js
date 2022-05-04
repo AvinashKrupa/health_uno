@@ -104,7 +104,11 @@ export const renderText = (text) => {
   return (
     <div
       className="sorting_1"
-      style={{ wordWrap: "break-word", wordBreak: "break-word" }}
+      style={{
+        wordWrap: "break-word",
+        wordBreak: "break-word",
+        whiteSpace: "initial",
+      }}
     >
       {changeCaseFirstLetter(text)}
     </div>

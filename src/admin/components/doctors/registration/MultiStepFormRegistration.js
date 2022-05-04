@@ -85,7 +85,7 @@ const MultiStepFormRegistration = ({ history }) => {
             const user = response.data["user"];
             const additional_info = response.data["additional_info"];
    
-            history.push("/doctor-list");
+            history.push("/doctor-list/1");
             setShowLoader(false);
             toast.success(response.message, { appearance: "success" });
           } else {
@@ -422,7 +422,7 @@ const MultiStepFormRegistration = ({ history }) => {
 
   const handlePrev = () => {
     if (activeStep === 1) {
-      history.push("/doctor-list");
+      history.push("/doctor-list/1");
     }
     let tempActiveStep = activeStep;
     tempActiveStep = tempActiveStep - 1;

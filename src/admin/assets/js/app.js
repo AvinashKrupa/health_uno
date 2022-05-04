@@ -105,23 +105,25 @@ $(document).ready(function() {
 	// Sidebar Slimscroll
 
 	if($slimScrolls.length > 0) {
-		$slimScrolls.slimScroll({
-			height: 'auto',
-			width: '100%',
-			position: 'right',
-			size: '7px',
-			color: '#ccc',
-			wheelStep: 10,
-			touchScrollStep: 100
-		});
-		var wHeight = $(window).height() - 60;
-		$slimScrolls.height(wHeight);
-		$('.sidebar .slimScrollDiv').height(wHeight);
-		$(window).resize(function() {
-			var rHeight = $(window).height() - 60;
-			$slimScrolls.height(rHeight);
-			$('.sidebar .slimScrollDiv').height(rHeight);
-		});
+		setTimeout(function(){
+			$slimScrolls.slimScroll({
+				height: 'auto',
+				width: '100%',
+				position: 'right',
+				size: '7px',
+				color: '#ccc',
+				wheelStep: 10,
+				touchScrollStep: 100
+			});
+			var wHeight = $(window).height() - 60;
+			$slimScrolls.height(wHeight);
+			$('.sidebar .slimScrollDiv').height(wHeight);
+			$(window).resize(function() {
+				var rHeight = $(window).height() - 60;
+				$slimScrolls.height(rHeight);
+				$('.sidebar .slimScrollDiv').height(rHeight);
+			});
+		},1000);
 	}
 	
 	// Page Content Height
@@ -342,4 +344,40 @@ $(document).ready(function() {
 $(window).on ('load', function (){
 	$('#loader').delay(100).fadeOut('slow');
 	$('#loader-wrapper').delay(500).fadeOut('slow');
+	$('#sidebar-menu ul li').on('click',function(){	
+		
+		setTimeout(function(){
+			var $pageWrapper = $('.page-wrapper');
+			var $slimScrolls = $('.slimscroll');
+			// Sidebar Slimscroll
+			if($slimScrolls.length > 0) {		
+				$slimScrolls.slimScroll({
+					height: 'auto',
+					width: '100%',
+					position: 'right',
+					size: '7px',
+					color: '#ccc',
+					wheelStep: 10,
+					touchScrollStep: 100
+				});
+				var wHeight = $(window).height() - 60;
+				$slimScrolls.height(wHeight);
+				$('.sidebar .slimScrollDiv').height(wHeight);
+				$(window).resize(function() {
+					var rHeight = $(window).height() - 60;
+					$slimScrolls.height(rHeight);
+					$('.sidebar .slimScrollDiv').height(rHeight);
+				});		
+			}
+			// Page Content Height
+
+			var pHeight = $(window).height();
+			$pageWrapper.css('min-height', pHeight);
+			$(window).resize(function() {
+				var prHeight = $(window).height();
+				$pageWrapper.css('min-height', prHeight);
+			});
+		},1000)
+		
+	})
 });
