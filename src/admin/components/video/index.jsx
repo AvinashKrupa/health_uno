@@ -377,7 +377,7 @@ class Video extends Component {
                     className="btn btn-primary"
                     onClick={() => this.changeStatus(this.state.show.record)}
                   >
-                    Save
+                    Yes
                   </button>
                   <button
                     type="button"
@@ -385,7 +385,7 @@ class Video extends Component {
                     className="btn btn-danger"
                     data-dismiss="modal"
                   >
-                    Close
+                    No
                   </button>
                 </div>
               </Modal.Body>
@@ -406,7 +406,7 @@ class Video extends Component {
                     className="btn btn-primary"
                     onClick={() => this.deleteRecord(this.state.show.record)}
                   >
-                    Save
+                    Yes
                   </button>
                   <button
                     type="button"
@@ -414,7 +414,7 @@ class Video extends Component {
                     className="btn btn-danger"
                     data-dismiss="modal"
                   >
-                    Close
+                    No
                   </button>
                 </div>
               </Modal.Body>
