@@ -101,7 +101,14 @@ export const renderChips = (items) => {
   });
 };
 export const renderText = (text) => {
-  return <div className="sorting_1">{changeCaseFirstLetter(text)}</div>;
+  return (
+    <div
+      className="sorting_1"
+      style={{ wordWrap: "break-word", wordBreak: "break-word" }}
+    >
+      {changeCaseFirstLetter(text)}
+    </div>
+  );
 };
 export const renderBoolean = (value) => {
   return <div className="sorting_1">{value ? "Enabled" : "Disabled"}</div>;
@@ -251,7 +258,7 @@ export const renderEditDisableActions = (
               {record.enabled ? "Disable" : " Enable"}
             </a>
           </>
-        ) : (type == 2 ? (
+        ) : type == 2 ? (
           <>
             <a
               href="#0"
@@ -287,9 +294,7 @@ export const renderEditDisableActions = (
               </a>
             )}
           </>
-          )
-        )
-      }
+        )}
         <a
           href="#0"
           className="btn btn-sm bg-danger-light"
@@ -537,7 +542,9 @@ export const getDynamicSearchProps = (
       <Space>
         <Button
           type="primary"
-          onClick={() => handleSearch(selectedKeys, confirm, dataIndex, recordValueToCompare)}
+          onClick={() =>
+            handleSearch(selectedKeys, confirm, dataIndex, recordValueToCompare)
+          }
           size="small"
           style={{ width: 90 }}
         >

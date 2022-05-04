@@ -33,6 +33,7 @@ import { getValidDate } from "../../../_utils/utilities";
 class Profile extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       loadingQual: false,
       loadingDept: false,
@@ -249,10 +250,17 @@ class Profile extends Component {
   }
 
   async getUserProfile() {
+    let req = { user_id: this.state.user_id, type: this.state.type };
+
+    if (this.props.location.state && this.props.location.state.profile_type) {
+      req["profile_type"] = this.props.location.state.profile_type;
+    }
+
+    console.log("req", req);
     let profile = await fetchApi({
       url: "v1/user/getUserProfile",
       method: "POST",
-      body: { user_id: this.state.user_id, type: this.state.type },
+      body: req,
     });
     if (
       profile &&
