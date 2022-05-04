@@ -114,6 +114,25 @@ export const renderText = (text) => {
     </div>
   );
 };
+
+export const renderEnabledStatus = (value) => {
+  return (
+    <div className="sorting_1">
+      {value == "active" ? "Enabled" : "Disabled"}
+    </div>
+  );
+};
+
+export const renderTextWithLink = (text, url) => {
+  return (
+    <h2 className="table-avatar">
+      <a target="_blank" href={url} className="avatar avatar-sm mr-2">
+        {text}
+      </a>
+    </h2>
+  );
+};
+
 export const renderBoolean = (value) => {
   return <div className="sorting_1">{value ? "Enabled" : "Disabled"}</div>;
 };
