@@ -101,13 +101,40 @@ export const renderChips = (items) => {
   });
 };
 export const renderText = (text) => {
-  return <div className="sorting_1">{changeCaseFirstLetter(text)}</div>;
+  return (
+    <div
+      className="sorting_1"
+      style={{
+        wordWrap: "break-word",
+        wordBreak: "break-word",
+        whiteSpace: "initial",
+      }}
+    >
+      {changeCaseFirstLetter(text)}
+    </div>
+  );
 };
+
+export const renderEnabledStatus = (value) => {
+  return (
+    <div className="sorting_1">
+      {value == "active" ? "Enabled" : "Disabled"}
+    </div>
+  );
+};
+
+export const renderTextWithLink = (text, url) => {
+  return (
+    <h2 className="table-avatar">
+      <a target="_blank" href={url} className="avatar avatar-sm mr-2">
+        {text}
+      </a>
+    </h2>
+  );
+};
+
 export const renderBoolean = (value) => {
   return <div className="sorting_1">{value ? "Enabled" : "Disabled"}</div>;
-};
-export const renderEnabledStatus = (value) => {
-  return <div className="sorting_1">{value=='active' ? "Enabled" : "Disabled"}</div>;
 };
 
 export const renderStatus = (value) => {
@@ -125,13 +152,6 @@ export const renderTextWithImage = (text, url) => {
         <img src={url} className="avatar-img" alt="" />
       </a>
       <a>{text}</a>
-    </h2>
-  );
-};
-export const renderTextWithLink = (text, url) => {
-  return (
-    <h2 className="table-avatar">
-      <a target="_blank" href={url} className="avatar avatar-sm mr-2">{text}</a>
     </h2>
   );
 };
@@ -261,7 +281,7 @@ export const renderEditDisableActions = (
               {record.enabled ? "Disable" : " Enable"}
             </a>
           </>
-        ) : (type == 2 ? (
+        ) : type == 2 ? (
           <>
             <a
               href="#0"
@@ -285,7 +305,7 @@ export const renderEditDisableActions = (
                 }`}
                 onClick={() => handleShow("disable")}
               >
-                {record.status == "active" ? "Disable" : " Enable"}
+                {record.status == "active" ? "Inactive" : " Active"}
               </a>
             ) : (
               <a
@@ -297,9 +317,7 @@ export const renderEditDisableActions = (
               </a>
             )}
           </>
-          )
-        )
-      }
+        )}
         <a
           href="#0"
           className="btn btn-sm bg-danger-light"
@@ -547,7 +565,9 @@ export const getDynamicSearchProps = (
       <Space>
         <Button
           type="primary"
-          onClick={() => handleSearch(selectedKeys, confirm, dataIndex, recordValueToCompare)}
+          onClick={() =>
+            handleSearch(selectedKeys, confirm, dataIndex, recordValueToCompare)
+          }
           size="small"
           style={{ width: 90 }}
         >

@@ -34,7 +34,7 @@ class Video extends Component {
   async componentDidMount() {
     await this.reloadData();
   }
-  
+
   async reloadData() {
     let result = await fetchApi({
       url: "v1/videos?showAll=true",
@@ -43,10 +43,9 @@ class Video extends Component {
     this.setState({ data: result.data });
   }
 
-
   handleClose = () => {
     this.setState({
-      show: { id: null, record: null }
+      show: { id: null, record: null },
     });
   };
 
@@ -74,15 +73,15 @@ class Video extends Component {
       show: show,
       title: e.target.value,
     });
-  };  
+  };
   handleVideoFileSelection = async (e) => {
     const targetFile = e.target.files[0];
-    const type = "file";   
+    const type = "file";
     this.newMethod(true, targetFile, type);
   };
   handleThumbnailFileSelection = async (e) => {
     const targetFile = e.target.files[0];
-    const type = "thumb_file";    
+    const type = "thumb_file";
     this.newMethod(true, targetFile, type);
   };
   newMethod(valid, targetFile, type) {
@@ -98,9 +97,7 @@ class Video extends Component {
         show: show,
       });
     } else {
-      type === "file"
-        ? (this.file.value = "")
-        : (this.thumb_file.value = "");
+      type === "file" ? (this.file.value = "") : (this.thumb_file.value = "");
     }
   }
 
@@ -120,10 +117,10 @@ class Video extends Component {
     if (valid) {
       let result;
       if (record) {
-        let data = new FormData();       
+        let data = new FormData();
         data.append("title", record.title);
         data.append("file", record.file);
-        data.append("thumb_file", record.thumb_file);    
+        data.append("thumb_file", record.thumb_file);
 
         result = await fetchApiWithFileUpload({
           url: "v1/video/addNew",
@@ -139,7 +136,10 @@ class Video extends Component {
     }
   };
   changeStatus = async (record) => {
-    let body = { _id: record._id, status: record.status=='active' ? 'inactive': 'active' };
+    let body = {
+      _id: record._id,
+      status: record.status == "active" ? "inactive" : "active",
+    };
     try {
       let result = await fetchApi({
         url: "v1/video/changeStatus",
@@ -341,7 +341,6 @@ class Video extends Component {
                     </div>
                   </div>
 
-                 
                   <button
                     type="submit"
                     onClick={(e) => {
@@ -372,7 +371,7 @@ class Video extends Component {
                   <p className="mb-4">{`Are you sure want to ${
                     this.state.show.record.enabled ? "disable" : "enable"
                   } "${this.state.show.record.title}" ?`}</p>
-                  <button 
+                  <button
                     type="button"
                     className="btn btn-primary"
                     onClick={() => this.changeStatus(this.state.show.record)}
