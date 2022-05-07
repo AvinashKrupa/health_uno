@@ -22,6 +22,7 @@ import {
   sorterText,
   renderButton,
   renderDeleteButton,
+  getDynamicSearchProps,
 } from "../../../_utils/data-table-utils";
 import toast from "react-hot-toast";
 
@@ -89,16 +90,17 @@ class Patients extends Component {
     });
   }
 
-  handleSearch = (selectedKeys, confirm, dataIndex) => {
-    this.setState(
-      {
-        searchText: selectedKeys[0],
-        searchedColumn: dataIndex,
-      },
-      () => {
+  handleSearch = (selectedKeys, confirm, dataIndex, fieldName) => {
+    console.log("fieldName", fieldName);
+    if (fieldName === "name") {
+      this.setState({ searchText: selectedKeys[0] }, () => {
         confirm();
-      }
-    );
+      });
+    } else if (fieldName === "user_id.mobile_number") {
+      this.setState({ searchMobile: selectedKeys[0] }, () => {
+        confirm();
+      });
+    }
   };
 
   fetchPatientsList = async (params = {}, changeRoute = false) => {
@@ -167,6 +169,12 @@ class Patients extends Component {
 
   handleReset = (clearFilters) => {
     this.setState({ searchText: "" }, () => {
+      clearFilters();
+    });
+  };
+
+  handleResetMobileNumber = (clearFilters) => {
+    this.setState({ searchMobile: "" }, () => {
       clearFilters();
     });
   };
@@ -382,14 +390,27 @@ class Patients extends Component {
         render: (text, record) => renderText(record.user_id.mobile_number),
         sorter: (a, b) =>
           sorterText(a.user_id.mobile_number, b.user_id.mobile_number),
-        ...getColumnSearchProps(
+        ...getDynamicSearchProps(
           this,
           "Mobile Number",
           this.handleSearch,
-          this.handleReset,
+          this.handleResetMobileNumber,
           "user_id.mobile_number"
         ),
       },
+      // {
+      //   title: "Mobile Number",
+      //   render: (text, record) => renderText(record.user_id.mobile_number),
+      //   sorter: (a, b) =>
+      //     sorterText(a.user_id.mobile_number, b.user_id.mobile_number),
+      //   ...getColumnSearchProps(
+      //     this,
+      //     "Mobile Number",
+      //     this.handleSearch,
+      //     this.handleResetMobileNumber,
+      //     "user_id.mobile_number"
+      //   ),
+      // },
       {
         title: "Email",
         dataIndex: "email",
