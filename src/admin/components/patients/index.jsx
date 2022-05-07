@@ -40,13 +40,18 @@ class Patients extends Component {
       isConfirmation: false,
       selectedRecord: null,
       loadingCsv: false,
+      filter: {
+        name: "",
+        mobile_number: "",
+        status: "",
+      },
       pagination: {
         page: parseInt(props.match.params.page) ?? 1,
         limit: 10,
       },
       loading: false,
-      page: parseInt(props.match.params.page) ?? 1
-    }
+      page: parseInt(props.match.params.page) ?? 1,
+    };
     this.csvLinkEl = React.createRef();
   }
 
@@ -55,34 +60,76 @@ class Patients extends Component {
       this.setState({
         pagination: {
           page: parseInt(this.props.match.params.page),
-          limit: 10
-        }
-      })
+          limit: 10,
+        },
+      });
       const { pagination } = this.state;
-      this.fetchPatientsList(pagination);
+      this.fetchPatientsList({
+        ...pagination,
+        sort_key: "created_at",
+        sort_order: "descend",
+        filter: this.state.filter,
+      });
     }
   }
 
   async componentDidMount() {
     const { pagination } = this.state;
-    this.fetchPatientsList(pagination,true);
+    this.fetchPatientsList(
+      {
+        ...pagination,
+        sort_key: "created_at",
+        sort_order: "descend",
+        filter: global.patientFilter,
+      },
+      true
+    );
+    this.setState({
+      filter: global.patientFilter,
+    });
   }
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-    this.setState({
-      searchText: selectedKeys[0],
-      searchedColumn: dataIndex,
-    });
+    this.setState(
+      {
+        searchText: selectedKeys[0],
+        searchedColumn: dataIndex,
+      },
+      () => {
+        confirm();
+      }
+    );
   };
 
   fetchPatientsList = async (params = {}, changeRoute = false) => {
+    let currentPage = this.state.pagination.page;
+    if (changeRoute) {
+      if (params.page != currentPage) {
+        this.setState(
+          {
+            pagination: {
+              page: parseInt(params.page),
+              limit: params.limit,
+            },
+            filter: params.filter || {},
+          },
+          () => {
+            this.props.history.push(
+              "/patient-list/" + this.state.pagination.page
+            );
+          }
+        );
+        return;
+      }
+    }
+    global.patientFilter = params.filter;
+
     this.setState({ loading: true });
     const body = {
       ...params,
     };
-    let patients = await fetchApi({ 
-      url: "v2/patients", 
+    let patients = await fetchApi({
+      url: "v2/patients",
       method: "POST",
       body: body,
     });
@@ -96,10 +143,8 @@ class Patients extends Component {
         limit: patients.data.limit,
         total: patients.data.total,
       },
+      filter: params.filter,
     });
-    if(changeRoute){
-      this.props.history.push("/patient-list/"+this.state.pagination.page)
-    }
   };
 
   async deletePatient(record) {
@@ -121,8 +166,9 @@ class Patients extends Component {
   }
 
   handleReset = (clearFilters) => {
-    clearFilters();
-    this.setState({ searchText: "" });
+    this.setState({ searchText: "" }, () => {
+      clearFilters();
+    });
   };
 
   async handleItemClick(record, dropdownItem) {
@@ -161,23 +207,24 @@ class Patients extends Component {
     this.setState({
       searchStatus: filters.status,
     });
+
     const obj = {
-      sort_key: sorter.field,
-      sort_order: sorter.order,
+      sort_key: sorter.field || "created_at",
+      sort_order: sorter.order || "descend",
       page: pagination.current,
       limit: pagination.pageSize,
       filter: {
         name: this.state.searchText,
         mobile_number: this.state.searchMobile,
-        status: filters.status
+        status: filters.status,
       },
     };
-    this.fetchPatientsList(obj,true);
+    console.log("action filter", obj);
+    this.fetchPatientsList(obj, true);
   };
 
-  
   handleExportData = async (event, done) => {
-    const { searchStatus,filters } = this.state;
+    const { searchStatus, filters } = this.state;
     this.setState({
       loadingCsv: true,
     });
@@ -203,46 +250,71 @@ class Patients extends Component {
       if (patients?.data?.docs?.length > 0) {
         let finalData = [];
         patients?.data?.docs.forEach((element) => {
-          let covid_vaccinated = '';
-          let allergy_to_meds = '';
-          let past_surgeries = '';
-          let diagnosed_with_covid = '';
-          let hypertensive = '';
-          let diabetic = '';
-          element?.med_cond.map( (item) => {            
-            if(item?.name=='covid_vaccinated'){
-              covid_vaccinated = item?.selected? 'Yes'+(item?.desc? ', '+item?.desc: ''): 'No';
-              covid_vaccinated += ', '+ item?.meta?.map( (meta) => {
-                return meta?.desc
-              })
+          let covid_vaccinated = "";
+          let allergy_to_meds = "";
+          let past_surgeries = "";
+          let diagnosed_with_covid = "";
+          let hypertensive = "";
+          let diabetic = "";
+          element?.med_cond.map((item) => {
+            if (item?.name == "covid_vaccinated") {
+              covid_vaccinated = item?.selected
+                ? "Yes" + (item?.desc ? ", " + item?.desc : "")
+                : "No";
+              covid_vaccinated +=
+                ", " +
+                item?.meta?.map((meta) => {
+                  return meta?.desc;
+                });
             }
-            if(item?.name=='allergy_to_meds'){
-              allergy_to_meds = item?.selected? 'Yes'+(item?.desc? ', '+item?.desc: ''): 'No'
+            if (item?.name == "allergy_to_meds") {
+              allergy_to_meds = item?.selected
+                ? "Yes" + (item?.desc ? ", " + item?.desc : "")
+                : "No";
             }
-            if(item?.name=='past_surgeries'){
-              past_surgeries = item?.selected? 'Yes'+(item?.desc? ', '+item?.desc: ''): 'No'
+            if (item?.name == "past_surgeries") {
+              past_surgeries = item?.selected
+                ? "Yes" + (item?.desc ? ", " + item?.desc : "")
+                : "No";
             }
-            if(item?.name=='diagnosed_with_covid'){
-              diagnosed_with_covid = item?.selected? 'Yes'+(item?.desc? ', '+item?.desc: ''): 'No'
+            if (item?.name == "diagnosed_with_covid") {
+              diagnosed_with_covid = item?.selected
+                ? "Yes" + (item?.desc ? ", " + item?.desc : "")
+                : "No";
             }
-            if(item?.name=='hypertensive'){
-              hypertensive = item?.selected? 'Yes'+(item?.desc? ', '+item?.desc: ''): 'No'
+            if (item?.name == "hypertensive") {
+              hypertensive = item?.selected
+                ? "Yes" + (item?.desc ? ", " + item?.desc : "")
+                : "No";
             }
-            if(item?.name=='diabetic'){
-              diabetic = item?.selected? 'Yes'+(item?.desc? ', '+item?.desc: ''): 'No'
-            }          
-          })
+            if (item?.name == "diabetic") {
+              diabetic = item?.selected
+                ? "Yes" + (item?.desc ? ", " + item?.desc : "")
+                : "No";
+            }
+          });
 
           const dataObj = {
             id: element?.huno_id,
-            name: `${element?.user_id?.first_name + " " + element?.user_id?.last_name}`,
+            name: `${
+              element?.user_id?.first_name + " " + element?.user_id?.last_name
+            }`,
             relation: element?.relation || "",
             relative_name: element?.relative_name || "",
             height: element?.height || "",
             weight: element?.weight || "",
             mobile_number: `${element?.user_id?.country_code} ${element?.user_id?.mobile_number}`,
             email: element?.user_id?.email || "",
-            address: element?.address?.line1+' '+element?.address?.line2+', '+element?.address.city+', '+element?.address?.state+', '+element?.address?.country,
+            address:
+              element?.address?.line1 +
+              " " +
+              element?.address?.line2 +
+              ", " +
+              element?.address.city +
+              ", " +
+              element?.address?.state +
+              ", " +
+              element?.address?.country,
             diabetic: diabetic,
             hypertensive: hypertensive,
             covid: diagnosed_with_covid,
@@ -251,7 +323,7 @@ class Patients extends Component {
             vaccinated: covid_vaccinated,
             other: element?.other_med_cond,
             created_at: moment(element?.created_at).format("DD/MM/YYYY") || "",
-            updated_at: moment(element?.updated_at).format("DD/MM/YYYY") || "",            
+            updated_at: moment(element?.updated_at).format("DD/MM/YYYY") || "",
             account_status: element.status || "",
           };
           finalData.push(dataObj);
@@ -279,7 +351,6 @@ class Patients extends Component {
   };
 
   render() {
-
     const { data, dataFromList, loadingCsv, exportingData } = this.state;
 
     const columns = [
@@ -383,28 +454,28 @@ class Patients extends Component {
         },
       },
     ];
-        
+
     const headers = [
-      { label: "HealthUno ID", key: "id" }, 	
-      { label: "Patient Name", key: "name" },	
-      { label: "Relation", key: "relation" },	
-      { label: "Relative Name", key: "relative_name" },	
-      { label: "Height (Feet)", key: "height" },	
-      { label: "Weight (Kg)", key: "weight" },	
-      { label: "Email", key: "email" },	
-      { label: "Mobile Number", key: "mobile_number" },	
-      { label: "Address", key: "address" },	
-      { label: "Are you Diabetic?", key: "diabetic" },	
-      { label: "Are you Hypertensive?", key: "hypertensive" },	
-      { label: "Have you been diagnosed with Covid?", key: "covid" },	
-      { label: "Any past surgery?", key: "surgery" },	
-      { label: "Any allergies to medications?", key: "medications" },	
-      { label: "Have you been vaccinated against Covid?", key: "vaccinated" },	
-      { label: "Other medical conditions", key: "other" },	
-      { label: "Created At", key: "created_at" },	
-      { label: "Updated At", key: "updated_at" },	
+      { label: "HealthUno ID", key: "id" },
+      { label: "Patient Name", key: "name" },
+      { label: "Relation", key: "relation" },
+      { label: "Relative Name", key: "relative_name" },
+      { label: "Height (Feet)", key: "height" },
+      { label: "Weight (Kg)", key: "weight" },
+      { label: "Email", key: "email" },
+      { label: "Mobile Number", key: "mobile_number" },
+      { label: "Address", key: "address" },
+      { label: "Are you Diabetic?", key: "diabetic" },
+      { label: "Are you Hypertensive?", key: "hypertensive" },
+      { label: "Have you been diagnosed with Covid?", key: "covid" },
+      { label: "Any past surgery?", key: "surgery" },
+      { label: "Any allergies to medications?", key: "medications" },
+      { label: "Have you been vaccinated against Covid?", key: "vaccinated" },
+      { label: "Other medical conditions", key: "other" },
+      { label: "Created At", key: "created_at" },
+      { label: "Updated At", key: "updated_at" },
       { label: "Account Status", key: "account_status" },
-    ]; 
+    ];
 
     return (
       <>
@@ -464,7 +535,7 @@ class Patients extends Component {
               <div className="col-md-12">
                 <div className="card">
                   <div className="card-body">
-                    <div className="table-responsive">   
+                    <div className="table-responsive">
                       <Button onClick={() => this.handleExportData()}>
                         {loadingCsv ? "Loading csv..." : "Export to CSV"}
                       </Button>
@@ -473,8 +544,8 @@ class Patients extends Component {
                         filename={"patients-data.csv"}
                         headers={headers}
                         ref={this.csvLinkEl}
-                      ></CSVLink> 
-                    
+                      ></CSVLink>
+
                       <button
                         type="primary"
                         className="btn btn-primary float-right"

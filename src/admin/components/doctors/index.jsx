@@ -46,6 +46,13 @@ class Doctors extends Component {
       dataFromList: [],
       searchedColumn: "",
       loadingCsv: false,
+      filter: {
+        name: "",
+        mobile_number: "",
+        dept_name: "",
+        status: "",
+        specialities: "",
+      },
       pagination: {
         page: parseInt(props.match.params.page) ?? 1,
         limit: 10,
@@ -59,19 +66,45 @@ class Doctors extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    console.log("prevProps", prevProps, "location", this.props.location);
     if (this.props.location !== prevProps.location) {
       this.setState({
         pagination: {
-          page: parseInt(this.props.match.params.page)
-        }
-      })
+          page: parseInt(this.props.match.params.page),
+        },
+      });
       const { pagination } = this.state;
-      this.fetchDoctors(pagination);
+      this.fetchDoctors({
+        ...pagination,
+        sort_key: "created_at",
+        sort_order: "descend",
+        filter: this.state.filter,
+      });
     }
   }
 
   async fetchDoctors(params = {}, changeRoute = false) {
-    
+    let currentPage = this.state.pagination.page;
+    if (changeRoute) {
+      if (params.page != currentPage) {
+        this.setState(
+          {
+            pagination: {
+              page: parseInt(params.page),
+              limit: params.limit,
+            },
+            filter: params.filter || {},
+          },
+          () => {
+            this.props.history.push(
+              "/doctor-list/" + this.state.pagination.page
+            );
+          }
+        );
+        return;
+      }
+    }
+    global.doctorFilter = params.filter;
     this.setState({ loading: true });
     const body = {
       ...params,
@@ -82,6 +115,7 @@ class Doctors extends Component {
       body: body,
     });
     let doctorsData = doctors.data.docs;
+
     this.setState({
       data: doctorsData,
       exportingData: doctorsData,
@@ -92,20 +126,26 @@ class Doctors extends Component {
         limit: doctors.data.limit,
         total: doctors.data.total,
       },
+      filter: params.filter,
     });
-    if(changeRoute){
-      this.props.history.push("/doctor-list/"+this.state.pagination.page)
-    }   
   }
 
   async componentDidMount() {
     const { pagination } = this.state;
-    this.fetchDoctors(pagination,true);
+    this.fetchDoctors(
+      {
+        ...pagination,
+        sort_key: "created_at",
+        sort_order: "descend",
+        filter: global.doctorFilter,
+      },
+      true
+    );
     let speclData = await fetchApi({ url: "v1/specialities", method: "GET" });
     let specialities = speclData.data.map((ele) => {
       return { name: ele.title, value: ele._id };
     });
-    this.setState({ specialities: specialities });
+    this.setState({ specialities: specialities, filter: global.doctorFilter });
   }
 
   async handleItemClick(record, dropdownItem) {
@@ -132,7 +172,7 @@ class Doctors extends Component {
       this.setState({ searchText: selectedKeys[0] });
     } else if (fieldName === "dept_name") {
       this.setState({ searchDept: selectedKeys });
-    }else if (fieldName === "user_id.mobile_number") {
+    } else if (fieldName === "user_id.mobile_number") {
       this.setState({ searchMobile: selectedKeys[0] });
     }
 
@@ -141,7 +181,10 @@ class Doctors extends Component {
         name: fieldName == "name" ? selectedKeys[0] : this.state.searchText,
       },
       ...{
-        mobile_number: fieldName == "user_id.mobile_number" ? selectedKeys[0] : this.state.searchMobile,
+        mobile_number:
+          fieldName == "user_id.mobile_number"
+            ? selectedKeys[0]
+            : this.state.searchMobile,
       },
       ...{
         dept_name:
@@ -202,7 +245,7 @@ class Doctors extends Component {
         specialities: filters.specialities,
       },
     };
-    this.fetchDoctors(obj,true);
+    this.fetchDoctors(obj, true);
   };
 
   async deleteDoctor(record) {
@@ -281,7 +324,9 @@ class Doctors extends Component {
               "",
             email: element?.user_id?.email || "",
             dob: element?.user_id?.dob || "",
-            language: element?.user_id?.language ? element?.user_id?.language?.map( (item) => item.name): "",
+            language: element?.user_id?.language
+              ? element?.user_id?.language?.map((item) => item.name)
+              : "",
             gender: element?.user_id?.gender || "",
             state: element?.address?.state || "",
             city: element?.address?.city || "",
@@ -327,7 +372,8 @@ class Doctors extends Component {
           this.handleReset,
           "first_name"
         ),
-      },{
+      },
+      {
         title: "Mobile Number",
         render: (text, record) => renderText(record.user_id.mobile_number),
         sorter: (a, b) =>
@@ -364,7 +410,12 @@ class Doctors extends Component {
         render: (text, record) => renderChips(record.qualif.specl),
         dataIndex: "specialities",
         sorter: (a, b) => {
-          if (a.qualif.specl && a.qualif.specl.length > 0 && b.qualif.specl && b.qualif.specl.length > 0) {
+          if (
+            a.qualif.specl &&
+            a.qualif.specl.length > 0 &&
+            b.qualif.specl &&
+            b.qualif.specl.length > 0
+          ) {
             return sorterText(a.qualif.specl[0].title, b.qualif.specl[0].title);
           }
         },
@@ -594,13 +645,13 @@ class Doctors extends Component {
                         ref={this.csvLinkEl}
                       ></CSVLink>
                       <button
-                          type="primary"
-                          className="btn btn-primary float-right"
-                          onClick={() =>
-                            this.props.history.push("/doctor-registration")
-                          }
-                        >
-                          Add Doctor
+                        type="primary"
+                        className="btn btn-primary float-right"
+                        onClick={() =>
+                          this.props.history.push("/doctor-registration")
+                        }
+                      >
+                        Add Doctor
                       </button>
                       <Table
                         className="table-striped"
@@ -612,7 +663,7 @@ class Doctors extends Component {
                         dataSource={[...data]}
                         rowKey={(record) => record._id}
                         showSizeChanger={true}
-                        pagination={{                          
+                        pagination={{
                           current: parseInt(this.props.match.params.page) ?? 1,
                           total:
                             this.state.total >= 0
